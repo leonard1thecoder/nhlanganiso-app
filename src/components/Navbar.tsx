@@ -20,22 +20,6 @@ export function Navbar() {
   const links = [
     ...(isAdminArea ? [] : [{ href: '/products', label: 'Shop' }]),
     ...(isAdminArea ? [] : [{ href: '/catering', label: 'Catering' }]),
-    ...(status === 'authenticated'
-      ? [
-          {
-            href: '/orders',
-            label: 'My orders',
-            icon: (
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-                <path d="M4 2v20l2-1 2 1 2-1 2 1 2-1 2 1 2-1 2 1V2l-2 1-2-1-2 1-2-1-2 1-2-1-2 1Z" />
-                <path d="M8 7h8" />
-                <path d="M8 11h8" />
-                <path d="M8 15h5" />
-              </svg>
-            ),
-          },
-        ]
-      : []),
     ...(isAdmin
       ? [
           {
@@ -51,6 +35,16 @@ export function Navbar() {
         ]
       : []),
   ];
+
+  const showOrders = status === 'authenticated' && !isAdminArea;
+  const ordersIcon = (
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+      <path d="M4 2v20l2-1 2 1 2-1 2 1 2-1 2 1 2-1 2 1V2l-2 1-2-1-2 1-2-1-2 1-2-1-2 1Z" />
+      <path d="M8 7h8" />
+      <path d="M8 11h8" />
+      <path d="M8 15h5" />
+    </svg>
+  );
 
   const isActive = (href: string) => pathname === href || pathname.startsWith(`${href}/`);
 
@@ -115,6 +109,18 @@ export function Navbar() {
             </svg>
             {ready && count > 0 && <span className="badge-count">{count}</span>}
           </Link>
+
+          {showOrders ? (
+            <Link
+              href="/orders"
+              className="icon-btn"
+              onClick={() => setOpen(false)}
+              aria-label="My orders"
+              title="My orders"
+            >
+              {ordersIcon}
+            </Link>
+          ) : null}
 
           {status === 'authenticated' && user ? (
             <div className="navbar__account">
