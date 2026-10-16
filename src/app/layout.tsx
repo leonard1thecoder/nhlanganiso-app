@@ -1,6 +1,6 @@
 import type { Metadata, Viewport } from 'next';
 import './globals.css';
-import { Footer } from '@/components/Footer';
+import { FooterGate } from '@/components/FooterGate';
 import { Navbar } from '@/components/Navbar';
 import { Providers } from '@/components/Providers';
 import { SITE_NAME, SITE_URL } from '@/lib/config';
@@ -33,7 +33,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           <main id="main" className="site-main">
             {children}
           </main>
-          <Footer />
+          <FooterGate />
         </Providers>
       </body>
     </html>
