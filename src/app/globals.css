@@ -613,6 +613,12 @@ code {
   margin-left: 4px;
 }
 
+.navbar__user {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
 @media (max-width: 860px) {
   .navbar__toggle {
     display: inline-flex;
@@ -649,6 +655,10 @@ code {
   .navbar__account {
     margin: 4px 0 0;
     justify-content: space-between;
+  }
+
+  .navbar__account .account-name {
+    display: none;
   }
 }
 
