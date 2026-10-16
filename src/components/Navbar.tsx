@@ -57,8 +57,18 @@ export function Navbar() {
             </Link>
           ))}
 
-          <Link href="/cart" className="navbar__cart" onClick={() => setOpen(false)} aria-label="Cart">
-            Cart
+          <Link
+            href="/cart"
+            className="navbar__cart icon-btn"
+            onClick={() => setOpen(false)}
+            aria-label={`Cart${ready && count > 0 ? `, ${count} items` : ''}`}
+            title="Cart"
+          >
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+              <circle cx="9" cy="21" r="1" />
+              <circle cx="20" cy="21" r="1" />
+              <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6" />
+            </svg>
             {ready && count > 0 && <span className="badge-count">{count}</span>}
           </Link>
 
@@ -79,8 +89,17 @@ export function Navbar() {
               </button>
             </div>
           ) : status === 'anonymous' ? (
-            <Link href="/login" className="btn btn-primary btn-sm" onClick={() => setOpen(false)}>
-              Sign in
+            <Link
+              href="/login"
+              className="icon-btn"
+              onClick={() => setOpen(false)}
+              aria-label="Sign in to your account"
+              title="Sign in"
+            >
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+                <circle cx="12" cy="7" r="4" />
+              </svg>
             </Link>
           ) : null}
         </nav>

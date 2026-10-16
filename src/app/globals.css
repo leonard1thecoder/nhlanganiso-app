@@ -557,6 +557,31 @@ code {
   text-decoration: none;
 }
 
+.icon-btn {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  border: 1px solid var(--line);
+  background: #fff;
+  color: var(--brown);
+}
+
+.icon-btn:hover {
+  border-color: var(--brown);
+  background: var(--gold-soft);
+  text-decoration: none;
+}
+
+.icon-btn .badge-count {
+  position: absolute;
+  top: -4px;
+  right: -4px;
+}
+
 .badge-count {
   display: inline-flex;
   align-items: center;
