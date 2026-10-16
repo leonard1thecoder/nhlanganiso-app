@@ -14,7 +14,7 @@ function LoginForm() {
   const router = useRouter();
   const params = useSearchParams();
   const rawNext = params.get('next');
-  const next = safeNext(rawNext);
+  const next = safeNext(rawNext, '/products');
   const { login } = useAuth();
 
   const [email, setEmail] = useState('');
