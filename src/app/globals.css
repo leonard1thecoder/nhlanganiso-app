@@ -1646,6 +1646,78 @@ code {
   font-size: 0.92rem;
 }
 
+/* ---------- Admin layout ---------- */
+
+.admin-layout {
+  display: grid;
+  grid-template-columns: 240px minmax(0, 1fr);
+  gap: 28px;
+  align-items: start;
+  padding-top: 32px;
+  padding-bottom: 32px;
+}
+
+.admin-content {
+  min-width: 0;
+}
+
+.admin-content .section {
+  padding: 0;
+}
+
+.admin-content .container {
+  padding: 0;
+  max-width: none;
+}
+
+.admin-nav {
+  position: sticky;
+  top: 96px;
+  background: #fff;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  padding: 16px 12px;
+}
+
+.admin-nav__title {
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin: 0 0 8px;
+  padding: 0 10px;
+}
+
+.admin-nav ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.admin-nav__link {
+  display: block;
+  padding: 10px 12px;
+  border-radius: var(--radius-sm);
+  color: var(--brown);
+  font-weight: 600;
+  font-size: 0.93rem;
+}
+
+.admin-nav__link:hover {
+  background: var(--bg-soft);
+  text-decoration: none;
+}
+
+.admin-nav__link.is-active {
+  background: var(--gold-soft);
+  color: var(--brown-deep);
+  box-shadow: inset 3px 0 0 var(--gold);
+}
+
 /* ---------- Payment status ---------- */
 
 .pay-status {
@@ -1704,6 +1776,19 @@ code {
 
   .footer__grid {
     grid-template-columns: 1fr 1fr;
+  }
+
+  .admin-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .admin-nav {
+    position: static;
+  }
+
+  .admin-nav ul {
+    flex-direction: row;
+    flex-wrap: wrap;
   }
 
   .detail-grid {
