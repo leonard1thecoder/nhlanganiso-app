@@ -3,9 +3,11 @@
 
 const trimSlash = (s: string) => s.replace(/\/+$/, '');
 
-// Empty means same-origin (use the Next.js /api/v1 rewrite proxy, no CORS).
-// Set NEXT_PUBLIC_API_URL only if you want the browser to call the API directly.
-export const API_BASE_URL = trimSlash(process.env.NEXT_PUBLIC_API_URL ?? '');
+// Always same-origin: use the Next.js /api/v1 rewrite proxy, never call the
+// API cross-origin from the browser, so CORS can never block us.
+// (NEXT_PUBLIC_API_URL is intentionally ignored here; the upstream is chosen
+// server-side in next.config.mjs via API_UPSTREAM / NEXT_PUBLIC_API_URL.)
+export const API_BASE_URL = '';
 
 /** Every API route lives under this prefix. */
 export const API_PREFIX = '/api/v1';
