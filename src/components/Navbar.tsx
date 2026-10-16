@@ -14,9 +14,12 @@ export function Navbar() {
   const pathname = usePathname();
   const [open, setOpen] = useState(false);
 
+  // Back-office screens get a focused header: no shopfront links.
+  const isAdminArea = pathname === '/admin' || pathname.startsWith('/admin/');
+
   const links = [
-    { href: '/products', label: 'Shop' },
-    { href: '/catering', label: 'Catering' },
+    ...(isAdminArea ? [] : [{ href: '/products', label: 'Shop' }]),
+    ...(isAdminArea ? [] : [{ href: '/catering', label: 'Catering' }]),
     ...(status === 'authenticated'
       ? [
           {
