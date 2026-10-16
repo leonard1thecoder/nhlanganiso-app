@@ -96,6 +96,17 @@ export interface Category {
   slug: string;
 }
 
+/** POST /api/v1/products (admin Bearer token required). */
+export interface CreateProductBody {
+  name: string;
+  slug: string;
+  price_cents: number;
+  description?: string | null;
+  image_url?: string | null;
+  active?: boolean;
+  category_id?: Uuid | null;
+}
+
 // ---------- Cart / orders / payments ----------
 
 export interface CartQuoteItem {

@@ -8,8 +8,10 @@ import type {
   CateringQuote,
   CateringRequestBody,
   CateringStatus,
+  Category,
   CheckoutFields,
   CreateOrderBody,
+  CreateProductBody,
   CreateQuoteBody,
   CreatedOrder,
   FulfilmentStatus,
@@ -78,6 +80,16 @@ export const productService = {
     api.get<Availability>(`/products/${id}/availability`).then((r) => r.data),
 };
 
+// ---------- Categories ----------
+
+export const categoryService = {
+  /** GET /categories returns the array directly (not paged). */
+  list: async (): Promise<Category[]> => {
+    const res = await api.get<Category[] | { data: Category[] }>('/categories');
+    return Array.isArray(res.data) ? res.data : res.data.data;
+  },
+};
+
 // ---------- Cart (server-side price check) ----------
 
 export const cartService = {
@@ -128,6 +140,9 @@ export const cateringService = {
 // ---------- Admin ----------
 
 export const adminService = {
+  createProduct: (body: CreateProductBody) =>
+    api.post<Product>('/products', body).then((r) => r.data),
+
   orders: () => api.get<OrderDetail[]>('/admin/orders').then((r) => r.data),
 
   setFulfilment: (id: string, status: FulfilmentStatus) =>
