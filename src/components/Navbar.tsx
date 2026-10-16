@@ -9,7 +9,7 @@ import { useCart } from '@/context/CartContext';
 import { cn } from '@/lib/format';
 
 export function Navbar() {
-  const { status, user, isAdmin, logout } = useAuth();
+  const { status, user, logout } = useAuth();
   const { count, ready } = useCart();
   const pathname = usePathname();
   const [open, setOpen] = useState(false);
@@ -33,7 +33,6 @@ export function Navbar() {
           },
         ]
       : []),
-    ...(isAdmin ? [{ href: '/admin', label: 'Admin' }] : []),
   ];
 
   const isActive = (href: string) => pathname === href || pathname.startsWith(`${href}/`);
