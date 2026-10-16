@@ -8,11 +8,13 @@ import { Notice } from '@/components/Notice';
 import { useAuth } from '@/context/AuthContext';
 import { describeError, toApiError } from '@/lib/api';
 import { safeNext } from '@/lib/redirect';
+import { authService } from '@/lib/services';
 
 function LoginForm() {
   const router = useRouter();
   const params = useSearchParams();
-  const next = safeNext(params.get('next'));
+  const rawNext = params.get('next');
+  const next = safeNext(rawNext);
   const { login } = useAuth();
 
   const [email, setEmail] = useState('');
@@ -31,7 +33,17 @@ function LoginForm() {
     setSubmitting(true);
     try {
       await login(email.trim().toLowerCase(), password);
-      router.replace(next);
+      // Admins land on the back office unless a destination was explicitly requested.
+      let dest = next;
+      if (!rawNext) {
+        try {
+          const me = await authService.me();
+          if (me.role === 'admin') dest = '/admin';
+        } catch {
+          /* fall through to the default destination */
+        }
+      }
+      router.replace(dest);
     } catch (err) {
       const e2 = toApiError(err);
       // Do not reveal whether the account exists; the API already responds generically.
