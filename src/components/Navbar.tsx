@@ -61,17 +61,29 @@ export function Navbar() {
         </button>
 
         <nav id="primary-nav" className={cn('navbar__nav', open && 'is-open')} aria-label="Main">
-          {links.map((l) => (
-            <Link
-              key={l.href}
-              href={l.href}
-              className={cn('navbar__link', isActive(l.href) && 'is-active')}
-              onClick={() => setOpen(false)}
-            >
-              {'icon' in l && l.icon ? <span className="navbar__link-icon" aria-hidden="true">{l.icon}</span> : null}
-              {l.label}
-            </Link>
-          ))}
+          {links.map((l) =>
+            'icon' in l && l.icon ? (
+              <Link
+                key={l.href}
+                href={l.href}
+                className="icon-btn"
+                onClick={() => setOpen(false)}
+                aria-label={l.label}
+                title={l.label}
+              >
+                {l.icon}
+              </Link>
+            ) : (
+              <Link
+                key={l.href}
+                href={l.href}
+                className={cn('navbar__link', isActive(l.href) && 'is-active')}
+                onClick={() => setOpen(false)}
+              >
+                {l.label}
+              </Link>
+            ),
+          )}
 
           <Link
             href="/cart"
