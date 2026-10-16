@@ -71,6 +71,20 @@ export function Navbar() {
         </button>
 
         <nav id="primary-nav" className={cn('navbar__nav', open && 'is-open')} aria-label="Main">
+          <div className="navbar__links">
+            {links
+              .filter((l) => !('icon' in l && l.icon))
+              .map((l) => (
+                <Link
+                  key={l.href}
+                  href={l.href}
+                  className={cn('navbar__link', isActive(l.href) && 'is-active')}
+                  onClick={() => setOpen(false)}
+                >
+                  {l.label}
+                </Link>
+              ))}
+          </div>
           {links.map((l) =>
             'icon' in l && l.icon ? (
               <Link
@@ -83,16 +97,7 @@ export function Navbar() {
               >
                 {l.icon}
               </Link>
-            ) : (
-              <Link
-                key={l.href}
-                href={l.href}
-                className={cn('navbar__link', isActive(l.href) && 'is-active')}
-                onClick={() => setOpen(false)}
-              >
-                {l.label}
-              </Link>
-            ),
+            ) : null,
           )}
 
           <Link

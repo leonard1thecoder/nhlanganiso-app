@@ -516,9 +516,17 @@ code {
 .navbar__nav {
   display: flex;
   align-items: center;
-  justify-content: center;
-  flex: 1;
   gap: 6px;
+  flex: 1;
+  flex-wrap: wrap;
+}
+
+.navbar__links {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  flex: 1;
   flex-wrap: wrap;
 }
 
@@ -629,6 +637,12 @@ code {
 
   .navbar__nav.is-open {
     display: flex;
+  }
+
+  .navbar__links {
+    flex-direction: column;
+    align-items: stretch;
+    width: 100%;
   }
 
   .navbar__cart,
