@@ -140,6 +140,9 @@ export const cateringService = {
 // ---------- Admin ----------
 
 export const adminService = {
+  createCategory: (body: { name: string; slug: string }) =>
+    api.post<{ id: string }>('/categories', body).then((r) => r.data),
+
   createProduct: (body: CreateProductBody) =>
     api.post<Product>('/products', body).then((r) => r.data),
 

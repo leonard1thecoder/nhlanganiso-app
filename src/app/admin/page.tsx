@@ -49,6 +49,8 @@ function Dashboard() {
       <div className="cta-row">
         <Link href="/admin/products" className="btn btn-primary">Manage products</Link>
         <Link href="/admin/products/new" className="btn btn-outline">New product</Link>
+        <Link href="/admin/categories" className="btn btn-outline">Manage categories</Link>
+        <Link href="/admin/categories/new" className="btn btn-outline">New category</Link>
         <Link href="/admin/orders" className="btn btn-outline">Manage orders</Link>
         <Link href="/admin/catering" className="btn btn-outline">Catering requests</Link>
       </div>

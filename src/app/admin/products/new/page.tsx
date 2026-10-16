@@ -168,6 +168,9 @@ function NewProductForm() {
               </option>
             ))}
           </Select>
+          <p className="field__hint">
+            <Link href="/admin/categories/new">+ New category</Link>
+          </p>
         </Field>
 
         <Field id="p-desc" label="Description">
