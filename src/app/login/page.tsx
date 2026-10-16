@@ -17,6 +17,7 @@ function LoginForm() {
 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
 
@@ -52,7 +53,16 @@ function LoginForm() {
             <TextInput id="email" type="email" autoComplete="email" value={email} onChange={(e) => setEmail(e.target.value)} />
           </Field>
           <Field id="password" label="Password" required>
-            <TextInput id="password" type="password" autoComplete="current-password" value={password} onChange={(e) => setPassword(e.target.value)} />
+            <TextInput id="password" type={showPassword ? 'text' : 'password'} autoComplete="current-password" value={password} onChange={(e) => setPassword(e.target.value)} />
+            <label className="muted small" htmlFor="show-password">
+              <input
+                id="show-password"
+                type="checkbox"
+                checked={showPassword}
+                onChange={(e) => setShowPassword(e.target.checked)}
+              />{' '}
+              Show password
+            </label>
           </Field>
           <button type="submit" className="btn btn-primary btn-block" disabled={submitting}>
             {submitting ? 'Signing in…' : 'Sign in'}

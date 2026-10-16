@@ -16,6 +16,7 @@ function RegisterForm() {
   const loginHref = next ? `/login?next=${encodeURIComponent(next)}` : '/login';
 
   const [form, setForm] = useState({ full_name: '', email: '', password: '', confirm: '' });
+  const [showPasswords, setShowPasswords] = useState(false);
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [serverError, setServerError] = useState<string | null>(null);
   const [done, setDone] = useState(false);
@@ -91,11 +92,20 @@ function RegisterForm() {
             <TextInput id="email" type="email" autoComplete="email" value={form.email} onChange={set('email')} />
           </Field>
           <Field id="password" label="Password" required hint="At least 8 characters." error={errors.password}>
-            <TextInput id="password" type="password" autoComplete="new-password" value={form.password} onChange={set('password')} />
+            <TextInput id="password" type={showPasswords ? 'text' : 'password'} autoComplete="new-password" value={form.password} onChange={set('password')} />
           </Field>
           <Field id="confirm" label="Confirm password" required error={errors.confirm}>
-            <TextInput id="confirm" type="password" autoComplete="new-password" value={form.confirm} onChange={set('confirm')} />
+            <TextInput id="confirm" type={showPasswords ? 'text' : 'password'} autoComplete="new-password" value={form.confirm} onChange={set('confirm')} />
           </Field>
+          <label className="muted small" htmlFor="show-passwords">
+            <input
+              id="show-passwords"
+              type="checkbox"
+              checked={showPasswords}
+              onChange={(e) => setShowPasswords(e.target.checked)}
+            />{' '}
+            Show passwords
+          </label>
           <button type="submit" className="btn btn-primary btn-block" disabled={submitting}>
             {submitting ? 'Creating account…' : 'Create account'}
           </button>

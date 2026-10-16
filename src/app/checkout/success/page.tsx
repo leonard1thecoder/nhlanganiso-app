@@ -91,6 +91,25 @@ function SuccessView() {
       <p className="eyebrow">Order placed</p>
       <h1>{headline}</h1>
 
+      <p>
+        <span
+          className={
+            payment === 'paid'
+              ? 'pay-status is-paid'
+              : payment === 'failed'
+                ? 'pay-status is-failed'
+                : 'pay-status is-pending'
+          }
+          role="status"
+        >
+          {payment === 'paid'
+            ? 'Payment confirmed'
+            : payment === 'failed'
+              ? 'Payment failed'
+              : 'Confirming payment…'}
+        </span>
+      </p>
+
       {lastOrder ? (
         <p className="lead">
           Reference <strong>{lastOrder.reference}</strong> · Total {formatZAR(lastOrder.total_cents)}

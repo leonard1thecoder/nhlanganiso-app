@@ -5,7 +5,7 @@ import { useEffect, useState, type FormEvent } from 'react';
 import { Field, Select, TextArea, TextInput } from '@/components/Field';
 import { Notice } from '@/components/Notice';
 import { describeError } from '@/lib/api';
-import { CONTACT } from '@/lib/config';
+import { CONTACT, HAS_REAL_CONTACT_EMAIL, HAS_REAL_CONTACT_PHONE } from '@/lib/config';
 import { randsToCents, todayISO } from '@/lib/format';
 import { cateringService } from '@/lib/services';
 
@@ -122,10 +122,19 @@ export default function CateringPage() {
             <li>Tailored menus and dietary needs</li>
             <li>Itemised quotes you can review and accept online</li>
           </ul>
-          <p className="muted small">
-            Prefer to talk? Call <a href={`tel:${CONTACT.phone.replace(/\s/g, '')}`}>{CONTACT.phone}</a> or email{' '}
-            <a href={`mailto:${CONTACT.email}`}>{CONTACT.email}</a>.
-          </p>
+          {HAS_REAL_CONTACT_EMAIL || HAS_REAL_CONTACT_PHONE ? (
+            <p className="muted small">
+              Prefer to talk?{' '}
+              {HAS_REAL_CONTACT_PHONE ? (
+                <>Call <a href={`tel:${CONTACT.phone.replace(/\s/g, '')}`}>{CONTACT.phone}</a></>
+              ) : null}
+              {HAS_REAL_CONTACT_PHONE && HAS_REAL_CONTACT_EMAIL ? ' or ' : null}
+              {HAS_REAL_CONTACT_EMAIL ? (
+                <>email <a href={`mailto:${CONTACT.email}`}>{CONTACT.email}</a></>
+              ) : null}
+              .
+            </p>
+          ) : null}
         </div>
 
         <div className="card">

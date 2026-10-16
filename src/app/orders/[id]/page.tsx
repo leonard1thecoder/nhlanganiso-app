@@ -7,7 +7,7 @@ import { FulfilmentBadge, PaymentBadge } from '@/components/StatusBadge';
 import { Notice } from '@/components/Notice';
 import { RequireAuth } from '@/components/RequireAuth';
 import { describeError } from '@/lib/api';
-import { CONTACT } from '@/lib/config';
+import { CONTACT, HAS_REAL_CONTACT_EMAIL } from '@/lib/config';
 import { formatZAR } from '@/lib/format';
 import { orderService } from '@/lib/services';
 import type { OrderDetail } from '@/lib/types';
@@ -90,9 +90,15 @@ function OrderView() {
         </div>
       </div>
 
-      <p className="muted small">
-        Questions about this order? Email us at <a href={`mailto:${CONTACT.email}`}>{CONTACT.email}</a> and quote the reference.
-      </p>
+      {HAS_REAL_CONTACT_EMAIL ? (
+        <p className="muted small">
+          Questions about this order? Email us at <a href={`mailto:${CONTACT.email}`}>{CONTACT.email}</a> and quote the reference.
+        </p>
+      ) : (
+        <p className="muted small">
+          Questions about this order? Please quote reference <strong>{order.reference}</strong> when you contact us.
+        </p>
+      )}
 
       {canCancel ? (
         <div className="cta-row">

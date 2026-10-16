@@ -23,6 +23,14 @@ export const CONTACT = {
   phone: process.env.NEXT_PUBLIC_CONTACT_PHONE ?? '+27 00 000 0000',
 } as const;
 
+/**
+ * Never render fabricated contact details. These are true only when the
+ * operator configured real values; callers must hide contact rows otherwise.
+ */
+export const HAS_REAL_CONTACT_EMAIL =
+  CONTACT.email !== 'hello@example.co.za' && CONTACT.email.includes('@');
+export const HAS_REAL_CONTACT_PHONE = CONTACT.phone !== '+27 00 000 0000';
+
 /** Storage keys (versioned so a future shape change can invalidate old data). */
 export const STORAGE_KEYS = {
   tokens: 'nhl.auth.tokens.v1',
