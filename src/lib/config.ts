@@ -3,7 +3,9 @@
 
 const trimSlash = (s: string) => s.replace(/\/+$/, '');
 
-export const API_BASE_URL = trimSlash(process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:8080');
+// Empty means same-origin (use the Next.js /api/v1 rewrite proxy, no CORS).
+// Set NEXT_PUBLIC_API_URL only if you want the browser to call the API directly.
+export const API_BASE_URL = trimSlash(process.env.NEXT_PUBLIC_API_URL ?? '');
 
 /** Every API route lives under this prefix. */
 export const API_PREFIX = '/api/v1';

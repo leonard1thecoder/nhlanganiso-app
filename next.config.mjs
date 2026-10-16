@@ -1,9 +1,21 @@
 /** @type {import('next').NextConfig} */
+const upstream = (
+  process.env.API_UPSTREAM ??
+  process.env.NEXT_PUBLIC_API_URL ??
+  'http://localhost:8080'
+).replace(/\/+$/, '');
+
 const nextConfig = {
   reactStrictMode: true,
   poweredByHeader: false,
-  // The storefront talks to the Rust API directly from the browser (see src/lib/api.ts),
-  // so no rewrites/proxy are needed here. CORS is configured on the API via CORS_ALLOWED_ORIGINS.
+  // Same-origin proxy for the API so the browser never hits CORS:
+  // the app calls /api/v1/* on its own origin, Next rewrites it to the
+  // Rust API. Set API_UPSTREAM (server-only) or NEXT_PUBLIC_API_URL to the
+  // API base (no trailing slash, no /api/v1). Falls back to localhost:8080.
+  async rewrites() {
+    if (!upstream) return [];
+    return [{ source: '/api/v1/:path*', destination: `${upstream}/api/v1/:path*` }];
+  },
   images: {
     remotePatterns: [
       // Product images are optional; allow any https host the API returns as image_url.
