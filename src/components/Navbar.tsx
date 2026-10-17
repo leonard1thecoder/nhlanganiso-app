@@ -19,7 +19,7 @@ export function Navbar() {
 
   const links = [
     ...(isAdminArea ? [] : [{ href: '/products', label: 'Shop' }]),
-    ...(isAdminArea ? [] : [{ href: '/catering', label: 'Catering' }]),
+    ...(isAdminArea ? [] : [{ href: '/catering', label: 'Contact us' }]),
     ...(isAdmin && !isAdminArea
       ? [
           {
@@ -128,6 +128,18 @@ export function Navbar() {
               {ordersIcon}
             </Link>
           ) : null}
+
+          <Link
+            href="/catering"
+            className="icon-btn"
+            onClick={() => setOpen(false)}
+            aria-label="Contact us"
+            title="Contact us"
+          >
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+              <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
+            </svg>
+          </Link>
 
           {status === 'authenticated' && user ? (
             <div className="navbar__account">

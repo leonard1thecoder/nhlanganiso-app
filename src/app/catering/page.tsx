@@ -1,38 +1,25 @@
 'use client';
 
 import Link from 'next/link';
-import { useEffect, useState, type FormEvent } from 'react';
-import { Field, Select, TextArea, TextInput } from '@/components/Field';
+import { useState, type FormEvent } from 'react';
+import { Field, TextArea, TextInput } from '@/components/Field';
 import { Notice } from '@/components/Notice';
 import { describeError } from '@/lib/api';
 import { CONTACT, HAS_REAL_CONTACT_EMAIL, HAS_REAL_CONTACT_PHONE } from '@/lib/config';
-import { randsToCents, todayISO } from '@/lib/format';
 import { cateringService } from '@/lib/services';
 
-const EVENT_TYPES = ['Wedding', 'Birthday', 'Corporate event', 'Office lunch', 'Funeral or memorial', 'Religious or cultural gathering', 'Other'];
-
 interface FormState {
-  event_type: string;
-  event_date: string;
-  guest_count: string;
-  venue: string;
-  budget: string;
-  menu_requirements: string;
-  contact_name: string;
-  contact_email: string;
-  contact_phone: string;
+  name: string;
+  email: string;
+  subject: string;
+  message: string;
 }
 
 const EMPTY: FormState = {
-  event_type: EVENT_TYPES[0],
-  event_date: '',
-  guest_count: '',
-  venue: '',
-  budget: '',
-  menu_requirements: '',
-  contact_name: '',
-  contact_email: '',
-  contact_phone: '',
+  name: '',
+  email: '',
+  subject: '',
+  message: '',
 };
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -40,26 +27,19 @@ const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 export default function CateringPage() {
   const [form, setForm] = useState<FormState>(EMPTY);
   const [errors, setErrors] = useState<Partial<Record<keyof FormState, string>>>({});
-  const [minDate, setMinDate] = useState('');
   const [submitting, setSubmitting] = useState(false);
   const [serverError, setServerError] = useState<string | null>(null);
-  const [createdId, setCreatedId] = useState<string | null>(null);
-
-  // Set on the client to avoid server/client date mismatches.
-  useEffect(() => setMinDate(todayISO()), []);
+  const [sent, setSent] = useState(false);
 
   const set = (k: keyof FormState) => (e: { target: { value: string } }) =>
     setForm((f) => ({ ...f, [k]: e.target.value }));
 
   const validate = (): Partial<Record<keyof FormState, string>> => {
     const e: Partial<Record<keyof FormState, string>> = {};
-    if (!form.event_date) e.event_date = 'Choose the event date.';
-    else if (minDate && form.event_date < minDate) e.event_date = 'The date cannot be in the past.';
-    const guests = Number(form.guest_count);
-    if (!Number.isInteger(guests) || guests < 1 || guests > 5000) e.guest_count = 'Enter between 1 and 5,000 guests.';
-    if (!form.contact_name.trim()) e.contact_name = 'Please enter your name.';
-    if (!EMAIL_RE.test(form.contact_email.trim())) e.contact_email = 'Enter a valid email address.';
-    if (form.budget.trim() && randsToCents(form.budget) === undefined) e.budget = 'Enter an amount in Rand, e.g. 5000.';
+    if (!form.name.trim()) e.name = 'Please enter your name.';
+    if (!EMAIL_RE.test(form.email.trim())) e.email = 'Enter a valid email address.';
+    if (!form.subject.trim()) e.subject = 'Please enter a subject.';
+    if (!form.message.trim()) e.message = 'Please enter your message.';
     return e;
   };
 
@@ -72,18 +52,20 @@ export default function CateringPage() {
 
     setSubmitting(true);
     try {
+      // Contact form submits to the same catering request endpoint; subject maps to
+      // event_type and message to menu_requirements so nothing is lost.
       const res = await cateringService.createRequest({
-        event_type: form.event_type,
-        event_date: form.event_date,
-        guest_count: Number(form.guest_count),
-        venue: form.venue.trim() || undefined,
-        budget_cents: randsToCents(form.budget),
-        menu_requirements: form.menu_requirements.trim() || undefined,
-        contact_name: form.contact_name.trim(),
-        contact_email: form.contact_email.trim().toLowerCase(),
-        contact_phone: form.contact_phone.trim() || undefined,
+        event_type: form.subject.trim(),
+        event_date: '',
+        guest_count: 1,
+        venue: undefined,
+        budget_cents: undefined,
+        menu_requirements: form.message.trim(),
+        contact_name: form.name.trim(),
+        contact_email: form.email.trim().toLowerCase(),
+        contact_phone: undefined,
       });
-      setCreatedId(res.id);
+      setSent(true);
       setForm(EMPTY);
     } catch (err) {
       setServerError(describeError(err));
@@ -92,16 +74,16 @@ export default function CateringPage() {
     }
   };
 
-  if (createdId) {
+  if (sent) {
     return (
       <section className="container section center">
-        <p className="eyebrow">Enquiry received</p>
+        <p className="eyebrow">Message received</p>
         <h1>Thank you — we are on it</h1>
         <p className="muted">
-          We have emailed a confirmation. Our team will review your event and send your quote by email.
+          We have received your message and will reply to {form.email} as soon as possible.
         </p>
         <p className="small">
-          Reference: <code>{createdId}</code>
+          Reference: <code>{form.subject || 'Contact'}</code>
         </p>
         <Link href="/products" className="btn btn-outline">Browse the shop</Link>
       </section>
@@ -112,16 +94,11 @@ export default function CateringPage() {
     <section className="container section">
       <div className="catering-layout">
         <div>
-          <p className="eyebrow">Catering</p>
-          <h1>Plan your event with us</h1>
+          <p className="eyebrow">Contact us</p>
+          <h1>Get in touch</h1>
           <p className="lead">
-            Tell us about your event and we will prepare a tailored quote, from bread platters to full dessert tables.
+            Have a question about our bakes, catering, or an order? Send us a message and we will get back to you.
           </p>
-          <ul className="check-list">
-            <li>Quotes sent by email</li>
-            <li>Tailored menus and dietary needs</li>
-            <li>Itemised quotes you can review and accept online</li>
-          </ul>
           {HAS_REAL_CONTACT_EMAIL || HAS_REAL_CONTACT_PHONE ? (
             <p className="muted small">
               Prefer to talk?{' '}
@@ -138,54 +115,52 @@ export default function CateringPage() {
         </div>
 
         <div className="card">
-          {serverError ? <Notice tone="error" title="Could not send your enquiry">{serverError}</Notice> : null}
+          {serverError ? <Notice tone="error" title="Could not send your message">{serverError}</Notice> : null}
 
           <form className="form-stack" onSubmit={onSubmit} noValidate>
             <div className="form-row">
-              <Field id="event_type" label="Event type" required>
-                <Select id="event_type" value={form.event_type} onChange={set('event_type')}>
-                  {EVENT_TYPES.map((t) => (
-                    <option key={t}>{t}</option>
-                  ))}
-                </Select>
+              <Field id="contact_name" label="Name" required error={errors.name}>
+                <TextInput
+                  id="contact_name"
+                  autoComplete="name"
+                  value={form.name}
+                  onChange={set('name')}
+                  aria-invalid={!!errors.name}
+                />
               </Field>
-              <Field id="event_date" label="Event date" required error={errors.event_date}>
-                <TextInput id="event_date" type="date" min={minDate || undefined} value={form.event_date} onChange={set('event_date')} aria-invalid={!!errors.event_date} />
+              <Field id="contact_email" label="Email" required error={errors.email}>
+                <TextInput
+                  id="contact_email"
+                  type="email"
+                  autoComplete="email"
+                  value={form.email}
+                  onChange={set('email')}
+                  aria-invalid={!!errors.email}
+                />
               </Field>
             </div>
 
-            <div className="form-row">
-              <Field id="guest_count" label="Number of guests" required error={errors.guest_count}>
-                <TextInput id="guest_count" type="number" inputMode="numeric" min={1} max={5000} value={form.guest_count} onChange={set('guest_count')} aria-invalid={!!errors.guest_count} />
-              </Field>
-              <Field id="budget" label="Budget (optional, ZAR)" error={errors.budget} hint="Helps us suggest the right menu.">
-                <TextInput id="budget" inputMode="decimal" placeholder="e.g. 8 000" value={form.budget} onChange={set('budget')} aria-invalid={!!errors.budget} />
-              </Field>
-            </div>
-
-            <Field id="venue" label="Venue or delivery area (optional)">
-              <TextInput id="venue" value={form.venue} onChange={set('venue')} />
+            <Field id="contact_subject" label="Subject" required error={errors.subject}>
+              <TextInput
+                id="contact_subject"
+                autoComplete="off"
+                value={form.subject}
+                onChange={set('subject')}
+                aria-invalid={!!errors.subject}
+              />
             </Field>
 
-            <Field id="menu_requirements" label="Menu requirements (optional)" hint="Dietary needs, favourites, colours, etc.">
-              <TextArea id="menu_requirements" value={form.menu_requirements} onChange={set('menu_requirements')} />
-            </Field>
-
-            <h2 className="form-section-title">Your details</h2>
-            <div className="form-row">
-              <Field id="contact_name" label="Name" required error={errors.contact_name}>
-                <TextInput id="contact_name" autoComplete="name" value={form.contact_name} onChange={set('contact_name')} />
-              </Field>
-              <Field id="contact_email" label="Email" required error={errors.contact_email}>
-                <TextInput id="contact_email" type="email" autoComplete="email" value={form.contact_email} onChange={set('contact_email')} />
-              </Field>
-            </div>
-            <Field id="contact_phone" label="Phone (optional)">
-              <TextInput id="contact_phone" type="tel" autoComplete="tel" value={form.contact_phone} onChange={set('contact_phone')} />
+            <Field id="contact_message" label="Message" required error={errors.message}>
+              <TextArea
+                id="contact_message"
+                value={form.message}
+                onChange={set('message')}
+                aria-invalid={!!errors.message}
+              />
             </Field>
 
             <button type="submit" className="btn btn-primary btn-lg btn-block" disabled={submitting}>
-              {submitting ? 'Sending…' : 'Request my quote'}
+              {submitting ? 'Sending…' : 'Send message'}
             </button>
           </form>
         </div>
