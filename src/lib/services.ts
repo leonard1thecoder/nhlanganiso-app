@@ -161,6 +161,12 @@ export const adminService = {
       .patch<{ ok: boolean }>(`/admin/catering/requests/${id}`, { status })
       .then((r) => r.data),
 
+  /** Send a reply message to the customer who made the contact request. */
+  reply: (requestId: string, message: string) =>
+    api
+      .post<{ ok: boolean }>(`/admin/catering/requests/${requestId}/reply`, { message })
+      .then((r) => r.data),
+
   createQuote: (requestId: string, body: CreateQuoteBody) =>
     api
       .post<{ id: string; total_cents: number }>(`/admin/catering/requests/${requestId}/quotes`, body)
