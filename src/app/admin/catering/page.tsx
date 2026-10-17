@@ -143,8 +143,8 @@ function AdminContactRequests() {
                       {r.contact_name ? ` · ${r.contact_name}` : ''}
                     </p>
                     <span
-                    className={`badge ${`badge--${(r as any).status === 'replied' ? 'reviewing' : (r as any).status === 'accepted' ? 'accepted' : (r as any).status === 'declined' ? 'declined' : (r as any).status === 'quoted' ? 'reviewing' : 'pending')}`}
-                  >
+                      className={`badge badge--${(r as any).status === 'replied' || (r as any).status === 'accepted' ? 'accepted' : (r as any).status === 'declined' || (r as any).status === 'c_declined' ? 'cancelled' : 'pending'}`}
+                    >
                     {(r as any).status?.replace('_', ' ') || 'New'}
                   </span>
                 </div>
