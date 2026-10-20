@@ -9,6 +9,7 @@ const ITEMS = [
   { href: '/admin/products', label: 'Manage products', exact: true },
   { href: '/admin/categories', label: 'Manage categories', exact: true },
   { href: '/admin/orders', label: 'Manage orders', exact: true },
+  { href: '/admin/newsletter', label: 'Newsletter', exact: true },
 ];
 
 export function AdminNav() {

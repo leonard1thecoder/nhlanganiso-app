@@ -2,6 +2,8 @@ import { api } from './api';
 import { API_BASE_URL, API_PREFIX } from './config';
 import type {
   AdminCateringRequest,
+  AdminNewsletter,
+  AdminSubscriber,
   AdminSummary,
   Availability,
   CartQuote,
@@ -11,18 +13,21 @@ import type {
   CateringStatus,
   Category,
   CheckoutFields,
+  CreateNewsletterBody,
   CreateOrderBody,
   CreateProductBody,
   CreateQuoteBody,
   CreatedOrder,
   FulfilmentStatus,
   Me,
+  NewsletterReceipt,
   OrderDetail,
   OrderSummary,
   Paged,
   Product,
   ProductDetail,
   Session,
+  SubscriberStats,
   TokenPair,
 } from './types';
 
@@ -165,6 +170,43 @@ export const cateringService = {
   /** Acceptance does NOT take payment. A deposit, if any, is paid through a normal order. */
   acceptQuote: (id: string) =>
     api.post<{ ok: boolean }>(`/catering/quotes/${id}/accept`).then((r) => r.data),
+};
+
+// ---------- Newsletter ----------
+
+export const newsletterService = {
+  /**
+   * Subscribe an email address to the newsletter. Returns the receipt the
+   * storefront shows (reference, status). A confirmation email is sent; the
+   * subscription only becomes active once that link is followed.
+   */
+  subscribe: (email: string) =>
+    api.post<NewsletterReceipt>('/subscribers', { email }).then((r) => r.data),
+
+  /** Confirm a subscription with the token from the confirmation email. */
+  verify: (token: string) =>
+    api.get<NewsletterReceipt>('/subscribers/verify', { params: { token } }).then((r) => r.data),
+};
+
+export const subscriberAdminService = {
+  list: () => api.get<AdminSubscriber[]>('/admin/subscribers').then((r) => r.data),
+
+  stats: () => api.get<SubscriberStats>('/admin/subscribers/stats').then((r) => r.data),
+
+  unsubscribe: (id: string) =>
+    api.delete<{ ok: boolean }>(`/admin/subscribers/${id}`).then((r) => r.data),
+};
+
+export const newsletterAdminService = {
+  /** Newsletters that were sent (or drafted). */
+  list: () => api.get<AdminNewsletter[]>('/admin/announcements').then((r) => r.data),
+
+  /** Create a newsletter; `send_now` sends it to the audience immediately. */
+  create: (body: CreateNewsletterBody) =>
+    api.post<{ id: string; title: string; status: string; announced_to: number }>(
+      '/admin/announcements',
+      body,
+    ).then((r) => r.data),
 };
 
 // ---------- Admin ----------

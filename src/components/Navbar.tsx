@@ -20,6 +20,7 @@ export function Navbar() {
   const links = [
     ...(isAdminArea ? [] : [{ href: '/products', label: 'Shop' }]),
     ...(isAdminArea ? [] : [{ href: '/catering', label: 'Contact us' }]),
+    ...(isAdminArea ? [] : [{ href: '/newsletter', label: 'Newsletter' }]),
     ...(isAdmin && !isAdminArea
       ? [
           {

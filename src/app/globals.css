@@ -1,6 +1,6 @@
-/* ==========================================================================
-   Nhlanganiso Catering & Baking — global styles
-   Premium design system: white · dark brown · golden yellow · silver-grey.
+﻿/* ==========================================================================
+   Nhlanganiso Catering & Baking â€” global styles
+   Premium design system: white Â· dark brown Â· golden yellow Â· silver-grey.
    White dominates; brown carries brand and actions; yellow highlights;
    silver separates. Semantic success/error tokens are reserved for status.
    ========================================================================== */
@@ -1237,7 +1237,7 @@ code {
 }
 
 .check-list li::before {
-  content: '✓';
+  content: 'âœ“';
   position: absolute;
   left: 0;
   color: var(--gold-deep);
@@ -1359,6 +1359,25 @@ code {
   min-height: 96px;
 }
 
+
+.receipt {
+  background: var(--surface-silver);
+  border: 1px dashed var(--line);
+  border-radius: var(--radius-sm);
+  padding: 16px 18px;
+  margin: 16px 0;
+  font-size: 0.95rem;
+  color: var(--brown-deep);
+}
+
+.receipt p {
+  margin: 0;
+}
+
+.receipt p + p {
+  margin-top: 4px;
+}
+
 .auth-card {
   max-width: 480px;
   margin: 0 auto;
@@ -1469,6 +1488,19 @@ code {
 }
 
 /* ---------- Badges & status ---------- */
+
+
+.badge--verified {
+  background: var(--success-bg);
+  border-color: #bfe0c9;
+  color: var(--success);
+}
+
+.badge--unsubscribed {
+  background: var(--surface-silver);
+  border-color: var(--line);
+  color: var(--muted);
+}
 
 .badge {
   display: inline-flex;

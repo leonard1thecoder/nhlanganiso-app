@@ -223,3 +223,56 @@ export interface AdminSummary {
   orders: number;
   currency: string;
 }
+
+// ---------- Newsletter ----------
+
+/** Receipt returned when a visitor subscribes to the newsletter. */
+export interface NewsletterReceipt {
+  id: Uuid;
+  /** Human-readable receipt code, e.g. NL-20261020-AB12CD. */
+  reference: string | null;
+  email: string;
+  /** pending | verified | unsubscribed */
+  status: string;
+  created_at: string;
+  /** True when the email was already subscribed. */
+  already_subscribed?: boolean;
+  /** True when a confirmation email was queued. */
+  verification_sent?: boolean;
+  subscribed_at?: string | null;
+}
+
+export interface SubscriberStats {
+  total: number;
+  verified: number;
+  pending: number;
+  unsubscribed: number;
+}
+
+export interface AdminSubscriber {
+  id: Uuid;
+  email: string;
+  status: string;
+  reference: string | null;
+  subscribed_at: string | null;
+}
+
+export interface AdminNewsletter {
+  id: Uuid;
+  title: string;
+  /** draft | sent | failed */
+  status: string;
+  audience: string | null;
+  sent_at: string | null;
+  created_at: string;
+}
+
+export interface CreateNewsletterBody {
+  title: string;
+  body_html: string;
+  body_text?: string;
+  /** subscribers | all */
+  audience?: 'subscribers' | 'all';
+  /** Send straight away instead of saving as a draft. */
+  send_now?: boolean;
+}
