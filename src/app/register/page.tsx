@@ -7,6 +7,7 @@ import { Field, TextInput } from '@/components/Field';
 import { Notice } from '@/components/Notice';
 import { describeError, toApiError } from '@/lib/api';
 import { authService } from '@/lib/services';
+import { useAuth } from '@/context/AuthContext';
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
@@ -14,6 +15,7 @@ function RegisterForm() {
   const params = useSearchParams();
   const next = params.get('next');
   const loginHref = next ? `/login?next=${encodeURIComponent(next)}` : '/login';
+  const { loginWithGoogle } = useAuth();
 
   const [form, setForm] = useState({ full_name: '', email: '', password: '', confirm: '' });
   const [showPasswords, setShowPasswords] = useState(false);
@@ -110,6 +112,17 @@ function RegisterForm() {
             {submitting ? 'Creating account…' : 'Create account'}
           </button>
         </form>
+
+        <div className="form-stack">
+          <button
+            type="button"
+            className="btn btn-block"
+            onClick={() => loginWithGoogle(next ?? undefined)}
+            disabled={submitting}
+          >
+            Register with Google
+          </button>
+        </div>
 
         <p className="auth-links">
           <span className="muted">Already registered?</span> <Link href={loginHref}>Sign in</Link>

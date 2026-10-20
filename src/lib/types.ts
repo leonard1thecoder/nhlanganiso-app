@@ -13,7 +13,14 @@ export type Uuid = string;
 
 export type PaymentStatus = 'pending' | 'paid' | 'failed' | 'cancelled';
 export type FulfilmentStatus = 'new' | 'preparing' | 'ready' | 'delivered' | 'cancelled';
-export type CateringStatus = 'new' | 'reviewing' | 'quoted' | 'accepted' | 'declined';
+export type CateringStatus =
+  | 'new'
+  | 'reviewing'
+  | 'quoted'
+  | 'replied'
+  | 'closed'
+  | 'accepted'
+  | 'declined';
 export type UserRole = 'customer' | 'admin';
 
 export interface ApiErrorBody {
@@ -37,6 +44,12 @@ export interface Me {
   email: string;
   full_name: string;
   role: UserRole | string;
+}
+
+/** Body accepted by POST /api/v1/auth/google/exchange. */
+export interface GoogleExchangeBody {
+  /** Single-use code handed over by the OAuth callback redirect. */
+  code: string;
 }
 
 export interface Session {
@@ -159,12 +172,9 @@ export interface CheckoutFields {
 // ---------- Catering ----------
 
 export interface CateringRequestBody {
+  /** The subject line of the contact form. */
   event_type: string;
-  /** YYYY-MM-DD */
-  event_date: string;
-  guest_count: number;
-  venue?: string;
-  budget_cents?: number;
+  /** Free-text message from the contact form. */
   menu_requirements?: string;
   contact_name: string;
   contact_email: string;
@@ -189,6 +199,11 @@ export interface AdminCateringRequest {
   id: Uuid;
   event_type: string;
   status: CateringStatus;
+  /** Who sent the enquiry (the contact form captures this). */
+  contact_name?: string | null;
+  contact_email?: string | null;
+  /** The message the customer wrote. */
+  message?: string | null;
 }
 
 export interface CreateQuoteBody {

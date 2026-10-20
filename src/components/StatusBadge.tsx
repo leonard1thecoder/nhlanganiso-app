@@ -20,6 +20,8 @@ const CATERING_LABEL: Record<CateringStatus, string> = {
   new: 'New enquiry',
   reviewing: 'Reviewing',
   quoted: 'Quote sent',
+  replied: 'Replied',
+  closed: 'Closed',
   accepted: 'Accepted',
   declined: 'Declined',
 };

@@ -1,4 +1,5 @@
 import { api } from './api';
+import { API_BASE_URL, API_PREFIX } from './config';
 import type {
   AdminCateringRequest,
   AdminSummary,
@@ -64,6 +65,27 @@ export const authService = {
     api
       .post<{ ok: boolean }>('/auth/password-reset/confirm', { token, new_password: newPassword })
       .then((r) => r.data),
+
+  /**
+   * Starts the Google OAuth 2.0 / OIDC flow.
+   *
+   * The API issues a state + nonce + PKCE challenge, then redirects the browser
+   * to Google. We navigate the whole window (not fetch) because Google shows
+   * its own consent UI. The API later redirects back to /auth/google/callback
+   * with a single-use `code`, which we exchange for a token pair.
+   *
+   * The URL is same-origin, so Next rewrites it to the API - no CORS involved.
+   */
+  googleSignInUrl: (next?: string) => {
+    const base = `${API_BASE_URL}${API_PREFIX}/auth/google`;
+    // `next` is only used by the frontend after the round trip; it is passed
+    // through the redirect so we can return the user where they started.
+    return next ? `${base}?next=${encodeURIComponent(next)}` : base;
+  },
+
+  /** Exchanges the single-use OAuth code for the normal token pair. */
+  googleExchange: (code: string) =>
+    api.post<TokenPair>('/auth/google/exchange', { code }).then((r) => r.data),
 };
 
 // ---------- Catalogue ----------

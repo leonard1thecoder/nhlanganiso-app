@@ -23,6 +23,10 @@ interface AuthContextValue {
   login: (email: string, password: string) => Promise<void>;
   logout: () => Promise<void>;
   refreshUser: () => Promise<void>;
+  /** Navigates the browser to Google to start the OAuth flow. */
+  loginWithGoogle: (next?: string) => void;
+  /** Completes the OAuth round trip with the single-use code from the callback. */
+  completeGoogleSignIn: (code: string) => Promise<Me>;
 }
 
 const AuthContext = createContext<AuthContextValue | null>(null);
@@ -85,6 +89,23 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
   }, []);
 
+  // Google sign-in: send the browser to the API, which handles the redirect to
+  // Google and comes back to /auth/google/callback?code=...
+  const loginWithGoogle = useCallback((next?: string) => {
+    window.location.assign(authService.googleSignInUrl(next));
+  }, []);
+
+  // Finish the OAuth round trip: exchange the one-time code for a token pair,
+  // store it, and load the signed-in user.
+  const completeGoogleSignIn = useCallback(async (code: string) => {
+    const pair = await authService.googleExchange(code);
+    setTokens(pair);
+    const me = await authService.me();
+    setUser(me);
+    setStatus('authenticated');
+    return me;
+  }, []);
+
   const value = useMemo<AuthContextValue>(
     () => ({
       status,
@@ -93,8 +114,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       login,
       logout,
       refreshUser,
+      loginWithGoogle,
+      completeGoogleSignIn,
     }),
-    [status, user, login, logout, refreshUser],
+    [status, user, login, logout, refreshUser, loginWithGoogle, completeGoogleSignIn],
   );
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

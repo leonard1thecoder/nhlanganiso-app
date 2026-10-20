@@ -56,10 +56,6 @@ export default function CateringPage() {
       // event_type and message to menu_requirements so nothing is lost.
       const res = await cateringService.createRequest({
         event_type: form.subject.trim(),
-        event_date: '',
-        guest_count: 1,
-        venue: undefined,
-        budget_cents: undefined,
         menu_requirements: form.message.trim(),
         contact_name: form.name.trim(),
         contact_email: form.email.trim().toLowerCase(),

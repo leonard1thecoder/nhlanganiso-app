@@ -15,7 +15,7 @@ function LoginForm() {
   const params = useSearchParams();
   const rawNext = params.get('next');
   const next = safeNext(rawNext, '/products');
-  const { login } = useAuth();
+  const { login, loginWithGoogle } = useAuth();
 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -80,6 +80,17 @@ function LoginForm() {
             {submitting ? 'Signing in…' : 'Sign in'}
           </button>
         </form>
+
+        <div className="form-stack">
+          <button
+            type="button"
+            className="btn btn-block"
+            onClick={() => loginWithGoogle(next)}
+            disabled={submitting}
+          >
+            Sign in with Google
+          </button>
+        </div>
 
         <div className="auth-links">
           <Link href="/forgot-password">Forgot password?</Link>
