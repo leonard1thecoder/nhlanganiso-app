@@ -27,6 +27,11 @@ interface AuthContextValue {
   loginWithGoogle: (next?: string) => void;
   /** Completes the OAuth round trip with the single-use code from the callback. */
   completeGoogleSignIn: (code: string) => Promise<Me>;
+  /**
+   * Links the current (already signed-in) account to a Google identity.
+   * Used when Google reports that the email already belongs to an account.
+   */
+  linkGoogle: () => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextValue | null>(null);
@@ -106,6 +111,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     return me;
   }, []);
 
+  // Attach a Google identity to the account that is signed in right now.
+  const linkGoogle = useCallback(async () => {
+    const { authorization_url } = await authService.googleLink();
+    window.location.assign(authorization_url);
+  }, []);
+
   const value = useMemo<AuthContextValue>(
     () => ({
       status,
@@ -116,8 +127,18 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       refreshUser,
       loginWithGoogle,
       completeGoogleSignIn,
+      linkGoogle,
     }),
-    [status, user, login, logout, refreshUser, loginWithGoogle, completeGoogleSignIn],
+    [
+      status,
+      user,
+      login,
+      logout,
+      refreshUser,
+      loginWithGoogle,
+      completeGoogleSignIn,
+      linkGoogle,
+    ],
   );
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

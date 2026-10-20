@@ -14,6 +14,7 @@ function GoogleCallback() {
   const { completeGoogleSignIn } = useAuth();
 
   const [error, setError] = useState<string | null>(null);
+  const [conflict, setConflict] = useState(false);
   // React 18/19 StrictMode double-invokes effects in dev; the code is
   // single-use, so only the first attempt may exchange it.
   const started = useRef(false);
@@ -42,6 +43,12 @@ function GoogleCallback() {
       })
       .catch((err) => {
         const e2 = toApiError(err);
+        if (e2.status === 409) {
+          // The email already belongs to a password account. We never merge
+          // accounts on email alone, so the user signs in and links instead.
+          setConflict(true);
+          return;
+        }
         setError(
           e2.status === 401
             ? 'That sign-in link has expired. Please try again.'
@@ -49,6 +56,23 @@ function GoogleCallback() {
         );
       });
   }, [code, oauthError, next, completeGoogleSignIn, router]);
+
+  if (conflict) {
+    return (
+      <section className="container section">
+        <div className="auth-card card center">
+          <h1>Account already exists</h1>
+          <Notice tone="error">
+            There is already an account with this email address. Sign in with your password to
+            continue, then link your Google account to it.
+          </Notice>
+          <p className="muted small">
+            <Link href="/login?next=%2Flink-google">Sign in and link Google</Link>
+          </p>
+        </div>
+      </section>
+    );
+  }
 
   return (
     <section className="container section">

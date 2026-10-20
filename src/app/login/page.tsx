@@ -15,7 +15,7 @@ function LoginForm() {
   const params = useSearchParams();
   const rawNext = params.get('next');
   const next = safeNext(rawNext, '/products');
-  const { login, loginWithGoogle } = useAuth();
+  const { login, loginWithGoogle, linkGoogle } = useAuth();
 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -33,6 +33,14 @@ function LoginForm() {
     setSubmitting(true);
     try {
       await login(email.trim().toLowerCase(), password);
+
+      // The user came here to link a Google identity to their existing
+      // account: continue straight into the Google link flow.
+      if (next === '/link-google') {
+        await linkGoogle();
+        return;
+      }
+
       // Admins land on the back office unless a destination was explicitly requested.
       let dest = next;
       if (!rawNext) {

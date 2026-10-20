@@ -86,6 +86,14 @@ export const authService = {
   /** Exchanges the single-use OAuth code for the normal token pair. */
   googleExchange: (code: string) =>
     api.post<TokenPair>('/auth/google/exchange', { code }).then((r) => r.data),
+
+  /**
+   * Starts linking a Google identity to the account that is currently signed
+   * in. Requires a valid access token, so it must be called after a password
+   * sign-in. Returns the Google URL to navigate to.
+   */
+  googleLink: () =>
+    api.post<{ authorization_url: string }>('/auth/google/link').then((r) => r.data),
 };
 
 // ---------- Catalogue ----------

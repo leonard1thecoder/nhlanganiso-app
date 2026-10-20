@@ -52,6 +52,11 @@ export interface GoogleExchangeBody {
   code: string;
 }
 
+/** Response of POST /api/v1/auth/google/link (start a Google link). */
+export interface GoogleLinkStart {
+  authorization_url: string;
+}
+
 export interface Session {
   id: Uuid;
   created_at: string;
