@@ -6,7 +6,7 @@ import { Suspense, useState, type FormEvent } from 'react';
 import { Field, TextInput } from '@/components/Field';
 import { Notice } from '@/components/Notice';
 import { useAuth } from '@/context/AuthContext';
-import { describeError, toApiError } from '@/lib/api';
+import { describeError, toApiError, OAUTH_ERROR_MESSAGES } from '@/lib/api';
 import { safeNext } from '@/lib/redirect';
 import { authService } from '@/lib/services';
 
@@ -15,6 +15,11 @@ function LoginForm() {
   const params = useSearchParams();
   const rawNext = params.get('next');
   const next = safeNext(rawNext, '/products');
+  // Reason the Google round trip sent the user back here (if any).
+  const oauthError = params.get('error');
+  const oauthErrorMessage = oauthError
+    ? (OAUTH_ERROR_MESSAGES[oauthError] ?? OAUTH_ERROR_MESSAGES.failed)
+    : null;
   const { login, loginWithGoogle, linkGoogle } = useAuth();
 
   const [email, setEmail] = useState('');
@@ -66,7 +71,9 @@ function LoginForm() {
         <p className="eyebrow">Welcome back</p>
         <h1>Sign in</h1>
 
-        {error ? <Notice tone="error">{error}</Notice> : null}
+        {error || oauthErrorMessage ? (
+          <Notice tone="error">{error ?? oauthErrorMessage}</Notice>
+        ) : null}
 
         <form className="form-stack" onSubmit={onSubmit} noValidate>
           <Field id="email" label="Email" required>

@@ -1,38 +1,46 @@
 'use client';
 
-import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { Suspense, useEffect, useRef, useState } from 'react';
-import { Notice } from '@/components/Notice';
+import { Suspense, useEffect, useRef } from 'react';
 import { useAuth } from '@/context/AuthContext';
-import { describeError, toApiError } from '@/lib/api';
-import { safeNext } from '@/lib/redirect';
+import { toApiError } from '@/lib/api';
 
+/**
+ * Landing page for the Google OAuth round trip.
+ *
+ * The API redirects here with a single-use `code`; we exchange it for a token
+ * pair and sign the user in. Any failure sends the user back to the sign-in
+ * page with a readable reason instead of stranding them on a dead end.
+ */
 function GoogleCallback() {
   const router = useRouter();
   const params = useSearchParams();
   const { completeGoogleSignIn } = useAuth();
 
-  const [error, setError] = useState<string | null>(null);
-  const [conflict, setConflict] = useState(false);
   // React 18/19 StrictMode double-invokes effects in dev; the code is
   // single-use, so only the first attempt may exchange it.
   const started = useRef(false);
 
   const code = params.get('code');
   const oauthError = params.get('error');
-  const next = safeNext(params.get('next'), '/products');
+  const next = params.get('next') ?? '/products';
 
   useEffect(() => {
     if (started.current) return;
     started.current = true;
 
+    const backToSignIn = (reason: string, nextPath?: string) => {
+      const q = new URLSearchParams({ error: reason });
+      if (nextPath) q.set('next', nextPath);
+      router.replace(`/login?${q.toString()}`);
+    };
+
     if (oauthError) {
-      setError('Google sign-in was cancelled or refused. Please try again.');
+      backToSignIn('cancelled');
       return;
     }
     if (!code) {
-      setError('We could not complete the Google sign-in. Please try again.');
+      backToSignIn('failed');
       return;
     }
 
@@ -46,50 +54,24 @@ function GoogleCallback() {
         if (e2.status === 409) {
           // The email already belongs to a password account. We never merge
           // accounts on email alone, so the user signs in and links instead.
-          setConflict(true);
+          backToSignIn('account_exists', '/link-google');
           return;
         }
-        setError(
-          e2.status === 401
-            ? 'That sign-in link has expired. Please try again.'
-            : describeError(err),
-        );
+        if (e2.status === 401) {
+          backToSignIn('expired');
+          return;
+        }
+        backToSignIn('failed');
       });
   }, [code, oauthError, next, completeGoogleSignIn, router]);
-
-  if (conflict) {
-    return (
-      <section className="container section">
-        <div className="auth-card card center">
-          <h1>Account already exists</h1>
-          <Notice tone="error">
-            There is already an account with this email address. Sign in with your password to
-            continue, then link your Google account to it.
-          </Notice>
-          <p className="muted small">
-            <Link href="/login?next=%2Flink-google">Sign in and link Google</Link>
-          </p>
-        </div>
-      </section>
-    );
-  }
 
   return (
     <section className="container section">
       <div className="auth-card card center">
-        <h1>{error ? 'Sign-in failed' : 'Signing you in'}</h1>
-        {error ? (
-          <>
-            <Notice tone="error">{error}</Notice>
-            <p className="muted small">
-              <Link href="/login">Back to sign in</Link>
-            </p>
-          </>
-        ) : (
-          <p className="muted" role="status">
-            Completing your Google sign-in…
-          </p>
-        )}
+        <h1>Signing you in</h1>
+        <p className="muted" role="status">
+          Completing your Google sign-in…
+        </p>
       </div>
     </section>
   );

@@ -5,7 +5,7 @@ import { useSearchParams } from 'next/navigation';
 import { Suspense, useState, type FormEvent } from 'react';
 import { Field, TextInput } from '@/components/Field';
 import { Notice } from '@/components/Notice';
-import { describeError, toApiError } from '@/lib/api';
+import { describeError, toApiError, OAUTH_ERROR_MESSAGES } from '@/lib/api';
 import { authService } from '@/lib/services';
 import { useAuth } from '@/context/AuthContext';
 
@@ -15,6 +15,11 @@ function RegisterForm() {
   const params = useSearchParams();
   const next = params.get('next');
   const loginHref = next ? `/login?next=${encodeURIComponent(next)}` : '/login';
+  // Reason the Google round trip sent the user back here (if any).
+  const oauthError = params.get('error');
+  const oauthErrorMessage = oauthError
+    ? (OAUTH_ERROR_MESSAGES[oauthError] ?? OAUTH_ERROR_MESSAGES.failed)
+    : null;
   const { loginWithGoogle } = useAuth();
 
   const [form, setForm] = useState({ full_name: '', email: '', password: '', confirm: '' });
@@ -84,7 +89,9 @@ function RegisterForm() {
         <h1>Create your account</h1>
         <p className="muted small">Track orders, reorder favourites and manage catering enquiries.</p>
 
-        {serverError ? <Notice tone="error">{serverError}</Notice> : null}
+        {serverError || oauthErrorMessage ? (
+          <Notice tone="error">{serverError ?? oauthErrorMessage}</Notice>
+        ) : null}
 
         <form className="form-stack" onSubmit={onSubmit} noValidate>
           <Field id="full_name" label="Full name" required error={errors.full_name}>

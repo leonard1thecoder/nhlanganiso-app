@@ -65,6 +65,19 @@ export function describeError(err: unknown): string {
   }
 }
 
+/**
+ * Reasons the Google round trip can bounce a user back to the sign-in page.
+ * The callback page redirects here with one of these codes in `?error=`.
+ */
+export const OAUTH_ERROR_MESSAGES: Record<string, string> = {
+  account_exists:
+    'An account with this email address already exists. Sign in with your password to continue, then link your Google account.',
+  expired: 'That Google sign-in link has expired. Please try again.',
+  cancelled: 'Google sign-in was cancelled. Please try again.',
+  failed: 'Google sign-in failed. Please try again.',
+  link_failed: 'We could not link your Google account. Please try again.',
+};
+
 const baseURL = `${API_BASE_URL}${API_PREFIX}`;
 
 /** The single axios instance used by the whole app. */
