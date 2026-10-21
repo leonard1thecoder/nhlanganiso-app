@@ -1492,6 +1492,25 @@ code {
 
 
 
+
+.badge--requested {
+  background: var(--info-bg);
+  border-color: #bfd6ea;
+  color: var(--info);
+}
+
+.badge--rejected {
+  background: var(--surface-silver);
+  border-color: var(--line);
+  color: var(--muted);
+}
+
+.badge--manual_action_required {
+  background: var(--gold-soft);
+  border-color: #e3c894;
+  color: var(--gold-deep);
+}
+
 .badge--refunded,
 .badge--partially_refunded {
   background: var(--gold-soft);

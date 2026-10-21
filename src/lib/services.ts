@@ -238,6 +238,20 @@ export const refundService = {
 
   /** Refunds for one order (customer's own order). */
   forOrder: (orderId: string) => api.get<Refund[]>(`/orders/${orderId}/refunds`).then((r) => r.data),
+
+  /** Ask for a refund on an order. The back office decides. */
+  request: (orderId: string, body: CreateRefundBody) =>
+    api.post<Refund>(`/orders/${orderId}/refund-request`, body).then((r) => r.data),
+
+  /** Approve a customer's refund request (back office). */
+  approve: (refundId: string) =>
+    api.post<Refund>(`/admin/refunds/${refundId}/approve`).then((r) => r.data),
+
+  /** Decline a customer's refund request (back office). */
+  reject: (refundId: string, reason: string) =>
+    api.post<{ ok: boolean; status: string }>(`/admin/refunds/${refundId}/reject`, { reason }).then(
+      (r) => r.data,
+    ),
 };
 
 // ---------- Admin ----------

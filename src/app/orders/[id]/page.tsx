@@ -3,6 +3,7 @@
 import Link from 'next/link';
 import { useParams } from 'next/navigation';
 import { useCallback, useEffect, useState } from 'react';
+import { Field, TextArea, TextInput } from '@/components/Field';
 import { FulfilmentBadge, PaymentBadge } from '@/components/StatusBadge';
 import { Notice } from '@/components/Notice';
 import { RequireAuth } from '@/components/RequireAuth';
@@ -19,6 +20,12 @@ function OrderView() {
   const [error, setError] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
   const [message, setMessage] = useState<string | null>(null);
+
+  // Refund request form state
+  const [refundReason, setRefundReason] = useState('');
+  const [refundAmount, setRefundAmount] = useState('');
+  const [refundError, setRefundError] = useState<string | null>(null);
+  const [refundSent, setRefundSent] = useState(false);
 
   const load = useCallback(async () => {
     try {
@@ -54,6 +61,35 @@ function OrderView() {
     }
   };
 
+  const onRequestRefund = async () => {
+    setRefundError(null);
+    if (!refundReason.trim()) {
+      setRefundError('Tell us why you would like a refund.');
+      return;
+    }
+    const amount = refundAmount.trim();
+    const grossCents = amount ? Math.round(Number(amount.replace(',', '.')) * 100) : undefined;
+    if (grossCents !== undefined && (!Number.isFinite(grossCents) || grossCents <= 0)) {
+      setRefundError('Enter a refund amount greater than zero, or leave it empty for the full amount.');
+      return;
+    }
+    setBusy(true);
+    try {
+      await refundService.request(id, {
+        gross_cents: grossCents,
+        reason: refundReason.trim(),
+      });
+      setRefundSent(true);
+      setRefundReason('');
+      setRefundAmount('');
+      await load();
+    } catch (err) {
+      setRefundError(describeError(err));
+    } finally {
+      setBusy(false);
+    }
+  };
+
   if (error) {
     return (
       <section className="container section">
@@ -66,6 +102,15 @@ function OrderView() {
   if (!order) return <div className="page-loading" role="status">Loading order…</div>;
 
   const canCancel = order.payment_status !== 'paid' && order.fulfilment_status !== 'cancelled';
+
+  // A refund can be requested for a paid order that has no refund in progress.
+  const hasOpenRefund = (refunds ?? []).some((r) =>
+    ['requested', 'pending', 'succeeded', 'manual_action_required'].includes(r.status),
+  );
+  const canRequestRefund =
+    (order.payment_status === 'paid' || order.payment_status === 'partially_refunded') &&
+    !hasOpenRefund &&
+    !refundSent;
 
   return (
     <section className="container section">
@@ -112,8 +157,57 @@ function OrderView() {
               <p>Amount returned: {formatZAR(r.net_cents)}</p>
               <p>Status: {r.status.replace(/_/g, ' ')}</p>
               {r.reason ? <p>Reason: {r.reason}</p> : null}
+              {r.decision_note ? <p>Note: {r.decision_note}</p> : null}
             </div>
           ))}
+        </div>
+      ) : null}
+
+      {canRequestRefund ? (
+        <div className="card" style={{ marginTop: '16px' }}>
+          <h2 className="card__title">Request a refund</h2>
+          {refundSent ? (
+            <Notice tone="success">
+              Your refund request has been sent. We will review it and email you with a decision.
+            </Notice>
+          ) : (
+            <>
+              <p className="muted small">
+                Tell us what went wrong. A bank charge of 8% is deducted from the refund, and
+                our team reviews every request before it is processed.
+              </p>
+              {refundError ? <Notice tone="error">{refundError}</Notice> : null}
+              <div className="form-stack">
+                <Field id="refund-amount" label="Amount (R)" hint="Leave empty to request the full amount.">
+                  <TextInput
+                    id="refund-amount"
+                    inputMode="decimal"
+                    value={refundAmount}
+                    onChange={(e) => setRefundAmount(e.target.value)}
+                  />
+                </Field>
+                <Field id="refund-reason" label="Reason" required>
+                  <TextArea
+                    id="refund-reason"
+                    rows={4}
+                    value={refundReason}
+                    onChange={(e) => setRefundReason(e.target.value)}
+                    placeholder="Why are you requesting a refund?"
+                  />
+                </Field>
+                <div className="cta-row">
+                  <button
+                    type="button"
+                    className="btn btn-primary"
+                    onClick={onRequestRefund}
+                    disabled={busy}
+                  >
+                    {busy ? 'Sending…' : 'Request refund'}
+                  </button>
+                </div>
+              </div>
+            </>
+          )}
         </div>
       ) : null}
 

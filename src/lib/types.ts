@@ -309,9 +309,11 @@ export interface Refund {
   net_cents: number;
   bank_charge_pct: number;
   currency: string;
-  /** pending | succeeded | failed | manual_action_required */
+  /** pending | requested | succeeded | failed | rejected | manual_action_required */
   status: string;
   reason: string | null;
+  /** Note left by the back office when a request was declined. */
+  decision_note?: string | null;
   created_at: string;
   completed_at: string | null;
 }
