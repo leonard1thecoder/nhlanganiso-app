@@ -36,7 +36,7 @@ function AccountView() {
     setNotice(null);
     try {
       await authService.revokeSession(id);
-      setNotice('Session signed out.');
+      setNotice('Session signed out successfully.');
       await loadSessions();
     } catch (err) {
       setError(describeError(err));
@@ -45,79 +45,83 @@ function AccountView() {
     }
   };
 
-  const logoutEverywhere = async () => {
-    if (!window.confirm('Sign out of every device, including this one?')) return;
-    try {
-      await authService.logoutAll();
-    } catch {
-      // Even if the call fails, clear this device.
-    }
-    await logout();
-  };
-
   return (
-    <section className="container section">
-      <header className="page-head">
+    <section className="container section account-section">
+      <header className="page-head account-head">
         <div>
-          <p className="eyebrow">Account</p>
-          <h1>Hello, {user?.full_name.split(' ')[0]}</h1>
+          <p className="eyebrow"><span className="rule" aria-hidden="true" />Customer Profile</p>
+          <h1 className="account-title">My Account</h1>
+          <p className="muted">Manage your profile details, past orders, and active sign-in sessions.</p>
         </div>
-        <button type="button" className="btn btn-outline" onClick={() => void logout()}>
-          Sign out
-        </button>
+        <div className="account-quick-links">
+          <Link href="/orders" className="btn btn-primary btn-sm">View My Orders →</Link>
+          <button type="button" className="btn btn-outline btn-sm" onClick={() => void logout()}>
+            Sign Out
+          </button>
+        </div>
       </header>
 
-      <div className="two-col">
-        <div className="card">
-          <h2 className="card__title">Profile</h2>
-          <dl className="dl">
-            <dt>Name</dt>
-            <dd>{user?.full_name}</dd>
-            <dt>Email</dt>
-            <dd>{user?.email}</dd>
-            <dt>Role</dt>
-            <dd className="capitalize">{user?.role}</dd>
-          </dl>
-          <p className="muted small">
-            Need to change your password? <Link href="/forgot-password">Send yourself a reset link</Link>.
-          </p>
-          <div className="cta-row">
-            <Link href="/orders" className="btn btn-primary">My orders</Link>
-            <Link href="/catering" className="btn btn-outline">Catering enquiry</Link>
+      {notice && <Notice tone="success">{notice}</Notice>}
+      {error && <Notice tone="error">{error}</Notice>}
+
+      <div className="account-grid">
+        <div className="account-card card">
+          <h2 className="account-card__title">Personal Details</h2>
+          <div className="account-detail-list">
+            <div className="account-detail-row">
+              <span className="account-detail-label">Full Name</span>
+              <strong className="account-detail-val">{user?.full_name ?? '—'}</strong>
+            </div>
+            <div className="account-detail-row">
+              <span className="account-detail-label">Email Address</span>
+              <span className="account-detail-val">{user?.email ?? '—'}</span>
+            </div>
+            <div className="account-detail-row">
+              <span className="account-detail-label">Account Role</span>
+              <span className="account-detail-val">{user?.role === 'admin' ? 'Bakery Admin' : 'Customer'}</span>
+            </div>
+            <div className="account-detail-row">
+              <span className="account-detail-label">Status</span>
+              <span className="badge-pill in-stock">Active</span>
+            </div>
           </div>
         </div>
 
-        <div className="card">
-          <h2 className="card__title">Signed-in devices</h2>
-          {notice ? <Notice tone="success">{notice}</Notice> : null}
-          {error ? <Notice tone="error">{error}</Notice> : null}
-          {sessions === null && !error ? <p className="muted">Loading…</p> : null}
-          {sessions && sessions.length === 0 ? <p className="muted">No active sessions.</p> : null}
-          {sessions && sessions.length > 0 ? (
-            <ul className="session-list">
+        <div className="account-card card">
+          <div className="account-card__head-row">
+            <div>
+              <h2 className="account-card__title">Security &amp; Active Devices</h2>
+              <p className="muted small">Sessions currently signed in to your account.</p>
+            </div>
+          </div>
+
+          {!sessions ? (
+            <div className="page-loading" role="status">Loading active sessions…</div>
+          ) : sessions.length === 0 ? (
+            <p className="muted small">No other active sessions detected.</p>
+          ) : (
+            <ul className="sessions-list">
               {sessions.map((s) => (
-                <li key={s.id} className="session-list__item">
-                  <div>
-                    <strong>{s.user_agent ? s.user_agent.slice(0, 60) : 'Unknown device'}</strong>
-                    <p className="muted small">
-                      {s.ip ?? 'Unknown IP'} · Signed in {formatDateTime(s.created_at)}
-                    </p>
+                <li key={s.id} className="session-item">
+                  <div className="session-info">
+                    <strong className="session-agent">{s.user_agent || 'Standard Web Browser'}</strong>
+                    <div className="session-meta muted small">
+                      {s.ip ? <span>IP: {s.ip} · </span> : null}
+                      <span>Created: {formatDateTime(s.created_at)}</span>
+                    </div>
                   </div>
                   <button
                     type="button"
-                    className="btn btn-ghost btn-sm"
-                    onClick={() => void revoke(s.id)}
+                    className="btn btn-outline btn-sm"
                     disabled={busyId === s.id}
+                    onClick={() => revoke(s.id)}
                   >
-                    {busyId === s.id ? 'Signing out…' : 'Sign out'}
+                    {busyId === s.id ? 'Revoking…' : 'Sign out'}
                   </button>
                 </li>
               ))}
             </ul>
-          ) : null}
-          <button type="button" className="link-danger" onClick={() => void logoutEverywhere()}>
-            Sign out of all devices
-          </button>
+          )}
         </div>
       </div>
     </section>

@@ -27,9 +27,9 @@ const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 function validate(f: FormState): Errors {
   const e: Errors = {};
-  if (!f.name.trim()) e.name = 'Please enter your name.';
+  if (!f.name.trim()) e.name = 'Please enter your full name.';
   if (!EMAIL_RE.test(f.email.trim())) e.email = 'Enter a valid email address.';
-  if (f.phone.trim() && !/^[+\d\s()-]{7,20}$/.test(f.phone.trim())) e.phone = 'Enter a valid phone number.';
+  if (f.phone.trim() && !/^[+\d\s()-]{7,20}$/.test(f.phone.trim())) e.phone = 'Enter a valid contact phone number.';
   if (f.name.length > 120) e.name = 'Name must be 120 characters or fewer.';
   return e;
 }
@@ -45,7 +45,6 @@ export default function CheckoutPage() {
   const [submitting, setSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState<string | null>(null);
 
-  // Prefill from the signed-in account (guests fill the form manually).
   useEffect(() => {
     if (user) {
       setForm((f) => ({
@@ -64,14 +63,15 @@ export default function CheckoutPage() {
       .catch((err) => setSubmitError(describeError(err)));
   }, [ready, lines]);
 
-  if (!ready) return <div className="page-loading" role="status">Loading…</div>;
+  if (!ready) return <div className="page-loading" role="status">Preparing your checkout…</div>;
 
   if (lines.length === 0) {
     return (
-      <section className="container section center">
-        <h1>Nothing to check out</h1>
-        <p className="muted">Your cart is empty.</p>
-        <Link href="/products" className="btn btn-primary">Browse the shop</Link>
+      <section className="container section center empty-checkout-section">
+        <div className="empty-cart-icon">🛒</div>
+        <h1>Your bag is empty</h1>
+        <p className="muted">Add some freshly baked goodies before heading to checkout.</p>
+        <Link href="/products" className="btn btn-primary btn-lg">Browse Bakery Shop</Link>
       </section>
     );
   }
@@ -79,146 +79,217 @@ export default function CheckoutPage() {
   const set = (key: keyof FormState) => (e: { target: { value: string } }) =>
     setForm((f) => ({ ...f, [key]: e.target.value }));
 
-  const onSubmit = async (e: FormEvent) => {
-    e.preventDefault();
+  const onSubmit = async (ev: FormEvent) => {
+    ev.preventDefault();
     setSubmitError(null);
     const v = validate(form);
     setErrors(v);
-    if (Object.keys(v).length > 0) return;
+    if (Object.keys(v).length) return;
 
     setSubmitting(true);
     try {
-      // 1. Create the order (guest allowed; the API attaches the account if signed in).
       const order = await orderService.create({
-        items: lines.map((l) => ({ product_id: l.product_id, qty: l.qty })),
-        fulfilment_method: 'pickup',
         contact_name: form.name.trim(),
         contact_email: form.email.trim().toLowerCase(),
         contact_phone: form.phone.trim() || undefined,
         notes: form.notes.trim() || undefined,
+        fulfilment_method: 'pickup',
+        items: lines.map((l) => ({ product_id: l.product_id, qty: l.qty })),
       });
 
-      // Remember the order for the success page (cart is cleared there, after payment returns).
       try {
-        window.sessionStorage.setItem(
-          STORAGE_KEYS.lastOrder,
-          JSON.stringify({ id: order.id, reference: order.reference, total_cents: order.total_cents }),
-        );
+        localStorage.setItem(STORAGE_KEYS.lastOrder, JSON.stringify(order));
       } catch {
-        /* storage may be unavailable (private mode); not fatal */
+        // LocalStorage is best-effort
       }
 
-      // 2. Ask the API for signed PayFast fields (amount is computed server-side).
-      const nameParts = form.name.trim().split(/\s+/);
-      const checkout = await paymentService.checkout({
+      const [nameFirst, ...rest] = form.name.trim().split(/\s+/);
+      const nameLast = rest.join(' ') || undefined;
+
+      const checkoutFields = await paymentService.checkout({
         order_id: order.id,
-        name_first: nameParts[0],
-        name_last: nameParts.slice(1).join(' ') || undefined,
+        name_first: nameFirst || undefined,
+        name_last: nameLast,
         email_address: form.email.trim().toLowerCase(),
       });
 
-      // 3. Hand the browser over to PayFast. The page navigates away from here.
-      postToPayFast(checkout.checkout_url, checkout.fields);
+      clear();
+      postToPayFast(checkoutFields.checkout_url, checkoutFields.fields);
     } catch (err) {
       setSubmitError(describeError(err));
       setSubmitting(false);
     }
   };
 
+  const snapshotTotal = lines.reduce((acc, l) => acc + l.price_cents * l.qty, 0);
+  const payableTotal = quote?.subtotal_cents ?? snapshotTotal;
+
   return (
-    <section className="container section">
-      <header className="page-head">
+    <section className="container section checkout-section">
+      <nav className="crumbs" aria-label="Breadcrumb">
+        <Link href="/cart">← Return to Shopping Bag</Link>
+      </nav>
+
+      <header className="page-head checkout-head">
         <div>
-          <p className="eyebrow">Checkout</p>
-          <h1>Your details</h1>
-          {status !== 'authenticated' ? (
-            <p className="muted small">
-              Already have an account? <Link href={`/login?next=${encodeURIComponent('/checkout')}`}>Sign in</Link> to
-              track your order later.
-            </p>
-          ) : null}
+          <p className="eyebrow"><span className="rule" aria-hidden="true" />Secure Checkout</p>
+          <h1 className="checkout-title">Customer &amp; Collection Details</h1>
+          <p className="muted">
+            Complete your contact details below. You will be redirected to PayFast for protected payment verification.
+          </p>
         </div>
       </header>
 
-      {submitError ? <Notice tone="error" title="We could not start your payment">{submitError}</Notice> : null}
+      {submitError && (
+        <Notice tone="error" title="Checkout Notice">
+          {submitError}
+        </Notice>
+      )}
 
-      <div className="cart-layout">
-        <form className="card form-stack" onSubmit={onSubmit} noValidate aria-describedby="checkout-help">
-          <p id="checkout-help" className="muted small">
-            Fields marked * are required. You will be redirected to PayFast to pay securely.
-          </p>
-
-          <Field id="name" label="Full name" required error={errors.name}>
-            <TextInput
-              id="name"
-              autoComplete="name"
-              value={form.name}
-              onChange={set('name')}
-              aria-invalid={!!errors.name}
-              aria-describedby={errors.name ? 'name-error' : undefined}
-            />
-          </Field>
-
-          <Field id="email" label="Email" required hint="We send your receipt here." error={errors.email}>
-            <TextInput
-              id="email"
-              type="email"
-              autoComplete="email"
-              value={form.email}
-              onChange={set('email')}
-              aria-invalid={!!errors.email}
-            />
-          </Field>
-
-          <Field id="phone" label="Phone (optional)" error={errors.phone}>
-            <TextInput id="phone" type="tel" autoComplete="tel" value={form.phone} onChange={set('phone')} aria-invalid={!!errors.phone} />
-          </Field>
-
-          <fieldset className="fieldset">
-            <legend className="field__label">Fulfilment</legend>
-            <div className="radio-card is-selected">
-              <input type="radio" id="pickup" name="fulfilment" value="pickup" defaultChecked />
-              <label htmlFor="pickup">
-                <strong>Collect from the bakery</strong>
-                <span className="muted small">No delivery fee.</span>
-              </label>
+      <div className="checkout-grid">
+        <div className="checkout-form-container">
+          <form className="checkout-form card" onSubmit={onSubmit} noValidate>
+            <div className="form-section-head">
+              <span className="form-step-badge">1</span>
+              <div>
+                <h2 className="form-section-title">Contact Information</h2>
+                <p className="muted small">We will send your order confirmation and pickup notification here.</p>
+              </div>
             </div>
-            <p className="muted small">Delivery is not yet available online. Contact us for delivery requests.</p>
-          </fieldset>
 
-          <Field id="notes" label="Order notes (optional)">
-            <TextArea id="notes" value={form.notes} onChange={set('notes')} placeholder="Allergies, decorations, collection time…" />
-          </Field>
+            <div className="field-grid-2">
+              <Field id="checkout-name" label="Full Name" required error={errors.name}>
+                <TextInput
+                  id="checkout-name"
+                  value={form.name}
+                  onChange={set('name')}
+                  placeholder="e.g. Nhlanganiso Khumalo"
+                  autoComplete="name"
+                  aria-invalid={Boolean(errors.name)}
+                />
+              </Field>
 
-          <button type="submit" className="btn btn-primary btn-lg btn-block" disabled={submitting || !quote}>
-            {submitting ? 'Preparing secure payment…' : `Pay ${quote ? formatZAR(quote.subtotal_cents) : ''} securely`}
-          </button>
-          <p className="muted small center">Payments are processed by PayFast. We never see your card details.</p>
-        </form>
+              <Field id="checkout-email" label="Email Address" required error={errors.email}>
+                <TextInput
+                  id="checkout-email"
+                  type="email"
+                  value={form.email}
+                  onChange={set('email')}
+                  placeholder="name@domain.co.za"
+                  autoComplete="email"
+                  aria-invalid={Boolean(errors.email)}
+                />
+              </Field>
+            </div>
 
-        <aside className="summary card" aria-label="Order summary">
-          <h2 className="summary__title">Items</h2>
-          <ul className="summary__items">
-            {lines.map((l) => (
-              <li key={l.product_id}>
-                <span>{l.qty} × {l.name}</span>
-                <span>{formatZAR(l.price_cents * l.qty)}</span>
-              </li>
-            ))}
-          </ul>
-          <div className="summary__row">
-            <span>Subtotal</span>
-            <span>{quote ? formatZAR(quote.subtotal_cents) : 'Calculating…'}</span>
+            <Field
+              id="checkout-phone"
+              label="Contact Phone Number"
+              hint="Required for SMS or WhatsApp notification when your order is fresh out of the oven."
+              error={errors.phone}
+            >
+              <TextInput
+                id="checkout-phone"
+                type="tel"
+                value={form.phone}
+                onChange={set('phone')}
+                placeholder="+27 82 000 0000"
+                autoComplete="tel"
+                aria-invalid={Boolean(errors.phone)}
+              />
+            </Field>
+
+            <div className="form-divider" />
+
+            <div className="form-section-head">
+              <span className="form-step-badge">2</span>
+              <div>
+                <h2 className="form-section-title">Special Bakery Instructions</h2>
+                <p className="muted small">Specify any allergies, cake inscription notes, or requested collection timing.</p>
+              </div>
+            </div>
+
+            <Field id="checkout-notes" label="Order Notes &amp; Requests (Optional)">
+              <TextArea
+                id="checkout-notes"
+                value={form.notes}
+                onChange={set('notes')}
+                rows={3}
+                placeholder="e.g. Please pipe 'Happy 30th Birthday Thando' in chocolate cream; collecting at 14:00."
+              />
+            </Field>
+
+            <div className="checkout-trust-banner">
+              <div className="trust-strip">
+                <span className="trust-icon" aria-hidden="true">🔒</span>
+                <div>
+                  <strong>PayFast Official Payment Gateway</strong>
+                  <p className="small muted">
+                    Your card and EFT details are processed on PayFast&apos;s 256-bit encrypted banking server. Our server verifies payment signatures securely.
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            <button
+              type="submit"
+              className="btn btn-primary btn-lg btn-block checkout-submit-btn"
+              disabled={submitting}
+            >
+              {submitting ? (
+                <span className="btn-spinner-wrap">
+                  <span className="spinner" aria-hidden="true" />
+                  <span>Connecting to PayFast…</span>
+                </span>
+              ) : (
+                <span>Pay {formatZAR(payableTotal)} via PayFast →</span>
+              )}
+            </button>
+          </form>
+        </div>
+
+        <aside className="checkout-summary-sidebar">
+          <div className="checkout-summary-card card">
+            <h2 className="summary-card-title">Order Items ({lines.length})</h2>
+
+            <ul className="checkout-item-list">
+              {lines.map((l) => (
+                <li key={l.product_id} className="checkout-item-row">
+                  <div className="checkout-item-info">
+                    <strong className="checkout-item-name">{l.name}</strong>
+                    <span className="checkout-item-meta">
+                      Qty: {l.qty} × {formatZAR(l.price_cents)}
+                    </span>
+                  </div>
+                  <span className="checkout-item-price">
+                    {formatZAR(l.price_cents * l.qty)}
+                  </span>
+                </li>
+              ))}
+            </ul>
+
+            <div className="checkout-totals">
+              <div className="total-row">
+                <span>Subtotal</span>
+                <span>{formatZAR(payableTotal)}</span>
+              </div>
+              <div className="total-row">
+                <span>Collection Fulfilment</span>
+                <span className="badge-free">Free (Bakery Pickup)</span>
+              </div>
+              <div className="total-row total-row--final">
+                <strong>Total Due</strong>
+                <strong className="grand-total">{formatZAR(payableTotal)}</strong>
+              </div>
+            </div>
+
+            <div className="pickup-notice">
+              <span className="pickup-icon" aria-hidden="true">📍</span>
+              <p className="small muted">
+                <strong>Collection Location:</strong> Nhlanganiso Bakery. We will prepare your items fresh for the appointed date.
+              </p>
+            </div>
           </div>
-          <div className="summary__row">
-            <span>Delivery</span>
-            <span>Free (pickup)</span>
-          </div>
-          <div className="summary__row summary__total">
-            <span>Total</span>
-            <span>{quote ? formatZAR(quote.subtotal_cents) : '—'}</span>
-          </div>
-          <Link href="/cart" className="link-arrow center block">Edit cart</Link>
         </aside>
       </div>
     </section>

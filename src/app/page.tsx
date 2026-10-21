@@ -17,7 +17,7 @@ export default function HomePage() {
   useEffect(() => {
     let cancelled = false;
     productService
-      .list({ per_page: 4 })
+      .list({ per_page: 8 })
       .then((res) => !cancelled && setFeatured(res.data))
       .catch((err) => !cancelled && setError(describeError(err)));
     categoryService
@@ -31,48 +31,115 @@ export default function HomePage() {
 
   return (
     <>
+      {/* Hero Section */}
       <section className="hero">
         <div className="container hero__grid">
           <div className="hero__copy">
-            <p className="hero__badge">Baked fresh daily</p>
-            <h1>
-              Freshly Baked. <span className="accent">Made to Be Shared.</span>
-            </h1>
-            <p className="lead">
-              Everyday loaves, celebration cakes and catering platters — baked in small batches
-              and ready for pickup.
-            </p>
-            <div className="cta-row">
-              <Link href="/products" className="btn btn-primary btn-lg">Shop now</Link>
-              <Link href="/catering" className="btn btn-secondary btn-lg">Plan an event</Link>
+            <div className="hero__tagline">
+              <span className="hero__sparkle" aria-hidden="true">✦</span>
+              <span>Handcrafted in South Africa</span>
             </div>
-            <ul className="hero__points">
-              <li><span className="dot" aria-hidden="true" />Baked to order</li>
-              <li><span className="dot" aria-hidden="true" />Secure PayFast checkout</li>
-              <li><span className="dot" aria-hidden="true" />Easy pickup</li>
-            </ul>
+            <h1 className="hero__title">
+              Made with Love. <br />
+              <span className="accent">Baked to Delight.</span>
+            </h1>
+            <p className="hero__lead">
+              From slow-fermented artisan sourdough to custom luxury celebration cakes and lavish event spreads — baked fresh in small batches daily.
+            </p>
+            <div className="cta-row hero__cta-group">
+              <Link href="/products" className="btn btn-primary btn-lg">
+                Shop Baked Goods
+                <span className="btn-arrow" aria-hidden="true">→</span>
+              </Link>
+              <Link href="/catering" className="btn btn-outline btn-lg">
+                Explore Catering
+              </Link>
+            </div>
+            <div className="hero__trust-strip">
+              <div className="hero__trust-item">
+                <span className="hero__trust-icon" aria-hidden="true">✓</span>
+                <span>Baked to Order</span>
+              </div>
+              <div className="hero__trust-item">
+                <span className="hero__trust-icon" aria-hidden="true">✓</span>
+                <span>Secure PayFast Checkout</span>
+              </div>
+              <div className="hero__trust-item">
+                <span className="hero__trust-icon" aria-hidden="true">✓</span>
+                <span>Bakery Fresh Collection</span>
+              </div>
+            </div>
           </div>
-          <div className="hero__art">
-            <Image
-              src="/brand/logo.jpg"
-              alt="Nhlanganiso Catering & Baking logo: three figures, bread and wheat"
-              width={1920}
-              height={1280}
-              priority
-              sizes="(max-width: 900px) 90vw, 560px"
-            />
+
+          <div className="hero__art-container">
+            <div className="hero__art-card">
+              <div className="hero__art-image-wrap">
+                <Image
+                  src="/brand/logo.jpg"
+                  alt="Nhlanganiso Catering & Baking — Artisanal baking and feast catering"
+                  width={1200}
+                  height={800}
+                  priority
+                  className="hero__img"
+                  sizes="(max-width: 900px) 90vw, 560px"
+                />
+              </div>
+              <div className="hero__floating-card">
+                <div className="hero__floating-badge">✦ Fresh Daily</div>
+                <p className="hero__floating-text">“The aroma of pure butter, real chocolate &amp; golden crusts.”</p>
+              </div>
+            </div>
           </div>
         </div>
       </section>
 
+      {/* Featured Categories Carousel / Grid */}
+      {categories && categories.length > 0 ? (
+        <section className="section section--tint">
+          <div className="container">
+            <div className="section__head">
+              <div>
+                <p className="eyebrow"><span className="rule" aria-hidden="true" />Browse by Craving</p>
+                <h2>Signature Categories</h2>
+              </div>
+              <Link href="/products" className="link-arrow">
+                View all categories <span aria-hidden="true">→</span>
+              </Link>
+            </div>
+            <div className="category-grid">
+              {categories.map((c) => (
+                <Link
+                  key={c.id}
+                  href={`/products?q=${encodeURIComponent(c.name)}`}
+                  className="category-card"
+                >
+                  <div className="category-card__visual">
+                    <span className="category-card__monogram" aria-hidden="true">
+                      {c.name.charAt(0).toUpperCase()}
+                    </span>
+                  </div>
+                  <div className="category-card__info">
+                    <h3 className="category-card__title">{c.name}</h3>
+                    <span className="category-card__action">Explore collection →</span>
+                  </div>
+                </Link>
+              ))}
+            </div>
+          </div>
+        </section>
+      ) : null}
+
+      {/* Featured Products / Best Sellers */}
       <section className="section">
         <div className="container">
           <div className="section__head">
             <div>
-              <p className="eyebrow"><span className="rule" aria-hidden="true" />Fresh from the oven</p>
-              <h2>Featured products</h2>
+              <p className="eyebrow"><span className="rule" aria-hidden="true" />Fresh from the Oven</p>
+              <h2>Best Sellers &amp; Bakery Favourites</h2>
             </div>
-            <Link href="/products" className="link-arrow">View all →</Link>
+            <Link href="/products" className="link-arrow">
+              Browse Full Shop <span aria-hidden="true">→</span>
+            </Link>
           </div>
 
           {error ? <Notice tone="error">{error}</Notice> : null}
@@ -86,7 +153,10 @@ export default function HomePage() {
           ) : null}
 
           {featured && featured.length === 0 ? (
-            <p className="muted">Our shelves are being restocked. Check back soon.</p>
+            <div className="empty-catalog-state">
+              <p className="muted">Our shelves are currently being freshly restocked. Please check back shortly!</p>
+              <Link href="/catering" className="btn btn-outline">Enquire about Custom Bakes</Link>
+            </div>
           ) : null}
 
           {featured && featured.length > 0 ? (
@@ -99,63 +169,79 @@ export default function HomePage() {
         </div>
       </section>
 
-      {categories && categories.length > 0 ? (
-        <section className="section section--tint">
-          <div className="container">
-            <div className="section__head">
-              <div>
-                <p className="eyebrow"><span className="rule" aria-hidden="true" />Browse by craving</p>
-                <h2>Shop by category</h2>
+      {/* Brand Craftsmanship / Story */}
+      <section className="section section--tint brand-story-section">
+        <div className="container brand-story-grid">
+          <div className="brand-story-copy">
+            <p className="eyebrow"><span className="rule" aria-hidden="true" />The Nhlanganiso Craft</p>
+            <h2>Baking Worth Gathering Around</h2>
+            <p className="lead-story">
+              At Nhlanganiso Catering &amp; Baking, every loaf, delicate tart, and multi-tiered cake starts with wholesome ingredients, honest technique, and deep devotion to taste.
+            </p>
+            <p className="muted">
+              Whether you are stopping by for your family&apos;s daily bread or orchestrating a memorable wedding reception, our bakery is committed to hospitality, warmth, and uncompromised quality.
+            </p>
+            <div className="story-highlights">
+              <div className="story-highlight-item">
+                <strong className="story-highlight-number">100%</strong>
+                <span className="story-highlight-label">Small-batch artisan craftsmanship</span>
+              </div>
+              <div className="story-highlight-item">
+                <strong className="story-highlight-number">ZAR</strong>
+                <span className="story-highlight-label">Transparent, fair local pricing</span>
               </div>
             </div>
-            <ul className="cat-chips">
-              {categories.map((c) => (
-                <li key={c.id}>
-                  <span>{c.name}</span>
-                </li>
-              ))}
-            </ul>
           </div>
-        </section>
-      ) : null}
 
-      <section className="section">
-        <div className="container editorial">
-          <div>
-            <p className="eyebrow"><span className="rule" aria-hidden="true" />Our bakery</p>
-            <h2>Baking worth gathering around</h2>
-            <p className="muted">
-              Nhlanganiso Catering &amp; Baking prepares bread, cakes and platters in small,
-              fresh batches — from weekday loaves to wedding and celebration orders.
-            </p>
-          </div>
-          <div className="steps">
-            <div className="step">
-              <span className="step__num" aria-hidden="true">1</span>
-              <h3>Choose your bakes</h3>
-              <p className="muted">Browse the shop and add to your cart.</p>
-            </div>
-            <div className="step">
-              <span className="step__num" aria-hidden="true">2</span>
-              <h3>Pay securely</h3>
-              <p className="muted">Check out with PayFast. Totals are verified by our server.</p>
-            </div>
-            <div className="step">
-              <span className="step__num" aria-hidden="true">3</span>
-              <h3>Collect fresh</h3>
-              <p className="muted">Pick up your order from the bakery, baked to schedule.</p>
-            </div>
+          <div className="story-steps-box">
+            <h3 className="story-steps-heading">How Our Ordering Works</h3>
+            <ol className="story-steps-list">
+              <li className="story-step-item">
+                <span className="story-step-num">01</span>
+                <div>
+                  <h4>Browse &amp; Pick Your Treats</h4>
+                  <p className="muted small">Select your favourites online, with easy real-time cart review.</p>
+                </div>
+              </li>
+              <li className="story-step-item">
+                <span className="story-step-num">02</span>
+                <div>
+                  <h4>Secure PayFast Checkout</h4>
+                  <p className="muted small">Instant payment via card or EFT, verified directly with our server.</p>
+                </div>
+              </li>
+              <li className="story-step-item">
+                <span className="story-step-num">03</span>
+                <div>
+                  <h4>Bespoke Collection</h4>
+                  <p className="muted small">Freshly prepared and packaged for pickup at your scheduled time.</p>
+                </div>
+              </li>
+            </ol>
           </div>
         </div>
       </section>
 
-      <section className="section">
-        <div className="container cta-band">
-          <div>
-            <h2>Hosting something special?</h2>
-            <p className="muted">Weddings, birthdays, office lunches and celebrations — request a tailored quote.</p>
+      {/* Catering Showcase Banner */}
+      <section className="section catering-banner-section">
+        <div className="container">
+          <div className="catering-banner-card">
+            <div className="catering-banner-content">
+              <span className="hero__tagline mb-3">✦ Full-Service Food Design</span>
+              <h2>Hosting an Unforgettable Occasion?</h2>
+              <p className="muted">
+                From intimate dinner celebrations and corporate functions to lavish wedding banquets, Nhlanganiso delivers curated catering platters and dessert bars crafted to impress your guests.
+              </p>
+              <div className="cta-row">
+                <Link href="/catering" className="btn btn-secondary btn-lg">
+                  Request a Tailored Quote
+                </Link>
+                <Link href="/products" className="btn btn-ghost btn-lg">
+                  View Pastry Platters
+                </Link>
+              </div>
+            </div>
           </div>
-          <Link href="/catering" className="btn btn-secondary btn-lg">Request a catering quote</Link>
         </div>
       </section>
     </>

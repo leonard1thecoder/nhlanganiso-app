@@ -5,7 +5,7 @@ import { useSearchParams } from 'next/navigation';
 import { Suspense, useState, type FormEvent } from 'react';
 import { Field, TextInput } from '@/components/Field';
 import { Notice } from '@/components/Notice';
-import { describeError, toApiError, OAUTH_ERROR_MESSAGES } from '@/lib/api';
+import { describeError, OAUTH_ERROR_MESSAGES } from '@/lib/api';
 import { authService } from '@/lib/services';
 import { useAuth } from '@/context/AuthContext';
 
@@ -15,7 +15,6 @@ function RegisterForm() {
   const params = useSearchParams();
   const next = params.get('next');
   const loginHref = next ? `/login?next=${encodeURIComponent(next)}` : '/login';
-  // Reason the Google round trip sent the user back here (if any).
   const oauthError = params.get('error');
   const oauthErrorMessage = oauthError
     ? (OAUTH_ERROR_MESSAGES[oauthError] ?? OAUTH_ERROR_MESSAGES.failed)
@@ -51,18 +50,13 @@ function RegisterForm() {
     setSubmitting(true);
     try {
       await authService.register({
-        full_name: form.full_name.trim(),
         email: form.email.trim().toLowerCase(),
         password: form.password,
+        full_name: form.full_name.trim(),
       });
       setDone(true);
     } catch (err) {
-      const e2 = toApiError(err);
-      setServerError(
-        e2.status === 409
-          ? 'An account with this email already exists. Try signing in instead.'
-          : describeError(err),
-      );
+      setServerError(describeError(err));
     } finally {
       setSubmitting(false);
     }
@@ -70,69 +64,120 @@ function RegisterForm() {
 
   if (done) {
     return (
-      <section className="container section">
-        <div className="auth-card card center">
-          <h1>Check your inbox</h1>
+      <section className="container section center auth-page-container">
+        <div className="auth-box card text-center">
+          <div className="empty-cart-icon">✉️</div>
+          <p className="eyebrow"><span className="rule" aria-hidden="true" />Check Your Inbox</p>
+          <h1 className="auth-title">Verify your email</h1>
           <p className="muted">
-            We sent a verification link to <strong>{form.email.trim().toLowerCase()}</strong>. It expires in 24 hours.
+            We sent a verification link to <strong>{form.email}</strong>. Please check your email to activate your Nhlanganiso account.
           </p>
-          <Link href={loginHref} className="btn btn-primary">Continue to sign in</Link>
+          <Link href={loginHref} className="btn btn-primary btn-lg mt-4">
+            Proceed to Sign In →
+          </Link>
         </div>
       </section>
     );
   }
 
   return (
-    <section className="container section">
-      <div className="auth-card card">
-        <p className="eyebrow">Join us</p>
-        <h1>Create your account</h1>
-        <p className="muted small">Track orders, reorder favourites and manage catering enquiries.</p>
+    <section className="container section auth-page-container">
+      <div className="auth-box card">
+        <div className="auth-head">
+          <p className="eyebrow"><span className="rule" aria-hidden="true" />Join Nhlanganiso</p>
+          <h1 className="auth-title">Create an Account</h1>
+          <p className="muted small">Quick checkout, order history tracking, and exclusive bakery notices.</p>
+        </div>
 
-        {serverError || oauthErrorMessage ? (
-          <Notice tone="error">{serverError ?? oauthErrorMessage}</Notice>
-        ) : null}
+        {oauthErrorMessage && <Notice tone="error">{oauthErrorMessage}</Notice>}
+        {serverError && <Notice tone="error">{serverError}</Notice>}
 
-        <form className="form-stack" onSubmit={onSubmit} noValidate>
-          <Field id="full_name" label="Full name" required error={errors.full_name}>
-            <TextInput id="full_name" autoComplete="name" value={form.full_name} onChange={set('full_name')} />
+        <form onSubmit={onSubmit} className="auth-form" noValidate>
+          <Field id="reg-name" label="Full Name" required error={errors.full_name}>
+            <TextInput
+              id="reg-name"
+              value={form.full_name}
+              onChange={set('full_name')}
+              placeholder="e.g. Thabo Ndlovu"
+              autoComplete="name"
+            />
           </Field>
-          <Field id="email" label="Email" required error={errors.email}>
-            <TextInput id="email" type="email" autoComplete="email" value={form.email} onChange={set('email')} />
+
+          <Field id="reg-email" label="Email Address" required error={errors.email}>
+            <TextInput
+              id="reg-email"
+              type="email"
+              value={form.email}
+              onChange={set('email')}
+              placeholder="thabo@domain.co.za"
+              autoComplete="email"
+            />
           </Field>
-          <Field id="password" label="Password" required hint="At least 8 characters." error={errors.password}>
-            <TextInput id="password" type={showPasswords ? 'text' : 'password'} autoComplete="new-password" value={form.password} onChange={set('password')} />
+
+          <Field id="reg-password" label="Password" required hint="At least 8 characters" error={errors.password}>
+            <div className="password-wrapper">
+              <TextInput
+                id="reg-password"
+                type={showPasswords ? 'text' : 'password'}
+                value={form.password}
+                onChange={set('password')}
+                placeholder="••••••••"
+                autoComplete="new-password"
+              />
+              <button
+                type="button"
+                className="password-toggle-btn"
+                onClick={() => setShowPasswords((v) => !v)}
+                aria-label={showPasswords ? 'Hide password' : 'Show password'}
+              >
+                {showPasswords ? 'Hide' : 'Show'}
+              </button>
+            </div>
           </Field>
-          <Field id="confirm" label="Confirm password" required error={errors.confirm}>
-            <TextInput id="confirm" type={showPasswords ? 'text' : 'password'} autoComplete="new-password" value={form.confirm} onChange={set('confirm')} />
+
+          <Field id="reg-confirm" label="Confirm Password" required error={errors.confirm}>
+            <TextInput
+              id="reg-confirm"
+              type={showPasswords ? 'text' : 'password'}
+              value={form.confirm}
+              onChange={set('confirm')}
+              placeholder="••••••••"
+              autoComplete="new-password"
+            />
           </Field>
-          <label className="muted small" htmlFor="show-passwords">
-            <input
-              id="show-passwords"
-              type="checkbox"
-              checked={showPasswords}
-              onChange={(e) => setShowPasswords(e.target.checked)}
-            />{' '}
-            Show passwords
-          </label>
-          <button type="submit" className="btn btn-primary btn-block" disabled={submitting}>
-            {submitting ? 'Creating account…' : 'Create account'}
+
+          <button
+            type="submit"
+            className="btn btn-primary btn-lg btn-block auth-btn"
+            disabled={submitting}
+          >
+            {submitting ? 'Creating Account…' : 'Create Account →'}
           </button>
         </form>
 
-        <div className="form-stack">
-          <button
-            type="button"
-            className="btn btn-block"
-            onClick={() => loginWithGoogle(next ?? undefined)}
-            disabled={submitting}
-          >
-            Register with Google
-          </button>
+        <div className="auth-divider">
+          <span>or sign up with</span>
         </div>
 
-        <p className="auth-links">
-          <span className="muted">Already registered?</span> <Link href={loginHref}>Sign in</Link>
+        <button
+          type="button"
+          className="btn btn-outline btn-block oauth-google-btn"
+          onClick={() => void loginWithGoogle()}
+        >
+          <svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true">
+            <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" />
+            <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" />
+            <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z" />
+            <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z" />
+          </svg>
+          <span>Continue with Google</span>
+        </button>
+
+        <p className="auth-footer-prompt">
+          Already have an account?{' '}
+          <Link href={loginHref} className="auth-highlight-link">
+            Sign in
+          </Link>
         </p>
       </div>
     </section>

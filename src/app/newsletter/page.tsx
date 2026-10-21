@@ -5,7 +5,7 @@ import { useSearchParams } from 'next/navigation';
 import { Suspense, useEffect, useState, type FormEvent } from 'react';
 import { Field, TextInput } from '@/components/Field';
 import { Notice } from '@/components/Notice';
-import { describeError, toApiError } from '@/lib/api';
+import { describeError } from '@/lib/api';
 import { newsletterService } from '@/lib/services';
 import type { NewsletterReceipt } from '@/lib/types';
 
@@ -21,7 +21,6 @@ function NewsletterForm() {
   const [submitting, setSubmitting] = useState(false);
   const [verifying, setVerifying] = useState(Boolean(token));
 
-  // Arriving from the confirmation email: verify the token and show the receipt.
   useEffect(() => {
     if (!token) return;
     void newsletterService
@@ -35,7 +34,7 @@ function NewsletterForm() {
     ev.preventDefault();
     setError(null);
     if (!EMAIL_RE.test(email.trim())) {
-      setError('Enter a valid email address.');
+      setError('Please provide a valid email address.');
       return;
     }
     setSubmitting(true);
@@ -44,72 +43,61 @@ function NewsletterForm() {
       setReceipt(r);
       setEmail('');
     } catch (err) {
-      setError(toApiError(err).status === 409 ? describeError(err) : describeError(err));
+      setError(describeError(err));
     } finally {
       setSubmitting(false);
     }
   };
 
-  if (receipt) {
-    return (
-      <section className="container section">
-        <div className="auth-card card">
-          <p className="eyebrow">Newsletter</p>
-          <h1>{receipt.status === 'verified' ? 'Subscription confirmed' : 'You are on the list'}</h1>
-
-          <div className="receipt">
-            <p>
-              <strong>Subscription receipt</strong>
-            </p>
-            <p>
-              Reference: <strong>{receipt.reference ?? '—'}</strong>
-            </p>
-            <p>Email: {receipt.email}</p>
-            <p>
-              Status: {receipt.status === 'verified' ? 'confirmed' : 'awaiting confirmation'}
-            </p>
-          </div>
-
-          {receipt.status !== 'verified' ? (
-            <Notice tone="success">
-              Check your inbox and click the confirmation link to activate your subscription.
-            </Notice>
-          ) : null}
-
-          <p className="muted small">
-            <Link href="/products">Continue shopping</Link>
+  return (
+    <section className="container section newsletter-page-section">
+      <div className="newsletter-box card">
+        <div className="newsletter-head text-center">
+          <div className="empty-cart-icon">🗞️</div>
+          <p className="eyebrow"><span className="rule" aria-hidden="true" />Bakery Gazette</p>
+          <h1 className="newsletter-title">Stories from the Hearth</h1>
+          <p className="muted">
+            Be the first to hear about seasonal cake creations, holiday menus, catering specials, and secret bakery recipes.
           </p>
         </div>
-      </section>
-    );
-  }
 
-  return (
-    <section className="container section">
-      <div className="auth-card card">
-        <p className="eyebrow">Newsletter</p>
-        <h1>Get our newsletter</h1>
-        <p className="muted small">
-          New bakes, seasonal menus and offers. One email a month, no spam.
-        </p>
+        {verifying && <div className="page-loading" role="status">Confirming your subscription…</div>}
+        {error && <Notice tone="error">{error}</Notice>}
 
-        {error ? <Notice tone="error">{error}</Notice> : null}
-        {verifying ? <Notice tone="success">Confirming your subscription…</Notice> : null}
+        {receipt ? (
+          <div className="newsletter-success text-center">
+            <Notice tone="success" title="Subscription confirmed!">
+              Thank you for subscribing! You are all set to receive our latest oven-fresh bakery updates.
+            </Notice>
+            <Link href="/products" className="btn btn-primary btn-lg mt-4">
+              Explore Our Fresh Bakes →
+            </Link>
+          </div>
+        ) : (
+          <form onSubmit={onSubmit} className="newsletter-form" noValidate>
+            <Field id="newsletter-email" label="Your Email Address" required>
+              <TextInput
+                id="newsletter-email"
+                type="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                placeholder="name@domain.co.za"
+                autoComplete="email"
+              />
+            </Field>
 
-        <form className="form-stack" onSubmit={onSubmit} noValidate>
-          <Field id="newsletter-email" label="Email address" required>
-            <TextInput
-              id="newsletter-email"
-              type="email"
-              autoComplete="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-            />
-          </Field>
-          <button type="submit" className="btn btn-primary btn-block" disabled={submitting}>
-            {submitting ? 'Subscribing…' : 'Subscribe'}
-          </button>
-        </form>
+            <button
+              type="submit"
+              className="btn btn-primary btn-lg btn-block mt-3"
+              disabled={submitting}
+            >
+              {submitting ? 'Subscribing…' : 'Subscribe to Bakery Newsletter →'}
+            </button>
+            <p className="muted small text-center mt-2">
+              No spam, ever. Unsubscribe at any time with a single click.
+            </p>
+          </form>
+        )}
       </div>
     </section>
   );
@@ -117,7 +105,7 @@ function NewsletterForm() {
 
 export default function NewsletterPage() {
   return (
-    <Suspense fallback={<div className="page-loading" role="status">Loading…</div>}>
+    <Suspense fallback={<div className="page-loading" role="status">Loading newsletter…</div>}>
       <NewsletterForm />
     </Suspense>
   );

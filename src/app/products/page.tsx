@@ -6,13 +6,10 @@ import { Suspense, useEffect, useState, type FormEvent } from 'react';
 import { Notice } from '@/components/Notice';
 import { ProductCard } from '@/components/ProductCard';
 import { describeError } from '@/lib/api';
-import { productService } from '@/lib/services';
-import type { PageMeta, Product } from '@/lib/types';
+import { productService, categoryService } from '@/lib/services';
+import type { Category, PageMeta, Product } from '@/lib/types';
 
 const PER_PAGE = 12;
-
-// The API supports `search`, `page` and `per_page`. A `category` filter exists in the
-// request type but is not applied server-side yet, so it is intentionally not offered here.
 
 function ProductsView() {
   const router = useRouter();
@@ -22,10 +19,22 @@ function ProductsView() {
 
   const [input, setInput] = useState(q);
   const [products, setProducts] = useState<Product[] | null>(null);
+  const [categories, setCategories] = useState<Category[] | null>(null);
   const [meta, setMeta] = useState<PageMeta | null>(null);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => setInput(q), [q]);
+
+  useEffect(() => {
+    let cancelled = false;
+    categoryService
+      .list()
+      .then((res) => !cancelled && setCategories(res))
+      .catch(() => !cancelled && setCategories([]));
+    return () => {
+      cancelled = true;
+    };
+  }, []);
 
   useEffect(() => {
     let cancelled = false;
@@ -63,44 +72,144 @@ function ProductsView() {
 
   return (
     <section className="container section">
-      <header className="page-head">
-        <div>
-          <p className="eyebrow">Shop</p>
-          <h1>Fresh from the bakery</h1>
-          <p className="muted">
-            {meta ? `${meta.total} ${meta.total === 1 ? 'product' : 'products'}` : 'Loading products…'}
-            {q ? <> for &ldquo;{q}&rdquo;</> : null}
+      {/* Editorial Header */}
+      <header className="shop-header">
+        <div className="shop-header__content">
+          <p className="eyebrow"><span className="rule" aria-hidden="true" />The Marketplace</p>
+          <h1 className="shop-header__title">Fresh from the Bakery</h1>
+          <p className="shop-header__desc">
+            Explore our daily inventory of wholesome artisan loaves, decorative celebration cakes, flaky pastries, and catering spreads.
           </p>
         </div>
 
-        <form className="search" role="search" onSubmit={onSearch}>
-          <label htmlFor="product-search" className="sr-only">Search products</label>
-          <input
-            id="product-search"
-            className="input"
-            type="search"
-            placeholder="Search bread, cakes, pastries…"
-            value={input}
-            onChange={(e) => setInput(e.target.value)}
-          />
-          <button type="submit" className="btn btn-primary">Search</button>
+        {/* Search Bar */}
+        <form className="shop-search" role="search" onSubmit={onSearch}>
+          <div className="shop-search__input-wrapper">
+            <svg className="shop-search__icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+              <circle cx="11" cy="11" r="8" />
+              <line x1="21" y1="21" x2="16.65" y2="16.65" />
+            </svg>
+            <label htmlFor="product-search" className="sr-only">Search products</label>
+            <input
+              id="product-search"
+              className="shop-search__input"
+              type="search"
+              placeholder="Search cakes, sourdough, croissants…"
+              value={input}
+              onChange={(e) => setInput(e.target.value)}
+            />
+            {input && (
+              <button
+                type="button"
+                className="shop-search__clear"
+                onClick={() => {
+                  setInput('');
+                  go('', 1);
+                }}
+                aria-label="Clear search"
+              >
+                ✕
+              </button>
+            )}
+          </div>
+          <button type="submit" className="btn btn-primary shop-search__btn">Find Bakes</button>
         </form>
       </header>
+
+      {/* Category Filter Pills (if categories available) */}
+      {categories && categories.length > 0 && (
+        <div className="shop-filter-bar">
+          <div className="shop-filter-bar__label">Categories:</div>
+          <div className="shop-filter-pills">
+            <button
+              type="button"
+              className={`shop-filter-pill ${!q ? 'is-active' : ''}`}
+              onClick={() => {
+                setInput('');
+                go('', 1);
+              }}
+            >
+              All Items
+            </button>
+            {categories.map((c) => {
+              const active = q.toLowerCase() === c.name.toLowerCase();
+              return (
+                <button
+                  key={c.id}
+                  type="button"
+                  className={`shop-filter-pill ${active ? 'is-active' : ''}`}
+                  onClick={() => {
+                    setInput(c.name);
+                    go(c.name, 1);
+                  }}
+                >
+                  {c.name}
+                </button>
+              );
+            })}
+          </div>
+        </div>
+      )}
+
+      {/* Results Count & Active Filter Indicator */}
+      <div className="shop-status-bar">
+        <div className="shop-status-text">
+          {meta ? (
+            <span>Showing <strong>{meta.total}</strong> {meta.total === 1 ? 'item' : 'items'}</span>
+          ) : (
+            <span>Fetching the freshest bakes…</span>
+          )}
+          {q && (
+            <span className="shop-query-badge">
+              matching &ldquo;{q}&rdquo;
+              <button
+                type="button"
+                onClick={() => {
+                  setInput('');
+                  go('', 1);
+                }}
+                className="shop-query-remove"
+                aria-label="Remove filter"
+              >
+                ×
+              </button>
+            </span>
+          )}
+        </div>
+      </div>
 
       {error ? <Notice tone="error" title="Could not load products">{error}</Notice> : null}
 
       {!error && products === null ? (
         <div className="grid-products" aria-busy="true">
-          {Array.from({ length: 6 }).map((_, i) => (
+          {Array.from({ length: 8 }).map((_, i) => (
             <div key={i} className="product-card product-card--skeleton" />
           ))}
         </div>
       ) : null}
 
       {products && products.length === 0 ? (
-        <div className="empty">
-          <p>No products matched your search.</p>
-          {q ? <button type="button" className="btn btn-outline" onClick={() => go('', 1)}>Clear search</button> : null}
+        <div className="empty-catalog-state card">
+          <div className="empty-catalog-icon" aria-hidden="true">🥖</div>
+          <h2>No baked goods match this query</h2>
+          <p className="muted">
+            We couldn&apos;t find any items matching &ldquo;{q}&rdquo;. Try another term or browse our complete collection.
+          </p>
+          <div className="cta-row center">
+            <button
+              type="button"
+              className="btn btn-primary"
+              onClick={() => {
+                setInput('');
+                go('', 1);
+              }}
+            >
+              View Full Collection
+            </button>
+            <Link href="/catering" className="btn btn-outline">
+              Request Custom Catering Order
+            </Link>
+          </div>
         </div>
       ) : null}
 
@@ -112,7 +221,8 @@ function ProductsView() {
         </div>
       ) : null}
 
-      {products && totalPages > 1 ? (
+      {/* Pagination */}
+      {totalPages > 1 ? (
         <nav className="pagination" aria-label="Pagination">
           <button
             type="button"
@@ -122,7 +232,7 @@ function ProductsView() {
           >
             ← Previous
           </button>
-          <span className="muted">
+          <span className="pagination__info">
             Page {page} of {totalPages}
           </span>
           <button
@@ -135,18 +245,13 @@ function ProductsView() {
           </button>
         </nav>
       ) : null}
-
-      <p className="muted small">
-        Looking for a larger order? <Link href="/catering">Request a catering quote</Link>.
-      </p>
     </section>
   );
 }
 
 export default function ProductsPage() {
-  // useSearchParams needs a Suspense boundary for static rendering.
   return (
-    <Suspense fallback={<div className="page-loading" role="status">Loading…</div>}>
+    <Suspense fallback={<div className="page-loading" role="status">Loading shop…</div>}>
       <ProductsView />
     </Suspense>
   );

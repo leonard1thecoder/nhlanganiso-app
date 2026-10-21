@@ -38,8 +38,8 @@ export default function CateringPage() {
     const e: Partial<Record<keyof FormState, string>> = {};
     if (!form.name.trim()) e.name = 'Please enter your name.';
     if (!EMAIL_RE.test(form.email.trim())) e.email = 'Enter a valid email address.';
-    if (!form.subject.trim()) e.subject = 'Please enter a subject.';
-    if (!form.message.trim()) e.message = 'Please enter your message.';
+    if (!form.subject.trim()) e.subject = 'Please specify the event type or subject.';
+    if (!form.message.trim()) e.message = 'Please describe your catering requirements (guest count, menu ideas, date).';
     return e;
   };
 
@@ -52,9 +52,7 @@ export default function CateringPage() {
 
     setSubmitting(true);
     try {
-      // Contact form submits to the same catering request endpoint; subject maps to
-      // event_type and message to menu_requirements so nothing is lost.
-      const res = await cateringService.createRequest({
+      await cateringService.createRequest({
         event_type: form.subject.trim(),
         menu_requirements: form.message.trim(),
         contact_name: form.name.trim(),
@@ -72,94 +70,155 @@ export default function CateringPage() {
 
   if (sent) {
     return (
-      <section className="container section center">
-        <p className="eyebrow">Message received</p>
-        <h1>Thank you — we are on it</h1>
-        <p className="muted">
-          We have received your message and will reply to {form.email} as soon as possible.
+      <section className="container section center catering-success-section">
+        <div className="empty-cart-icon">🥂</div>
+        <p className="eyebrow"><span className="rule" aria-hidden="true" />Enquiry Received</p>
+        <h1 className="success-heading">Thank You — We&apos;re Crafting Your Feast</h1>
+        <p className="muted success-desc">
+          We have safely received your catering specifications. Our head culinary team will review your menu requirements and follow up with a tailored quote.
         </p>
-        <p className="small">
-          Reference: <code>{form.subject || 'Contact'}</code>
-        </p>
-        <Link href="/products" className="btn btn-outline">Browse the shop</Link>
+        <div className="cta-row center">
+          <button type="button" className="btn btn-outline" onClick={() => setSent(false)}>
+            Send Another Enquiry
+          </button>
+          <Link href="/products" className="btn btn-primary">
+            Explore Everyday Bakery Shop
+          </Link>
+        </div>
       </section>
     );
   }
 
   return (
-    <section className="container section">
-      <div className="catering-layout">
-        <div>
-          <p className="eyebrow">Contact us</p>
-          <h1>Get in touch</h1>
-          <p className="lead">
-            Have a question about our bakes, catering, or an order? Send us a message and we will get back to you.
+    <section className="container section catering-page-section">
+      <div className="catering-hero-card">
+        <div className="catering-hero-content">
+          <p className="eyebrow"><span className="rule" aria-hidden="true" />Bespoke Food Design</p>
+          <h1 className="catering-title">Exceptional Catering for Every Celebration</h1>
+          <p className="catering-lead">
+            From intimate gatherings and corporate banquets to unforgettable weddings — we create bespoke dessert tables, savoury platter spreads, and artisanal banquets tailored to your taste.
           </p>
-          {HAS_REAL_CONTACT_EMAIL || HAS_REAL_CONTACT_PHONE ? (
-            <p className="muted small">
-              Prefer to talk?{' '}
-              {HAS_REAL_CONTACT_PHONE ? (
-                <>Call <a href={`tel:${CONTACT.phone.replace(/\s/g, '')}`}>{CONTACT.phone}</a></>
-              ) : null}
-              {HAS_REAL_CONTACT_PHONE && HAS_REAL_CONTACT_EMAIL ? ' or ' : null}
-              {HAS_REAL_CONTACT_EMAIL ? (
-                <>email <a href={`mailto:${CONTACT.email}`}>{CONTACT.email}</a></>
-              ) : null}
-              .
-            </p>
-          ) : null}
         </div>
+      </div>
 
-        <div className="card">
-          {serverError ? <Notice tone="error" title="Could not send your message">{serverError}</Notice> : null}
+      <div className="catering-grid">
+        <div className="catering-form-wrap">
+          <form className="catering-form card" onSubmit={onSubmit} noValidate>
+            <div className="form-head">
+              <h2>Request a Tailored Quote</h2>
+              <p className="muted small">Tell us about your event, expected guest count, and date. We will send a formal quote.</p>
+            </div>
 
-          <form className="form-stack" onSubmit={onSubmit} noValidate>
-            <div className="form-row">
-              <Field id="contact_name" label="Name" required error={errors.name}>
+            {serverError && <Notice tone="error">{serverError}</Notice>}
+
+            <div className="field-grid-2">
+              <Field id="cat-name" label="Your Name" required error={errors.name}>
                 <TextInput
-                  id="contact_name"
-                  autoComplete="name"
+                  id="cat-name"
                   value={form.name}
                   onChange={set('name')}
-                  aria-invalid={!!errors.name}
+                  placeholder="e.g. Lerato Dlamini"
+                  autoComplete="name"
+                  aria-invalid={Boolean(errors.name)}
                 />
               </Field>
-              <Field id="contact_email" label="Email" required error={errors.email}>
+
+              <Field id="cat-email" label="Email Address" required error={errors.email}>
                 <TextInput
-                  id="contact_email"
+                  id="cat-email"
                   type="email"
-                  autoComplete="email"
                   value={form.email}
                   onChange={set('email')}
-                  aria-invalid={!!errors.email}
+                  placeholder="lerato@domain.co.za"
+                  autoComplete="email"
+                  aria-invalid={Boolean(errors.email)}
                 />
               </Field>
             </div>
 
-            <Field id="contact_subject" label="Subject" required error={errors.subject}>
+            <Field
+              id="cat-subject"
+              label="Event Type &amp; Occasion"
+              required
+              hint="e.g. Wedding banquet, 50th Birthday dessert bar, Corporate breakfast platter"
+              error={errors.subject}
+            >
               <TextInput
-                id="contact_subject"
-                autoComplete="off"
+                id="cat-subject"
                 value={form.subject}
                 onChange={set('subject')}
-                aria-invalid={!!errors.subject}
+                placeholder="e.g. Wedding Reception Cake &amp; Dessert Table"
+                aria-invalid={Boolean(errors.subject)}
               />
             </Field>
 
-            <Field id="contact_message" label="Message" required error={errors.message}>
+            <Field
+              id="cat-message"
+              label="Menu Requirements &amp; Details"
+              required
+              hint="Include estimated guest count, target date, dietary requests, or specific treats you love."
+              error={errors.message}
+            >
               <TextArea
-                id="contact_message"
+                id="cat-message"
                 value={form.message}
                 onChange={set('message')}
-                aria-invalid={!!errors.message}
+                rows={5}
+                placeholder="Please describe: 1) Approximate number of guests; 2) Date of event; 3) Sweet vs savoury preferences; 4) Any special dietary notes."
+                aria-invalid={Boolean(errors.message)}
               />
             </Field>
 
-            <button type="submit" className="btn btn-primary btn-lg btn-block" disabled={submitting}>
-              {submitting ? 'Sending…' : 'Send message'}
+            <button
+              type="submit"
+              className="btn btn-primary btn-lg btn-block"
+              disabled={submitting}
+            >
+              {submitting ? 'Sending Request…' : 'Submit Catering Enquiry →'}
             </button>
           </form>
         </div>
+
+        <aside className="catering-info-sidebar">
+          <div className="catering-features-card card">
+            <h3 className="sidebar-title">What We Offer</h3>
+            <ul className="catering-services-list">
+              <li>
+                <strong>Celebration &amp; Wedding Cakes</strong>
+                <p className="muted small">Tiered artisanal cakes custom-decorated to match your celebration theme.</p>
+              </li>
+              <li>
+                <strong>Gourmet Savoury Platters</strong>
+                <p className="muted small">Handmade quiches, mini artisan pies, sliders, and sourdough crostini.</p>
+              </li>
+              <li>
+                <strong>Dessert Bars &amp; Sweet Tables</strong>
+                <p className="muted small">Mini cupcakes, macarons, chocolate brownies, fruit tarts, and pastries.</p>
+              </li>
+              <li>
+                <strong>Corporate Office Feasts</strong>
+                <p className="muted small">Prompt morning pastries, artisan sandwich boxes, and executive lunches.</p>
+              </li>
+            </ul>
+
+            <div className="catering-contact-direct">
+              <h4>Prefer to contact directly?</h4>
+              {HAS_REAL_CONTACT_EMAIL && (
+                <p className="contact-row">
+                  <span>Email:</span> <a href={`mailto:${CONTACT.email}`}>{CONTACT.email}</a>
+                </p>
+              )}
+              {HAS_REAL_CONTACT_PHONE && (
+                <p className="contact-row">
+                  <span>Phone:</span> <a href={`tel:${CONTACT.phone.replace(/\s/g, '')}`}>{CONTACT.phone}</a>
+                </p>
+              )}
+              <p className="muted small mt-2">
+                All catering quotes include direct consultation to ensure your event menu is perfectly executed.
+              </p>
+            </div>
+          </div>
+        </aside>
       </div>
     </section>
   );
