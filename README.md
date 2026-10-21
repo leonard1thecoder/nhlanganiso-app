@@ -6,7 +6,6 @@ The customer-facing e-commerce front-end for **Nhlanganiso Catering & Baking**. 
 - **axios** for every HTTP call, with one shared instance, automatic bearer auth, and silent token refresh
 - No UI framework: a small hand-written design system built from the logo palette (`src/app/globals.css`)
 
-## Quick start
 
 ```bash
 # 1. Backend (from the repo root)
