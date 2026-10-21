@@ -7,7 +7,7 @@ import { describeError } from '@/lib/api';
 import { useCart } from '@/context/CartContext';
 import { MAX_QTY_PER_LINE } from '@/lib/config';
 import { formatZAR } from '@/lib/format';
-import { cartService } from '@/lib/services';
+import { cartService, couponService } from '@/lib/services';
 import type { CartQuote } from '@/lib/types';
 
 export default function CartPage() {
@@ -15,6 +15,13 @@ export default function CartPage() {
   const [quote, setQuote] = useState<CartQuote | null>(null);
   const [quoteError, setQuoteError] = useState<string | null>(null);
   const [quoting, setQuoting] = useState(false);
+
+  // Coupon state
+  const [couponCode, setCouponCode] = useState('');
+  const [subscriberEmail, setSubscriberEmail] = useState('');
+  const [appliedDiscount, setAppliedDiscount] = useState<number | null>(null);
+  const [couponError, setCouponError] = useState<string | null>(null);
+  const [validatingCoupon, setValidatingCoupon] = useState(false);
 
   const signature = useMemo(
     () => lines.map((l) => `${l.product_id}:${l.qty}`).join('|'),
@@ -41,6 +48,27 @@ export default function CartPage() {
     };
   }, [signature, ready]);
 
+  const handleApplyCoupon = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setCouponError(null);
+    if (!couponCode.trim()) return;
+    if (!subscriberEmail.trim()) {
+      setCouponError('Please enter the email address used for your bakery newsletter.');
+      return;
+    }
+
+    setValidatingCoupon(true);
+    try {
+      const res = await couponService.validate(couponCode.trim(), subscriberEmail.trim());
+      setAppliedDiscount(res.discount_percentage);
+    } catch (err) {
+      setAppliedDiscount(null);
+      setCouponError(describeError(err));
+    } finally {
+      setValidatingCoupon(false);
+    }
+  };
+
   if (!ready) {
     return <div className="page-loading" role="status">Loading your shopping bag…</div>;
   }
@@ -62,8 +90,9 @@ export default function CartPage() {
     );
   }
 
-  // Display subtotal from quote or computed from snapshot
-  const displaySubtotal = quote?.subtotal_cents ?? lines.reduce((acc, l) => acc + l.price_cents * l.qty, 0);
+  const rawSubtotal = quote?.subtotal_cents ?? lines.reduce((acc, l) => acc + l.price_cents * l.qty, 0);
+  const discountAmount = appliedDiscount ? Math.round((rawSubtotal * appliedDiscount) / 100) : 0;
+  const displayTotal = rawSubtotal - discountAmount;
   const totalItemsCount = lines.reduce((acc, l) => acc + l.qty, 0);
 
   return (
@@ -88,7 +117,6 @@ export default function CartPage() {
       ) : null}
 
       <div className="cart-layout">
-        {/* Left Column: Cart Items List */}
         <div className="cart-lines-container">
           <div className="cart-lines-header">
             <span>Item</span>
@@ -155,9 +183,47 @@ export default function CartPage() {
               );
             })}
           </div>
+
+          {/* Coupon Code Section */}
+          <div className="coupon-box card mt-4">
+            <h3 className="coupon-box__title">Have a Promotional Coupon?</h3>
+            <p className="muted small">Enter your coupon code and verified subscriber email to apply your discount.</p>
+            <form onSubmit={handleApplyCoupon} className="coupon-form mt-2">
+              <div className="coupon-inputs-row">
+                <input
+                  type="text"
+                  placeholder="Coupon Code (e.g. WELCOME10)"
+                  className="input input-sm"
+                  value={couponCode}
+                  onChange={(e) => setCouponCode(e.target.value)}
+                />
+                <input
+                  type="email"
+                  placeholder="Subscriber Email"
+                  className="input input-sm"
+                  value={subscriberEmail}
+                  onChange={(e) => setSubscriberEmail(e.target.value)}
+                />
+                <button
+                  type="submit"
+                  className="btn btn-outline btn-sm"
+                  disabled={validatingCoupon}
+                >
+                  {validatingCoupon ? 'Validating…' : 'Apply'}
+                </button>
+              </div>
+            </form>
+
+            {couponError && <p className="text-danger small mt-2">{couponError}</p>}
+            {appliedDiscount && (
+              <p className="text-success small mt-2">
+                ✓ Coupon <strong>{couponCode.toUpperCase()}</strong> applied ({appliedDiscount}% off)!
+              </p>
+            )}
+          </div>
         </div>
 
-        {/* Right Column: Order Summary Card */}
+        {/* Order Summary */}
         <div className="cart-summary-sidebar">
           <div className="cart-summary-card card">
             <h2 className="cart-summary-title">Order Summary</h2>
@@ -165,15 +231,21 @@ export default function CartPage() {
             <div className="cart-summary-rows">
               <div className="cart-summary-row">
                 <span>Items Subtotal</span>
-                <span>{quoting ? 'Calculating…' : formatZAR(displaySubtotal)}</span>
+                <span>{quoting ? 'Calculating…' : formatZAR(rawSubtotal)}</span>
               </div>
+              {appliedDiscount && (
+                <div className="cart-summary-row text-success">
+                  <span>Promo Discount ({appliedDiscount}%)</span>
+                  <span>-{formatZAR(discountAmount)}</span>
+                </div>
+              )}
               <div className="cart-summary-row">
                 <span>Fulfilment</span>
                 <span className="badge-free">Bakery Collection</span>
               </div>
               <div className="cart-summary-row cart-summary-row--total">
                 <span>Estimated Total</span>
-                <span className="total-amount">{quoting ? '…' : formatZAR(displaySubtotal)}</span>
+                <span className="total-amount">{quoting ? '…' : formatZAR(displayTotal)}</span>
               </div>
               <p className="cart-summary-note">
                 Final total is verified by our server before processing securely via PayFast.

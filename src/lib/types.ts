@@ -276,3 +276,70 @@ export interface CreateNewsletterBody {
   /** Send straight away instead of saving as a draft. */
   send_now?: boolean;
 }
+
+// ---------- Favorites ----------
+export interface FavoriteProduct {
+  id: Uuid;
+  name: string;
+  slug: string;
+  price_cents: number;
+  currency: string;
+  active: boolean;
+}
+
+// ---------- Coupons ----------
+export interface CouponValidation {
+  code: string;
+  discount_percentage: number;
+  valid: boolean;
+  remaining_usages?: number;
+}
+
+export interface AdminCoupon {
+  id: Uuid;
+  code: string;
+  discount_percentage: number;
+  expires_at: string | null;
+  max_usages: number | null;
+  usage_count: number;
+  active: boolean;
+}
+
+export interface CreateCouponBody {
+  code: string;
+  discount_percentage: number;
+  expires_at?: string;
+  max_usages?: number;
+  active?: boolean;
+  subscriber_email?: string;
+  product_id?: Uuid;
+}
+
+// ---------- Announcements ----------
+export interface PublicAnnouncement {
+  id: Uuid;
+  title: string;
+  body_html: string;
+  created_at: string;
+}
+
+// ---------- Inventory & Audit ----------
+export interface InventoryMovement {
+  id: Uuid;
+  product_id: Uuid;
+  qty_delta: number;
+  reason: string;
+}
+
+export interface AuditLogItem {
+  id: Uuid;
+  action: string;
+  entity: string;
+}
+
+export interface EmailOutboxItem {
+  id: Uuid;
+  recipient: string;
+  status: string;
+  attempts: number;
+}

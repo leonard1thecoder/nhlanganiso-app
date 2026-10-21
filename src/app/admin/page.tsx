@@ -80,6 +80,24 @@ function Dashboard() {
             <span className="admin-action-arrow">→</span>
           </Link>
 
+          <Link href="/admin/inventory" className="admin-action-card">
+            <div className="admin-action-icon">📦</div>
+            <div className="admin-action-copy">
+              <strong>Inventory &amp; Stock</strong>
+              <p className="muted small">Adjust stock on hand with reasons and view stock movements.</p>
+            </div>
+            <span className="admin-action-arrow">→</span>
+          </Link>
+
+          <Link href="/admin/coupons" className="admin-action-card">
+            <div className="admin-action-icon">🎟️</div>
+            <div className="admin-action-copy">
+              <strong>Coupons &amp; Promos</strong>
+              <p className="muted small">Issue discount codes, manage usage limits and expiration.</p>
+            </div>
+            <span className="admin-action-arrow">→</span>
+          </Link>
+
           <Link href="/admin/catering" className="admin-action-card">
             <div className="admin-action-icon">🥂</div>
             <div className="admin-action-copy">
@@ -101,17 +119,17 @@ function Dashboard() {
           <Link href="/admin/newsletter" className="admin-action-card">
             <div className="admin-action-icon">✉️</div>
             <div className="admin-action-copy">
-              <strong>Subscribers</strong>
-              <p className="muted small">View bakery newsletter subscribers and export email lists.</p>
+              <strong>Subscribers &amp; Newsletters</strong>
+              <p className="muted small">Send bakery newsletters, view subscriber counts, and export lists.</p>
             </div>
             <span className="admin-action-arrow">→</span>
           </Link>
 
-          <Link href="/admin/products/new" className="admin-action-card admin-action-card--highlight">
-            <div className="admin-action-icon">➕</div>
+          <Link href="/admin/logs" className="admin-action-card">
+            <div className="admin-action-icon">🛡️</div>
             <div className="admin-action-copy">
-              <strong>Create New Product</strong>
-              <p className="muted small">Add a brand-new baked treat or seasonal recipe to the menu.</p>
+              <strong>Audit &amp; Email Outbox</strong>
+              <p className="muted small">Review system audit trail and verify email delivery queues.</p>
             </div>
             <span className="admin-action-arrow">→</span>
           </Link>

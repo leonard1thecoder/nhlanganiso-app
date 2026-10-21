@@ -2,9 +2,11 @@ import { api } from './api';
 import { API_BASE_URL, API_PREFIX } from './config';
 import type {
   AdminCateringRequest,
+  AdminCoupon,
   AdminNewsletter,
   AdminSubscriber,
   AdminSummary,
+  AuditLogItem,
   Availability,
   CartQuote,
   CartQuoteItem,
@@ -13,12 +15,17 @@ import type {
   CateringStatus,
   Category,
   CheckoutFields,
+  CouponValidation,
+  CreateCouponBody,
   CreateNewsletterBody,
   CreateOrderBody,
   CreateProductBody,
   CreateQuoteBody,
   CreatedOrder,
+  EmailOutboxItem,
+  FavoriteProduct,
   FulfilmentStatus,
+  InventoryMovement,
   Me,
   NewsletterReceipt,
   OrderDetail,
@@ -26,6 +33,7 @@ import type {
   Paged,
   Product,
   ProductDetail,
+  PublicAnnouncement,
   Session,
   SubscriberStats,
   TokenPair,
@@ -243,4 +251,55 @@ export const adminService = {
     api
       .post<{ id: string; total_cents: number }>(`/admin/catering/requests/${requestId}/quotes`, body)
       .then((r) => r.data),
+};
+
+// ---------- Favorites Service ----------
+export const favoriteService = {
+  list: () => api.get<FavoriteProduct[]>('/products/favorites').then((r) => r.data),
+  add: (productId: string) =>
+    api.post<{ product_id: string; favorited: boolean }>(`/products/${productId}/favorite`).then((r) => r.data),
+  remove: (productId: string) =>
+    api.delete<{ product_id: string; favorited: boolean }>(`/products/${productId}/favorite`).then((r) => r.data),
+};
+
+// ---------- Coupon Service ----------
+export const couponService = {
+  validate: (code: string, email: string, productId?: string) =>
+    api
+      .get<CouponValidation>(`/coupons/${encodeURIComponent(code)}/validate`, {
+        params: { email, product_id: productId },
+      })
+      .then((r) => r.data),
+
+  adminList: () => api.get<AdminCoupon[]>('/admin/coupons').then((r) => r.data),
+  create: (body: CreateCouponBody) =>
+    api.post<AdminCoupon>('/admin/coupons', body).then((r) => r.data),
+  update: (id: string, body: Partial<CreateCouponBody>) =>
+    api.patch<{ ok: boolean }>(`/admin/coupons/${id}`, body).then((r) => r.data),
+  remove: (id: string) =>
+    api.delete<{ ok: boolean }>(`/admin/coupons/${id}`).then((r) => r.data),
+};
+
+// ---------- Announcements Service ----------
+export const announcementService = {
+  publicList: (status?: string) =>
+    api.get<PublicAnnouncement[]>('/announcements', { params: { status } }).then((r) => r.data),
+};
+
+// ---------- Inventory & System Services ----------
+export const inventoryService = {
+  movements: () => api.get<InventoryMovement[]>('/admin/inventory/movements').then((r) => r.data),
+  adjust: (productId: string, delta: number, reason: string) =>
+    api
+      .post<{ ok: boolean; stock_on_hand: number }>('/admin/inventory/adjust', {
+        product_id: productId,
+        qty_delta: delta,
+        reason,
+      })
+      .then((r) => r.data),
+};
+
+export const auditService = {
+  logs: () => api.get<AuditLogItem[]>('/admin/audit-logs').then((r) => r.data),
+  outbox: () => api.get<EmailOutboxItem[]>('/admin/notifications/outbox').then((r) => r.data),
 };

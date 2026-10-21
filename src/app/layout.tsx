@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from 'next';
 import './globals.css';
 import { FooterGate } from '@/components/FooterGate';
 import { Navbar } from '@/components/Navbar';
+import { AnnouncementBanner } from '@/components/AnnouncementBanner';
 import { Providers } from '@/components/Providers';
 import { SITE_NAME, SITE_URL } from '@/lib/config';
 
@@ -29,6 +30,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           <a href="#main" className="skip-link">
             Skip to content
           </a>
+          <AnnouncementBanner />
           <Navbar />
           <main id="main" className="site-main">
             {children}
