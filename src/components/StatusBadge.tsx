@@ -6,6 +6,8 @@ const PAYMENT_LABEL: Record<PaymentStatus, string> = {
   paid: 'Paid',
   failed: 'Failed',
   cancelled: 'Cancelled',
+  refunded: 'Refunded',
+  partially_refunded: 'Partly refunded',
 };
 
 const FULFILMENT_LABEL: Record<FulfilmentStatus, string> = {

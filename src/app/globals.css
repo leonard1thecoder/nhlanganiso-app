@@ -1491,6 +1491,14 @@ code {
 /* ---------- Badges & status ---------- */
 
 
+
+.badge--refunded,
+.badge--partially_refunded {
+  background: var(--gold-soft);
+  border-color: #e3c894;
+  color: var(--gold-deep);
+}
+
 .badge--verified {
   background: var(--success-bg);
   border-color: #bfe0c9;

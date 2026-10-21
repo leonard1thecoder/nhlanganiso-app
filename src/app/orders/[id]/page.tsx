@@ -9,12 +9,13 @@ import { RequireAuth } from '@/components/RequireAuth';
 import { describeError } from '@/lib/api';
 import { CONTACT, HAS_REAL_CONTACT_EMAIL } from '@/lib/config';
 import { formatZAR } from '@/lib/format';
-import { orderService } from '@/lib/services';
-import type { OrderDetail } from '@/lib/types';
+import { orderService, refundService } from '@/lib/services';
+import type { OrderDetail, Refund } from '@/lib/types';
 
 function OrderView() {
   const { id } = useParams<{ id: string }>();
   const [order, setOrder] = useState<OrderDetail | null>(null);
+  const [refunds, setRefunds] = useState<Refund[] | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
   const [message, setMessage] = useState<string | null>(null);
@@ -25,6 +26,12 @@ function OrderView() {
       setError(null);
     } catch (err) {
       setError(describeError(err));
+    }
+    // Refunds are supplementary: a failure here must not break the order view.
+    try {
+      setRefunds(await refundService.forOrder(id));
+    } catch {
+      setRefunds(null);
     }
   }, [id]);
 
@@ -89,6 +96,26 @@ function OrderView() {
           <FulfilmentBadge status={order.fulfilment_status} />
         </div>
       </div>
+
+      {refunds && refunds.length > 0 ? (
+        <div className="card" style={{ marginTop: '16px' }}>
+          <h2 className="card__title">Refunds</h2>
+          {refunds.map((r) => (
+            <div key={r.id} className="receipt" style={{ marginBottom: '12px' }}>
+              <p>
+                <strong>Refund receipt</strong>
+              </p>
+              <p>Refund amount: {formatZAR(r.gross_cents)}</p>
+              <p>
+                Bank charge ({r.bank_charge_pct}%): −{formatZAR(r.bank_charge_cents)}
+              </p>
+              <p>Amount returned: {formatZAR(r.net_cents)}</p>
+              <p>Status: {r.status.replace(/_/g, ' ')}</p>
+              {r.reason ? <p>Reason: {r.reason}</p> : null}
+            </div>
+          ))}
+        </div>
+      ) : null}
 
       {HAS_REAL_CONTACT_EMAIL ? (
         <p className="muted small">

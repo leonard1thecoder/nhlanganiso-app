@@ -11,7 +11,13 @@
 
 export type Uuid = string;
 
-export type PaymentStatus = 'pending' | 'paid' | 'failed' | 'cancelled';
+export type PaymentStatus =
+  | 'pending'
+  | 'paid'
+  | 'failed'
+  | 'cancelled'
+  | 'refunded'
+  | 'partially_refunded';
 export type FulfilmentStatus = 'new' | 'preparing' | 'ready' | 'delivered' | 'cancelled';
 export type CateringStatus =
   | 'new'
@@ -275,6 +281,45 @@ export interface CreateNewsletterBody {
   audience?: 'subscribers' | 'all';
   /** Send straight away instead of saving as a draft. */
   send_now?: boolean;
+}
+
+// ---------- Refunds ----------
+
+/** What the admin sees before refunding: amounts, charge and what is refundable. */
+export interface RefundableAmount {
+  order_id: Uuid;
+  payment_status: string;
+  paid_cents: number;
+  refunded_cents: number;
+  refundable_cents: number;
+  bank_charge_pct: number;
+  bank_charge_cents: number;
+  net_to_customer_cents: number;
+  currency: string;
+}
+
+export interface Refund {
+  id: Uuid;
+  order_id: Uuid;
+  /** Amount taken off the order. */
+  gross_cents: number;
+  /** Bank charge deducted from the refund. */
+  bank_charge_cents: number;
+  /** Amount actually returned to the customer. */
+  net_cents: number;
+  bank_charge_pct: number;
+  currency: string;
+  /** pending | succeeded | failed | manual_action_required */
+  status: string;
+  reason: string | null;
+  created_at: string;
+  completed_at: string | null;
+}
+
+export interface CreateRefundBody {
+  /** Amount to refund in cents. Omit to refund everything that is left. */
+  gross_cents?: number;
+  reason: string;
 }
 
 // ---------- Favorites ----------

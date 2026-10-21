@@ -21,6 +21,7 @@ import type {
   CreateOrderBody,
   CreateProductBody,
   CreateQuoteBody,
+  CreateRefundBody,
   CreatedOrder,
   EmailOutboxItem,
   FavoriteProduct,
@@ -34,6 +35,8 @@ import type {
   Product,
   ProductDetail,
   PublicAnnouncement,
+  Refund,
+  RefundableAmount,
   Session,
   SubscriberStats,
   TokenPair,
@@ -215,6 +218,26 @@ export const newsletterAdminService = {
       '/admin/announcements',
       body,
     ).then((r) => r.data),
+};
+
+// ---------- Refunds ----------
+
+export const refundService = {
+  /** Amount still refundable on an order, with the bank charge preview. */
+  refundable: (orderId: string) =>
+    api.get<RefundableAmount>(`/admin/orders/${orderId}/refundable`).then((r) => r.data),
+
+  /** Refund an order. Omit gross_cents to refund everything that is left. */
+  create: (orderId: string, body: CreateRefundBody) =>
+    api
+      .post<Refund>(`/admin/orders/${orderId}/refund`, body)
+      .then((r) => r.data),
+
+  /** All refunds (back office). */
+  list: () => api.get<Refund[]>('/admin/refunds').then((r) => r.data),
+
+  /** Refunds for one order (customer's own order). */
+  forOrder: (orderId: string) => api.get<Refund[]>(`/orders/${orderId}/refunds`).then((r) => r.data),
 };
 
 // ---------- Admin ----------
