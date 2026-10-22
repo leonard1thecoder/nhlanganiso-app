@@ -46,8 +46,11 @@ function GoogleCallback() {
 
     void completeGoogleSignIn(code)
       .then((me) => {
-        // Admins land on the back office unless a destination was requested.
-        router.replace(me.role === 'admin' && next === '/products' ? '/admin' : next);
+        // Admins land on products by default; preserve any requested destination.
+        const adminDestination = next === '/products' || next === '/admin'
+          ? '/admin/products'
+          : next;
+        router.replace(me.role === 'admin' ? adminDestination : next);
       })
       .catch((err) => {
         const e2 = toApiError(err);

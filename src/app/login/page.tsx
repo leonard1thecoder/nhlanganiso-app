@@ -42,7 +42,10 @@ function LoginForm() {
         return;
       }
 
-      router.push(signedInUser.role === 'admin' && next === '/products' ? '/admin' : next);
+      const adminDestination = next === '/products' || next === '/admin'
+        ? '/admin/products'
+        : next;
+      router.push(signedInUser.role === 'admin' ? adminDestination : next);
     } catch (err) {
       setError(describeError(err));
     } finally {

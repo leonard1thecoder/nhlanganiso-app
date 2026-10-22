@@ -5,7 +5,6 @@ import { usePathname } from 'next/navigation';
 import { cn } from '@/lib/format';
 
 const ITEMS = [
-  { href: '/admin', label: 'Dashboard', icon: 'dashboard' },
   { href: '/admin/products', label: 'Products', icon: 'products' },
   { href: '/admin/categories', label: 'Categories', icon: 'categories' },
   { href: '/admin/orders', label: 'Orders', icon: 'orders' },
@@ -28,9 +27,6 @@ function AdminNavIcon({ name }: { name: string }) {
     'aria-hidden': true as const,
   };
 
-  if (name === 'dashboard') {
-    return <svg {...common}><rect x="3" y="3" width="8" height="8" rx="1.5" /><rect x="13" y="3" width="8" height="5" rx="1.5" /><rect x="13" y="10" width="8" height="11" rx="1.5" /><rect x="3" y="13" width="8" height="8" rx="1.5" /></svg>;
-  }
   if (name === 'products') {
     return <svg {...common}><path d="M4 8h16l-1.5 12h-13z" /><path d="M8 8a4 4 0 0 1 8 0" /><path d="M9 12v2M15 12v2" /></svg>;
   }
@@ -56,9 +52,7 @@ export function AdminNav() {
       <p className="admin-nav__title">Admin workspace</p>
       <ul>
         {ITEMS.map((item) => {
-          const active = item.href === '/admin'
-            ? pathname === item.href
-            : pathname === item.href || pathname.startsWith(`${item.href}/`);
+          const active = pathname === item.href || pathname.startsWith(`${item.href}/`);
           return (
             <li key={item.href}>
               <Link

@@ -3911,6 +3911,10 @@ body {
     backdrop-filter: blur(14px);
   }
 
+  .mobile-footer-nav--admin {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+
   .mobile-footer-nav__link {
     display: flex;
     min-width: 0;

@@ -79,7 +79,6 @@ export function MobileFooterNav() {
     || (pathname === '/account' && (isAdmin || status === 'loading'));
   const links = isAdminArea
     ? [
-        { href: '/admin', label: 'Dashboard' },
         { href: '/admin/products', label: 'Products' },
         { href: '/admin/orders', label: 'Orders' },
         { href: '/admin/catering', label: 'Enquiries' },
@@ -94,7 +93,10 @@ export function MobileFooterNav() {
       ];
 
   return (
-    <nav className="mobile-footer-nav" aria-label="Mobile navigation">
+    <nav
+      className={cn('mobile-footer-nav', isAdminArea && 'mobile-footer-nav--admin')}
+      aria-label="Mobile navigation"
+    >
       {links.map((link) => {
         const active = link.href === '/'
           ? pathname === '/'
