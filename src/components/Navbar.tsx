@@ -3,7 +3,6 @@
 import Image from 'next/image';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { useState } from 'react';
 import { useAuth } from '@/context/AuthContext';
 import { useCart } from '@/context/CartContext';
 import { cn } from '@/lib/format';
@@ -20,10 +19,9 @@ function CakeIcon() {
 }
 
 export function Navbar() {
-  const { status, user, isAdmin, logout } = useAuth();
+  const { status, user, isAdmin } = useAuth();
   const { count, ready } = useCart();
   const pathname = usePathname();
-  const [open, setOpen] = useState(false);
 
   // Back-office screens get a focused header: no shopfront links.
   const isAdminArea = pathname === '/admin' || pathname.startsWith('/admin/');
@@ -54,7 +52,7 @@ export function Navbar() {
   return (
     <header className="navbar">
       <div className="container navbar__inner">
-        <Link href="/" className="brand" onClick={() => setOpen(false)} aria-label="Nhlanganiso Catering & Baking Home">
+        <Link href="/" className="brand" aria-label="Nhlanganiso Catering & Baking Home">
           <Image src="/brand/mark.png" alt="" width={44} height={44} priority className="brand__mark" />
           <span className="brand__text">
             <strong>Nhlanganiso</strong>
@@ -167,117 +165,8 @@ export function Navbar() {
             </Link>
           ) : null}
 
-          {/* Mobile hamburger toggle */}
-          <button
-            type="button"
-            className="navbar__hamburger"
-            aria-expanded={open}
-            aria-controls={open ? 'mobile-nav-drawer' : undefined}
-            aria-label="Toggle navigation menu"
-            onClick={() => setOpen((v) => !v)}
-          >
-            <span className="navbar__hamburger-bar" aria-hidden="true" />
-            <span className="navbar__hamburger-bar" aria-hidden="true" />
-            <span className="navbar__hamburger-bar" aria-hidden="true" />
-          </button>
         </div>
       </div>
-
-      {/* Mobile Drawer Backdrop */}
-      {open && (
-        <div
-          className="navbar__drawer-backdrop"
-          onClick={() => setOpen(false)}
-          aria-hidden="true"
-        />
-      )}
-
-      {/* Mobile Navigation Drawer */}
-      {open && (
-        <aside
-          id="mobile-nav-drawer"
-          className="navbar__drawer is-open"
-          aria-label="Mobile Navigation"
-        >
-          <div className="navbar__drawer-head">
-            <div className="brand">
-              <Image src="/brand/mark.png" alt="" width={36} height={36} className="brand__mark" />
-              <span className="brand__text">
-                <strong>Nhlanganiso</strong>
-                <small>Catering &amp; Baking</small>
-              </span>
-            </div>
-            <button
-              type="button"
-              className="navbar__drawer-close"
-              onClick={() => setOpen(false)}
-              aria-label="Close menu"
-            >
-              ✕
-            </button>
-          </div>
-
-          <nav className="navbar__drawer-nav">
-            <ul className="navbar__drawer-list">
-              {navLinks.map((l) => (
-                <li key={l.href}>
-                  <Link
-                    href={l.href}
-                    className={cn('navbar__drawer-link', isActive(l.href) && 'is-active')}
-                    onClick={() => setOpen(false)}
-                  >
-                    {(l.label === 'Cakes' || l.label === 'Desserts') && <CakeIcon />}
-                    {l.label}
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          </nav>
-
-          <div className="navbar__drawer-footer">
-            {status === 'authenticated' && user ? (
-              <div className="navbar__drawer-user">
-                <div className="navbar__drawer-user-info">
-                  <strong>{user.full_name}</strong>
-                  <span className="muted small">{user.email}</span>
-                </div>
-                <div className="navbar__drawer-user-links">
-                  <Link href="/account" className="btn btn-outline btn-sm btn-block" onClick={() => setOpen(false)}>
-                    My account
-                  </Link>
-                  <Link href="/orders" className="btn btn-outline btn-sm btn-block" onClick={() => setOpen(false)}>
-                    My orders
-                  </Link>
-                  {isAdmin && (
-                    <Link href="/admin" className="btn btn-outline btn-sm btn-block" onClick={() => setOpen(false)}>
-                      Admin portal
-                    </Link>
-                  )}
-                  <button
-                    type="button"
-                    className="btn btn-ghost btn-sm btn-block"
-                    onClick={() => {
-                      setOpen(false);
-                      void logout();
-                    }}
-                  >
-                    Sign out
-                  </button>
-                </div>
-              </div>
-            ) : status === 'anonymous' ? (
-              <div className="navbar__drawer-auth">
-                <Link href="/login" className="btn btn-primary btn-block" onClick={() => setOpen(false)}>
-                  Sign in
-                </Link>
-                <Link href="/register" className="btn btn-outline btn-block" onClick={() => setOpen(false)}>
-                  Create an account
-                </Link>
-              </div>
-            ) : null}
-          </div>
-        </aside>
-      )}
     </header>
   );
 }
