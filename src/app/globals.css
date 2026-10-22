@@ -2056,6 +2056,17 @@ code {
   gap: 0.75rem;
 }
 
+.navbar__actions .navbar__sign-in-btn {
+  width: auto;
+  flex: 0 0 auto;
+  gap: 0.35rem;
+  padding-inline: 0.6rem;
+  border-radius: 999px;
+  font-size: 0.84rem;
+  font-weight: 650;
+  white-space: nowrap;
+}
+
 .navbar__action-btn,
 .navbar__cart-btn {
   display: inline-flex;
@@ -3787,9 +3798,37 @@ body {
     height: 34px;
     flex: 0 0 34px;
   }
+
+  .navbar__actions .navbar__sign-in-btn {
+    width: auto;
+    height: 34px;
+    flex-basis: auto;
+    gap: 0.25rem;
+    padding-inline: 0.4rem;
+    font-size: 0.72rem;
+  }
+
+  .navbar__sign-in-btn svg {
+    width: 18px;
+    height: 18px;
+  }
 }
 
 @media (max-width: 360px) {
+  .navbar__inner {
+    padding-inline: 0.5rem;
+  }
+
+  .navbar__inner > .brand .brand__mark {
+    width: 32px;
+    height: 32px;
+    flex-basis: 32px;
+  }
+
+  .navbar__inner > .brand .brand__text strong {
+    font-size: 0.9rem;
+  }
+
   .navbar__actions {
     gap: 0.2rem;
   }
@@ -3799,6 +3838,14 @@ body {
     width: 32px;
     height: 32px;
     flex-basis: 32px;
+  }
+
+  .navbar__actions .navbar__sign-in-btn {
+    width: auto;
+    height: 32px;
+    flex-basis: auto;
+    padding-inline: 0.3rem;
+    font-size: 0.68rem;
   }
 
   .navbar__actions a[aria-label="My orders"] {

@@ -112,7 +112,7 @@ export function Navbar() {
           ) : status === 'anonymous' ? (
             <Link
               href="/login"
-              className="navbar__action-btn"
+              className="navbar__action-btn navbar__sign-in-btn"
               aria-label="Sign in"
               title="Sign in"
             >
@@ -120,6 +120,7 @@ export function Navbar() {
                 <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
                 <circle cx="12" cy="7" r="4" />
               </svg>
+              <span>Sign in</span>
             </Link>
           ) : null}
 
