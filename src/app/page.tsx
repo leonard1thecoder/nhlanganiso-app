@@ -40,11 +40,11 @@ export default function HomePage() {
               <span>Handcrafted in South Africa</span>
             </div>
             <h1 className="hero__title">
-              Made with Love. <br />
-              <span className="accent">Baked to Delight.</span>
+              Freshly baked. <br />
+              <span className="accent">Made to be shared.</span>
             </h1>
             <p className="hero__lead">
-              From slow-fermented artisan sourdough to custom luxury celebration cakes and lavish event spreads — baked fresh in small batches daily.
+              Fresh breads, celebration cakes and catering for life&apos;s special moments.
             </p>
             <div className="cta-row hero__cta-group">
               <Link href="/products" className="btn btn-primary btn-lg">
@@ -58,7 +58,7 @@ export default function HomePage() {
             <div className="hero__trust-strip">
               <div className="hero__trust-item">
                 <span className="hero__trust-icon" aria-hidden="true">✓</span>
-                <span>Baked to Order</span>
+                <span>Browse the bakery</span>
               </div>
               <div className="hero__trust-item">
                 <span className="hero__trust-icon" aria-hidden="true">✓</span>
@@ -66,7 +66,7 @@ export default function HomePage() {
               </div>
               <div className="hero__trust-item">
                 <span className="hero__trust-icon" aria-hidden="true">✓</span>
-                <span>Bakery Fresh Collection</span>
+                <span>South African Rand pricing</span>
               </div>
             </div>
           </div>
@@ -75,8 +75,8 @@ export default function HomePage() {
             <div className="hero__art-card">
               <div className="hero__art-image-wrap">
                 <Image
-                  src="/brand/logo.jpg"
-                  alt="Nhlanganiso Catering & Baking — Artisanal baking and feast catering"
+                  src={featured?.find((product) => product.image_url)?.image_url ?? '/brand/mark.png'}
+                  alt={featured?.find((product) => product.image_url)?.name ?? 'Nhlanganiso Catering & Baking'}
                   width={1200}
                   height={800}
                   priority
@@ -85,8 +85,8 @@ export default function HomePage() {
                 />
               </div>
               <div className="hero__floating-card">
-                <div className="hero__floating-badge">✦ Fresh Daily</div>
-                <p className="hero__floating-text">“The aroma of pure butter, real chocolate &amp; golden crusts.”</p>
+                <div className="hero__floating-badge">Made for sharing</div>
+                <p className="hero__floating-text">Explore baked goods and plan a celebration with Nhlanganiso.</p>
               </div>
             </div>
           </div>
@@ -183,12 +183,12 @@ export default function HomePage() {
             </p>
             <div className="story-highlights">
               <div className="story-highlight-item">
-                <strong className="story-highlight-number">100%</strong>
-                <span className="story-highlight-label">Small-batch artisan craftsmanship</span>
+                <strong className="story-highlight-number">Bakes</strong>
+                <span className="story-highlight-label">Shop breads, cakes and pastries</span>
               </div>
               <div className="story-highlight-item">
-                <strong className="story-highlight-number">ZAR</strong>
-                <span className="story-highlight-label">Transparent, fair local pricing</span>
+                <strong className="story-highlight-number">Events</strong>
+                <span className="story-highlight-label">Send a catering enquiry online</span>
               </div>
             </div>
           </div>

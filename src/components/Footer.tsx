@@ -33,6 +33,7 @@ export function Footer() {
             <li><Link href="/products?q=cake">Celebration Cakes</Link></li>
             <li><Link href="/products?q=pastry">Pastries &amp; Savoury</Link></li>
             <li><Link href="/catering">Catering Enquiries</Link></li>
+            <li><Link href="/about">Our Story</Link></li>
             <li><Link href="/cart">Shopping Bag</Link></li>
           </ul>
         </div>
@@ -43,7 +44,7 @@ export function Footer() {
             <li><Link href="/catering">Contact &amp; Event Booking</Link></li>
             <li><Link href="/orders">Track My Order</Link></li>
             <li><Link href="/account">My Account</Link></li>
-            <li><Link href="/newsletter">Bakery Stories &amp; Specials</Link></li>
+            <li><Link href="/newsletter">Newsletter</Link></li>
           </ul>
         </div>
 

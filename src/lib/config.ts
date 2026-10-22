@@ -12,7 +12,7 @@ export const API_BASE_URL = '';
 /** Every API route lives under this prefix. */
 export const API_PREFIX = '/api/v1';
 
-export const SITE_URL = trimSlash(process.env.NEXT_PUBLIC_SITE_URL ?? 'http://localhost:3000');
+export const SITE_URL = trimSlash(process.env.NEXT_PUBLIC_SITE_URL ?? 'https://nhlanganiso-app.vercel.app');
 
 export const SITE_NAME = 'Nhlanganiso Catering & Baking';
 

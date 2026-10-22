@@ -7,24 +7,24 @@
    ========================================================================== */
 
 :root {
-  --bg: #fbf7f0;
-  --bg-soft: #f5efe4;
-  --surface: #fffdf9;
-  --surface-silver: #f1e9da;
+  --bg: #ffffff;
+  --bg-soft: #faf7f2;
+  --surface: #ffffff;
+  --surface-silver: #f5f2ed;
 
-  --brown: #4a2e1f;
-  --brown-deep: #2e1c12;
-  --brown-soft: #7a5440;
+  --brown: #39281f;
+  --brown-deep: #2c201a;
+  --brown-soft: #756052;
 
-  --gold: #c8893b;
-  --gold-soft: #f7ead2;
-  --gold-deep: #8a5a1f;
+  --gold: #c99a43;
+  --gold-soft: #f7f0e3;
+  --gold-deep: #856326;
 
-  --silver: #cbbfae;
-  --line: #e7dccb;
+  --silver: #d8d1c8;
+  --line: #eae5de;
 
-  --text: #2b2420;
-  --muted: #6e625a;
+  --text: #332b26;
+  --muted: #6b625c;
 
   --success: #2f7a4a;
   --success-bg: #e6f3ea;
@@ -60,7 +60,7 @@ body {
   min-height: 100vh;
   display: flex;
   flex-direction: column;
-  background: var(--bg);
+  background: #fff;
   color: var(--text);
   font-family: var(--font-sans);
   font-size: 16px;
@@ -2249,8 +2249,8 @@ code {
 
 /* Hero Section Editorial Enhancements */
 .hero {
-  padding: 3.5rem 0 4.5rem;
-  background: radial-gradient(circle at top right, #fbf2e3 0%, var(--bg) 65%);
+  padding: 2.75rem 0 3.5rem;
+  background: #fff;
   border-bottom: 1px solid var(--line);
 }
 
@@ -2277,7 +2277,8 @@ code {
   letter-spacing: 0.12em;
   text-transform: uppercase;
   color: var(--gold-deep);
-  background: var(--gold-soft);
+  background: transparent;
+  border: 1px solid var(--line);
   padding: 0.35rem 0.85rem;
   border-radius: 9999px;
   margin-bottom: 1.25rem;
@@ -2308,7 +2309,7 @@ code {
   flex-wrap: wrap;
   gap: 1.5rem;
   padding-top: 1.25rem;
-  border-top: 1px solid rgba(231, 220, 203, 0.8);
+  border-top: 1px solid var(--line);
 }
 
 .hero__trust-item {
@@ -2395,7 +2396,7 @@ code {
   background: var(--surface);
   border: 1px solid var(--line);
   border-radius: var(--radius);
-  padding: 1.5rem;
+  padding: 1.25rem;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -2444,7 +2445,7 @@ code {
 
 /* Product Card Luxury Redesign */
 .product-card {
-  background: var(--surface);
+  background: #fff;
   border: 1px solid var(--line);
   border-radius: var(--radius);
   overflow: hidden;
@@ -3195,10 +3196,24 @@ code {
 
 /* Footer Luxury Redesign */
 .footer {
-  background: #25170f;
-  color: #ede2d3;
+  background: #fff;
+  color: var(--text);
   margin-top: auto;
-  border-top: 3px solid var(--gold);
+  border-top: 1px solid var(--line);
+}
+
+.footer__brand .brand__text strong,
+.footer__heading { color: var(--brown-deep); }
+.footer__brand .brand__text small,
+.footer__desc,
+.footer__list a,
+.footer__bottom,
+.footer__note { color: var(--muted); }
+.footer__pill { background: var(--bg-soft); color: var(--brown); }
+.footer__bottom { border-top-color: var(--line); }
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { scroll-behavior: auto !important; animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; transition-duration: 0.01ms !important; }
 }
 
 .footer__grid {
@@ -3281,6 +3296,18 @@ code {
   align-items: center;
   text-align: center;
 }
+
+/* White-first footer surfaces; declared last to override legacy footer rules. */
+.footer { background: #fff; color: var(--text); border-top: 1px solid var(--line); }
+.footer .footer__brand .brand__text strong,
+.footer .footer__heading { color: var(--brown-deep); }
+.footer .footer__brand .brand__text small,
+.footer .footer__desc,
+.footer .footer__list a,
+.footer .footer__bottom,
+.footer .footer__note { color: var(--muted); }
+.footer .footer__pill { background: var(--bg-soft); color: var(--brown); }
+.footer .footer__bottom { border-top-color: var(--line); }
 
 @media (min-width: 768px) {
   .footer__bottom-inner {

@@ -29,9 +29,9 @@ export function Navbar() {
       : [
           { href: '/', label: 'Home' },
           { href: '/products', label: 'Shop' },
-          { href: '/products?q=cake', label: 'Cakes & Baking' },
+          { href: '/products?q=cake', label: 'Celebration Cakes' },
           { href: '/catering', label: 'Catering' },
-          { href: '/newsletter', label: 'Newsletter' },
+          { href: '/about', label: 'Our Story' },
         ]),
   ];
 
