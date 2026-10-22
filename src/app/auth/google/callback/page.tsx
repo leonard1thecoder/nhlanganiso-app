@@ -66,8 +66,9 @@ function GoogleCallback() {
   }, [code, oauthError, next, completeGoogleSignIn, router]);
 
   return (
-    <section className="container section">
-      <div className="auth-card card center">
+    <section className="container section auth-page-container">
+      <div className="auth-box card center">
+        <p className="eyebrow"><span className="rule" aria-hidden="true" />Secure sign-in</p>
         <h1>Signing you in</h1>
         <p className="muted" role="status">
           Completing your Google sign-in…

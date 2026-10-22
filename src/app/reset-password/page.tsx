@@ -18,8 +18,8 @@ function ResetForm() {
 
   if (!token) {
     return (
-      <section className="container section">
-        <div className="auth-card card center">
+      <section className="container section auth-page-container">
+        <div className="auth-box card center">
           <h1>Invalid reset link</h1>
           <p className="muted">This link is incomplete. Request a new one.</p>
           <Link href="/forgot-password" className="btn btn-primary">Request a new link</Link>
@@ -45,10 +45,13 @@ function ResetForm() {
   };
 
   return (
-    <section className="container section">
-      <div className="auth-card card">
-        <p className="eyebrow">Account</p>
-        <h1>Choose a new password</h1>
+    <section className="container section auth-page-container">
+      <div className="auth-box card">
+        <div className="auth-head">
+          <p className="eyebrow"><span className="rule" aria-hidden="true" />Account security</p>
+          <h1 className="auth-title">Choose a new password</h1>
+          <p className="muted small">Use a password you haven&apos;t used for this account before.</p>
+        </div>
 
         {done ? (
           <>
@@ -60,7 +63,7 @@ function ResetForm() {
         ) : (
           <>
             {error ? <Notice tone="error">{error}</Notice> : null}
-            <form className="form-stack" onSubmit={onSubmit} noValidate>
+            <form className="form-stack auth-form" onSubmit={onSubmit} noValidate>
               <Field id="password" label="New password" required hint="At least 8 characters.">
                 <TextInput id="password" type="password" autoComplete="new-password" value={password} onChange={(e) => setPassword(e.target.value)} />
               </Field>

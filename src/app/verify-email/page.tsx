@@ -34,8 +34,9 @@ function VerifyView() {
   }, [token]);
 
   return (
-    <section className="container section">
-      <div className="auth-card card center">
+    <section className="container section auth-page-container">
+      <div className="auth-box card center">
+        <p className="eyebrow"><span className="rule" aria-hidden="true" />Email verification</p>
         {state === 'checking' ? <p className="muted" role="status">Verifying your email…</p> : null}
 
         {state === 'ok' ? (

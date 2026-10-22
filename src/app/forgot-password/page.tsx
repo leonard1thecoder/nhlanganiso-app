@@ -29,10 +29,13 @@ export default function ForgotPasswordPage() {
   };
 
   return (
-    <section className="container section">
-      <div className="auth-card card">
-        <p className="eyebrow">Account</p>
-        <h1>Reset your password</h1>
+    <section className="container section auth-page-container">
+      <div className="auth-box card">
+        <div className="auth-head">
+          <p className="eyebrow"><span className="rule" aria-hidden="true" />Account security</p>
+          <h1 className="auth-title">Reset your password</h1>
+          <p className="muted small">We&apos;ll email you a secure link to choose a new password.</p>
+        </div>
 
         {sent ? (
           <Notice tone="success" title="Check your email">
@@ -42,7 +45,7 @@ export default function ForgotPasswordPage() {
           <>
             <p className="muted">Enter the email you registered with and we will send you a reset link.</p>
             {error ? <Notice tone="error">{error}</Notice> : null}
-            <form className="form-stack" onSubmit={onSubmit} noValidate>
+            <form className="form-stack auth-form" onSubmit={onSubmit} noValidate>
               <Field id="email" label="Email" required>
                 <TextInput id="email" type="email" autoComplete="email" value={email} onChange={(e) => setEmail(e.target.value)} />
               </Field>
