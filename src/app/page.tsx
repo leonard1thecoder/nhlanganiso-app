@@ -12,8 +12,41 @@ import type { Category, Product } from '@/lib/types';
 const CAKE_CATEGORY_RE = /cake|birthday|muffin|cupcake|wedding|celebration/i;
 const DESSERT_CATEGORY_RE = /dessert|pastry|pastries|tart|pudding|brownie|cookie|macaron/i;
 
+async function loadCollectionProducts(categories: Category[], pattern: RegExp, fallbackSearch: string) {
+  const matchingCategories = categories.filter((category) => pattern.test(category.name));
+  const productGroups = matchingCategories.length > 0
+    ? await Promise.all(
+        matchingCategories.map(async (category) => {
+          try {
+            const result = await productService.list({ search: category.name, per_page: 4 });
+            return result.data;
+          } catch {
+            return [];
+          }
+        }),
+      )
+    : [
+        await productService
+          .list({ search: fallbackSearch, per_page: 8 })
+          .then((result) => result.data)
+          .catch(() => []),
+      ];
+
+  const uniqueProducts = new Map<string, Product>();
+  for (const product of productGroups.flat()) uniqueProducts.set(product.id, product);
+  const products = [...uniqueProducts.values()];
+  if (products.length > 0 || matchingCategories.length === 0) return products.slice(0, 4);
+
+  return productService
+    .list({ search: fallbackSearch, per_page: 4 })
+    .then((result) => result.data)
+    .catch(() => []);
+}
+
 export default function HomePage() {
   const [featured, setFeatured] = useState<Product[] | null>(null);
+  const [cakes, setCakes] = useState<Product[] | null>(null);
+  const [desserts, setDesserts] = useState<Product[] | null>(null);
   const [categories, setCategories] = useState<Category[] | null>(null);
   const [error, setError] = useState<string | null>(null);
 
@@ -25,8 +58,30 @@ export default function HomePage() {
       .catch((err) => !cancelled && setError(describeError(err)));
     categoryService
       .list()
-      .then((cats) => !cancelled && setCategories(cats))
-      .catch(() => !cancelled && setCategories([]));
+      .then((cats) => {
+        if (cancelled) return;
+        setCategories(cats);
+        return Promise.all([
+          loadCollectionProducts(cats, CAKE_CATEGORY_RE, 'cake'),
+          loadCollectionProducts(cats, DESSERT_CATEGORY_RE, 'dessert'),
+        ]).then(([cakeProducts, dessertProducts]) => {
+          if (cancelled) return;
+          setCakes(cakeProducts);
+          setDesserts(dessertProducts);
+        });
+      })
+      .catch(() => {
+        if (cancelled) return;
+        setCategories([]);
+        void Promise.all([
+          loadCollectionProducts([], CAKE_CATEGORY_RE, 'cake'),
+          loadCollectionProducts([], DESSERT_CATEGORY_RE, 'dessert'),
+        ]).then(([cakeProducts, dessertProducts]) => {
+          if (cancelled) return;
+          setCakes(cakeProducts);
+          setDesserts(dessertProducts);
+        });
+      });
     return () => {
       cancelled = true;
     };
@@ -169,6 +224,62 @@ export default function HomePage() {
               ))}
             </div>
           ) : null}
+        </div>
+      </section>
+
+      {/* Cakes */}
+      <section className="section section--tint">
+        <div className="container">
+          <div className="section__head">
+            <div>
+              <p className="eyebrow"><span className="rule" aria-hidden="true" />Made for celebrating</p>
+              <h2>Cakes</h2>
+            </div>
+            <Link href="/cakes" className="link-arrow">
+              Explore all cakes <span aria-hidden="true">&rarr;</span>
+            </Link>
+          </div>
+          {cakes === null ? (
+            <div className="grid-products" aria-busy="true">
+              {Array.from({ length: 4 }).map((_, i) => (
+                <div key={i} className="product-card product-card--skeleton" />
+              ))}
+            </div>
+          ) : cakes.length > 0 ? (
+            <div className="grid-products">
+              {cakes.map((product) => <ProductCard key={product.id} product={product} />)}
+            </div>
+          ) : (
+            <p className="muted">Our cake collection is being freshly prepared. Contact us for a custom celebration cake.</p>
+          )}
+        </div>
+      </section>
+
+      {/* Desserts */}
+      <section className="section">
+        <div className="container">
+          <div className="section__head">
+            <div>
+              <p className="eyebrow"><span className="rule" aria-hidden="true" />A little something sweet</p>
+              <h2>Desserts</h2>
+            </div>
+            <Link href="/dessert" className="link-arrow">
+              Explore all desserts <span aria-hidden="true">&rarr;</span>
+            </Link>
+          </div>
+          {desserts === null ? (
+            <div className="grid-products" aria-busy="true">
+              {Array.from({ length: 4 }).map((_, i) => (
+                <div key={i} className="product-card product-card--skeleton" />
+              ))}
+            </div>
+          ) : desserts.length > 0 ? (
+            <div className="grid-products">
+              {desserts.map((product) => <ProductCard key={product.id} product={product} />)}
+            </div>
+          ) : (
+            <p className="muted">Our dessert selection is being freshly prepared. Browse the bakery for today&apos;s treats.</p>
+          )}
         </div>
       </section>
 
