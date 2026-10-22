@@ -35,9 +35,14 @@ function AdminProducts() {
           <h1>Products</h1>
           <p className="muted small">{products ? `${products.length} products` : 'Loading…'}</p>
         </div>
-        <Link href="/admin/products/new" className="btn btn-primary">
-          New product
-        </Link>
+        <div className="admin-products-actions">
+          <Link href="/admin/categories" className="btn btn-outline">
+            View categories
+          </Link>
+          <Link href="/admin/products/new" className="btn btn-primary">
+            New product
+          </Link>
+        </div>
       </header>
 
       {error ? <Notice tone="error">{error}</Notice> : null}

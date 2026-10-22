@@ -312,6 +312,13 @@ code {
   margin-bottom: 28px;
 }
 
+.admin-products-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
 .page-loading {
   padding: 80px 20px;
   text-align: center;

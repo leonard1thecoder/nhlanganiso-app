@@ -6,7 +6,6 @@ import { cn } from '@/lib/format';
 
 const ITEMS = [
   { href: '/admin/products', label: 'Products', icon: 'products' },
-  { href: '/admin/categories', label: 'Categories', icon: 'categories' },
   { href: '/admin/orders', label: 'Orders', icon: 'orders' },
   { href: '/admin/catering', label: 'Enquiries', icon: 'enquiries' },
   { href: '/admin/refunds', label: 'Refunds', icon: 'refunds' },
@@ -29,9 +28,6 @@ function AdminNavIcon({ name }: { name: string }) {
 
   if (name === 'products') {
     return <svg {...common}><path d="M4 8h16l-1.5 12h-13z" /><path d="M8 8a4 4 0 0 1 8 0" /><path d="M9 12v2M15 12v2" /></svg>;
-  }
-  if (name === 'categories') {
-    return <svg {...common}><path d="M4 4h7v7H4zM13 4h7v7h-7zM4 13h7v7H4zM13 13h7v7h-7z" /></svg>;
   }
   if (name === 'orders') {
     return <svg {...common}><path d="M6 3h12v18H6z" /><path d="M9 8h6M9 12h6M9 16h4" /></svg>;
