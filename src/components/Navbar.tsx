@@ -21,7 +21,7 @@ function CakeIcon() {
 }
 
 export function Navbar() {
-  const { status, user, isAdmin } = useAuth();
+  const { status, user, isAdmin, logout } = useAuth();
   const { count, ready } = useCart();
   const pathname = usePathname();
   const [notificationCount, setNotificationCount] = useState(0);
@@ -85,7 +85,7 @@ export function Navbar() {
   }, [isAdmin, status]);
 
   return (
-    <header className="navbar">
+    <header className={cn('navbar', isAdmin && 'navbar--admin-user')}>
       <div className="container navbar__inner">
         <Link href="/" className="brand" aria-label="Nhlanganiso Catering & Baking Home">
           <Image src="/brand/mark.png" alt="" width={44} height={44} priority className="brand__mark" />
@@ -162,6 +162,20 @@ export function Navbar() {
           {status === 'authenticated' ? (
             <Link
               href={isAdmin ? '/admin/orders' : '/orders'}
+              className="navbar__action-btn"
+              aria-label={isAdmin ? 'Manage orders' : 'My orders'}
+              title={isAdmin ? 'Manage orders' : 'My orders'}
+            >
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                <path d="M4 2v20l2-1 2 1 2-1 2 1 2-1 2 1 2-1 2 1V2l-2 1-2-1-2 1-2-1-2 1-2-1-2 1Z" />
+                <path d="M8 7h8M8 11h8M8 15h5" />
+              </svg>
+            </Link>
+          ) : null}
+
+          {status === 'authenticated' ? (
+            <Link
+              href={isAdmin ? '/admin/orders' : '/orders'}
               className="navbar__action-btn navbar__notification-btn"
               aria-label={notificationCount > 0 ? `Notifications, ${notificationCount} orders need attention` : 'Notifications'}
               title="Notifications"
@@ -202,6 +216,21 @@ export function Navbar() {
               </svg>
               {ready && count > 0 && <span className="cart-badge">{count}</span>}
             </Link>
+          ) : null}
+
+          {status === 'authenticated' ? (
+            <button
+              type="button"
+              className="navbar__action-btn navbar__logout-btn"
+              aria-label="Sign out"
+              title="Sign out"
+              onClick={() => void logout()}
+            >
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                <path d="M12 2v10" />
+                <path d="M18.36 6.64a9 9 0 1 1-12.73 0" />
+              </svg>
+            </button>
           ) : null}
 
         </div>
