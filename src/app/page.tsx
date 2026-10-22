@@ -9,6 +9,9 @@ import { describeError } from '@/lib/api';
 import { categoryService, productService } from '@/lib/services';
 import type { Category, Product } from '@/lib/types';
 
+const CAKE_CATEGORY_RE = /cake|birthday|muffin|cupcake|wedding|celebration/i;
+const DESSERT_CATEGORY_RE = /dessert|pastry|pastries|tart|pudding|brownie|cookie|macaron/i;
+
 export default function HomePage() {
   const [featured, setFeatured] = useState<Product[] | null>(null);
   const [categories, setCategories] = useState<Category[] | null>(null);
@@ -110,7 +113,7 @@ export default function HomePage() {
               {categories.map((c) => (
                 <Link
                   key={c.id}
-                  href={`/products?q=${encodeURIComponent(c.name)}`}
+                  href={`${CAKE_CATEGORY_RE.test(c.name) ? '/cakes' : DESSERT_CATEGORY_RE.test(c.name) ? '/dessert' : '/products'}?q=${encodeURIComponent(c.name)}`}
                   className="category-card"
                 >
                   <div className="category-card__visual">

@@ -30,8 +30,8 @@ export function Footer() {
           <h4 className="footer__heading">Shop &amp; Menu</h4>
           <ul className="footer__list">
             <li><Link href="/products">All Baked Goods</Link></li>
-            <li><Link href="/products?q=cake">Celebration Cakes</Link></li>
-            <li><Link href="/products?q=pastry">Pastries &amp; Savoury</Link></li>
+            <li><Link href="/cakes">Celebration Cakes</Link></li>
+            <li><Link href="/dessert?q=pastry">Pastries &amp; Savoury</Link></li>
             <li><Link href="/contact">Contact &amp; Catering</Link></li>
             <li><Link href="/about">Our Story</Link></li>
             <li><Link href="/cart">Shopping Bag</Link></li>

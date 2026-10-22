@@ -4,7 +4,6 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useState } from 'react';
-import { useSearchParams } from 'next/navigation';
 import { useAuth } from '@/context/AuthContext';
 import { useCart } from '@/context/CartContext';
 import { cn } from '@/lib/format';
@@ -24,7 +23,6 @@ export function Navbar() {
   const { status, user, isAdmin, logout } = useAuth();
   const { count, ready } = useCart();
   const pathname = usePathname();
-  const searchParams = useSearchParams();
   const [open, setOpen] = useState(false);
 
   // Back-office screens get a focused header: no shopfront links.
@@ -41,20 +39,16 @@ export function Navbar() {
         ]
       : [
           { href: '/', label: 'Home' },
-          { href: '/products?q=cake', label: 'Cakes' },
-          { href: '/products?q=dessert', label: 'Desserts' },
+          { href: '/cakes', label: 'Cakes' },
+          { href: '/dessert', label: 'Desserts' },
           { href: '/contact', label: 'Contact' },
           { href: '/about', label: 'Our Story' },
         ]),
   ];
 
   const isActive = (href: string) => {
-    const [path, query] = href.split('?');
-    if (path === '/') return pathname === '/';
-    const pathMatches = pathname === path || pathname.startsWith(`${path}/`);
-    if (!pathMatches) return false;
-    if (!query) return true;
-    return Array.from(new URLSearchParams(query).entries()).every(([key, value]) => searchParams.get(key) === value);
+    if (href === '/') return pathname === '/';
+    return pathname === href || pathname.startsWith(`${href}/`);
   };
 
   return (
