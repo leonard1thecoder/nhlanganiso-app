@@ -1,4 +1,5 @@
 import type { Metadata, Viewport } from 'next';
+import { Suspense } from 'react';
 import './globals.css';
 import { FooterGate } from '@/components/FooterGate';
 import { Navbar } from '@/components/Navbar';
@@ -40,7 +41,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             Skip to content
           </a>
           <AnnouncementBanner />
-          <Navbar />
+          <Suspense fallback={<div className="navbar" aria-hidden="true"><div className="container navbar__inner" /></div>}>
+            <Navbar />
+          </Suspense>
           <main id="main" className="site-main">
             {children}
           </main>

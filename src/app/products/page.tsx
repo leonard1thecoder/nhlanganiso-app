@@ -11,6 +11,7 @@ import type { Category, PageMeta, Product } from '@/lib/types';
 
 const PER_PAGE = 12;
 const CAKE_CATEGORY_RE = /cake|birthday|muffin|cupcake|wedding|celebration/i;
+const DESSERT_CATEGORY_RE = /dessert|pastry|pastries|tart|pudding|brownie|cookie|macaron|cupcake|muffin/i;
 
 interface ProductSection {
   category: Category;
@@ -26,12 +27,17 @@ function ProductsView() {
   const [input, setInput] = useState(q);
   const [products, setProducts] = useState<Product[] | null>(null);
   const [categories, setCategories] = useState<Category[] | null>(null);
-  const [cakeSections, setCakeSections] = useState<ProductSection[] | null>(null);
+  const [collectionSections, setCollectionSections] = useState<ProductSection[] | null>(null);
   const [meta, setMeta] = useState<PageMeta | null>(null);
   const [error, setError] = useState<string | null>(null);
   const isCakeBrowse = q.trim().toLowerCase() === 'cake';
-  const cakeCategories = (categories ?? []).filter((category) => CAKE_CATEGORY_RE.test(category.name));
-  const visibleCategories = isCakeBrowse ? cakeCategories : categories ?? [];
+  const isDessertBrowse = q.trim().toLowerCase() === 'dessert';
+  const isCollectionBrowse = isCakeBrowse || isDessertBrowse;
+  const collectionPattern = isDessertBrowse ? DESSERT_CATEGORY_RE : CAKE_CATEGORY_RE;
+  const collectionLabel = isDessertBrowse ? 'Desserts' : 'Cakes';
+  const collectionNoun = isDessertBrowse ? 'dessert' : 'cake';
+  const collectionCategories = (categories ?? []).filter((category) => collectionPattern.test(category.name));
+  const visibleCategories = isCollectionBrowse ? collectionCategories : categories ?? [];
 
   useEffect(() => setInput(q), [q]);
 
@@ -47,21 +53,21 @@ function ProductsView() {
   }, []);
 
   useEffect(() => {
-    if (!isCakeBrowse || !categories) {
-      setCakeSections(null);
+    if (!isCollectionBrowse || !categories) {
+      setCollectionSections(null);
       return;
     }
 
     const matchingCategories = categories
-      .filter((category) => CAKE_CATEGORY_RE.test(category.name))
+      .filter((category) => collectionPattern.test(category.name))
       .sort((a, b) => a.name.localeCompare(b.name));
     if (matchingCategories.length === 0) {
-      setCakeSections([]);
+      setCollectionSections([]);
       return;
     }
 
     let cancelled = false;
-    setCakeSections(null);
+    setCollectionSections(null);
     Promise.all(
       matchingCategories.map(async (category) => {
         try {
@@ -74,7 +80,7 @@ function ProductsView() {
     ).then((sections) => {
       if (cancelled) return;
       const seen = new Set<string>();
-      setCakeSections(
+      setCollectionSections(
         sections
           .map((section) => ({
             ...section,
@@ -91,7 +97,7 @@ function ProductsView() {
     return () => {
       cancelled = true;
     };
-  }, [categories, isCakeBrowse]);
+  }, [categories, collectionPattern, isCollectionBrowse]);
 
   useEffect(() => {
     let cancelled = false;
@@ -132,11 +138,11 @@ function ProductsView() {
       {/* Editorial Header */}
       <header className="shop-header">
         <div className="shop-header__content">
-          <p className="eyebrow"><span className="rule" aria-hidden="true" />Cakes &amp; Collections</p>
-          <h1 className="shop-header__title">{isCakeBrowse ? 'Cakes made to share' : 'Fresh from the Bakery'}</h1>
+          <p className="eyebrow"><span className="rule" aria-hidden="true" />{isCollectionBrowse ? `${collectionLabel} & Collections` : 'The Bakery'}</p>
+          <h1 className="shop-header__title">{isCollectionBrowse ? `${collectionLabel} made to share` : 'Fresh from the Bakery'}</h1>
           <p className="shop-header__desc">
-            {isCakeBrowse
-              ? 'Browse the cakes available now, from celebration favourites to other bakery treats.'
+            {isCollectionBrowse
+              ? `Browse the ${collectionLabel.toLowerCase()} available now, grouped into collections when categories are available.`
               : 'Browse the current bakery collection, or search for something you have in mind.'}
           </p>
         </div>
@@ -153,7 +159,7 @@ function ProductsView() {
               id="product-search"
               className="shop-search__input"
               type="search"
-              placeholder={isCakeBrowse ? 'Search birthday cakes, muffins…' : 'Search baked goods…'}
+              placeholder={isCakeBrowse ? 'Search birthday cakes, muffins…' : isDessertBrowse ? 'Search tarts, brownies, pastries…' : 'Search baked goods…'}
               value={input}
               onChange={(e) => setInput(e.target.value)}
             />
@@ -171,25 +177,25 @@ function ProductsView() {
               </button>
             )}
           </div>
-          <button type="submit" className="btn btn-primary shop-search__btn">{isCakeBrowse ? 'Find Cakes' : 'Find Bakes'}</button>
+          <button type="submit" className="btn btn-primary shop-search__btn">{isCollectionBrowse ? `Find ${collectionLabel}` : 'Find Bakes'}</button>
         </form>
       </header>
 
       {/* Category Filter Pills (if categories available) */}
       {visibleCategories.length > 0 && (
         <div className="shop-filter-bar">
-          <div className="shop-filter-bar__label">{isCakeBrowse ? 'Cake collections:' : 'Categories:'}</div>
+          <div className="shop-filter-bar__label">{isCollectionBrowse ? `${collectionLabel} collections:` : 'Categories:'}</div>
           <div className="shop-filter-pills">
             <button
               type="button"
-              className={`shop-filter-pill ${isCakeBrowse || !q ? 'is-active' : ''}`}
+              className={`shop-filter-pill ${isCollectionBrowse || !q ? 'is-active' : ''}`}
               onClick={() => {
-                const nextQuery = isCakeBrowse ? 'cake' : '';
+                const nextQuery = isCollectionBrowse ? isDessertBrowse ? 'dessert' : 'cake' : '';
                 setInput(nextQuery);
                 go(nextQuery, 1);
               }}
             >
-              {isCakeBrowse ? 'All Cakes' : 'All Items'}
+              {isCollectionBrowse ? `All ${collectionLabel}` : 'All Items'}
             </button>
             {visibleCategories.map((c) => {
               const active = q.toLowerCase() === c.name.toLowerCase();
@@ -251,7 +257,7 @@ function ProductsView() {
       {products && products.length === 0 ? (
         <div className="empty-catalog-state card">
           <div className="empty-catalog-icon" aria-hidden="true">🥖</div>
-          <h2>{isCakeBrowse ? 'No cakes match this query' : 'No baked goods match this query'}</h2>
+          <h2>{isCollectionBrowse ? `No ${collectionLabel.toLowerCase()} match this query` : 'No baked goods match this query'}</h2>
           <p className="muted">
             We couldn&apos;t find any items matching &ldquo;{q}&rdquo;. Try another term or browse our complete collection.
           </p>
@@ -267,20 +273,20 @@ function ProductsView() {
               View Full Collection
             </button>
             <Link href="/contact" className="btn btn-outline">
-              Contact us about a custom cake
+              Contact us about a custom order
             </Link>
           </div>
         </div>
       ) : null}
 
       {products && products.length > 0 ? (
-        isCakeBrowse && cakeSections && cakeSections.length > 0 ? (
+        isCollectionBrowse && collectionSections && collectionSections.length > 0 ? (
           <div className="cake-collections">
-            {cakeSections.map(({ category, products: sectionProducts }) => (
+            {collectionSections.map(({ category, products: sectionProducts }) => (
               <section className="cake-collection" key={category.id} aria-labelledby={`cake-collection-${category.id}`}>
                 <div className="cake-collection__head">
                   <div>
-                    <p className="eyebrow"><span className="rule" aria-hidden="true" />From the cake collection</p>
+                    <p className="eyebrow"><span className="rule" aria-hidden="true" />From the {collectionNoun} collection</p>
                     <h2 id={`cake-collection-${category.id}`}>{category.name}</h2>
                   </div>
                   <button type="button" className="link-arrow cake-collection__link" onClick={() => { setInput(category.name); go(category.name, 1); }}>
@@ -292,11 +298,11 @@ function ProductsView() {
                 </div>
               </section>
             ))}
-            {products.some((product) => !cakeSections.some((section) => section.products.some((item) => item.id === product.id))) ? (
-              <section className="cake-collection" aria-labelledby="more-cakes-heading">
-                <div className="cake-collection__head"><h2 id="more-cakes-heading">More cakes</h2></div>
+            {products.some((product) => !collectionSections.some((section) => section.products.some((item) => item.id === product.id))) ? (
+              <section className="cake-collection" aria-labelledby="more-collection-heading">
+                <div className="cake-collection__head"><h2 id="more-collection-heading">More {collectionLabel.toLowerCase()}</h2></div>
                 <div className="grid-products">
-                  {products.filter((product) => !cakeSections.some((section) => section.products.some((item) => item.id === product.id))).map((product) => <ProductCard key={product.id} product={product} />)}
+                  {products.filter((product) => !collectionSections.some((section) => section.products.some((item) => item.id === product.id))).map((product) => <ProductCard key={product.id} product={product} />)}
                 </div>
               </section>
             ) : null}
