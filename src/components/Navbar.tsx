@@ -3,9 +3,11 @@
 import Image from 'next/image';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
+import { useEffect, useState } from 'react';
 import { useAuth } from '@/context/AuthContext';
 import { useCart } from '@/context/CartContext';
 import { cn } from '@/lib/format';
+import { adminService, orderService } from '@/lib/services';
 
 function CakeIcon() {
   return (
@@ -22,6 +24,7 @@ export function Navbar() {
   const { status, user, isAdmin } = useAuth();
   const { count, ready } = useCart();
   const pathname = usePathname();
+  const [notificationCount, setNotificationCount] = useState(0);
 
   // Back-office screens get a focused header: no shopfront links.
   const isAdminArea = pathname === '/admin' || pathname.startsWith('/admin/');
@@ -48,6 +51,38 @@ export function Navbar() {
     if (href === '/') return pathname === '/';
     return pathname === href || pathname.startsWith(`${href}/`);
   };
+
+  useEffect(() => {
+    if (status !== 'authenticated') {
+      setNotificationCount(0);
+      return;
+    }
+
+    let active = true;
+    const refreshNotifications = async () => {
+      try {
+        const actionableCount = isAdmin
+          ? (await adminService.orders()).filter((order) =>
+              order.payment_status === 'pending' ||
+              ((order.payment_status === 'paid' || order.payment_status === 'partially_refunded') &&
+                order.fulfilment_status === 'new'),
+            ).length
+          : (await orderService.mine()).filter((order) => order.payment_status === 'pending').length;
+
+        if (active) setNotificationCount(actionableCount);
+      } catch {
+        if (active) setNotificationCount(0);
+      }
+    };
+
+    void refreshNotifications();
+    const interval = window.setInterval(() => void refreshNotifications(), 60_000);
+
+    return () => {
+      active = false;
+      window.clearInterval(interval);
+    };
+  }, [isAdmin, status]);
 
   return (
     <header className="navbar">
@@ -124,19 +159,22 @@ export function Navbar() {
             </Link>
           ) : null}
 
-          {status === 'authenticated' && !isAdminArea ? (
+          {status === 'authenticated' ? (
             <Link
-              href="/orders"
-              className="navbar__action-btn"
-              aria-label="My orders"
-              title="My orders"
+              href={isAdmin ? '/admin/orders' : '/orders'}
+              className="navbar__action-btn navbar__notification-btn"
+              aria-label={notificationCount > 0 ? `Notifications, ${notificationCount} orders need attention` : 'Notifications'}
+              title="Notifications"
             >
               <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-                <path d="M4 2v20l2-1 2 1 2-1 2 1 2-1 2 1 2-1 2 1V2l-2 1-2-1-2 1-2-1-2 1-2-1-2 1Z" />
-                <path d="M8 7h8" />
-                <path d="M8 11h8" />
-                <path d="M8 15h5" />
+                <path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9" />
+                <path d="M10 21h4" />
               </svg>
+              {notificationCount > 0 ? (
+                <span className="navbar__notification-badge" aria-hidden="true">
+                  {notificationCount > 9 ? '9+' : notificationCount}
+                </span>
+              ) : null}
             </Link>
           ) : null}
 

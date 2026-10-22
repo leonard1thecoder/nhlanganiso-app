@@ -2139,6 +2139,24 @@ code {
   padding: 0 4px;
 }
 
+.navbar__notification-badge {
+  position: absolute;
+  top: -3px;
+  right: -4px;
+  display: grid;
+  min-width: 17px;
+  height: 17px;
+  place-items: center;
+  padding: 0 3px;
+  border: 2px solid #fff;
+  border-radius: 999px;
+  background: var(--pink-deep);
+  color: #fff;
+  font-size: 0.58rem;
+  font-weight: 800;
+  line-height: 1;
+}
+
 /* Hero Section Editorial Enhancements */
 .hero {
   padding: 2.75rem 0 3.5rem;
@@ -3848,9 +3866,6 @@ body {
     font-size: 0.68rem;
   }
 
-  .navbar__actions a[aria-label="My orders"] {
-    display: none;
-  }
 }
 
 .mobile-footer-nav {
