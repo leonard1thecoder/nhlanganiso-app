@@ -42,6 +42,7 @@ export function Footer() {
           <h4 className="footer__heading">Customer Care</h4>
           <ul className="footer__list">
             <li><Link href="/contact">Contact &amp; Event Enquiries</Link></li>
+            <li><Link href="/faq">Frequently Asked Questions</Link></li>
             <li><Link href="/orders">Track My Order</Link></li>
             <li><Link href="/account">My Account</Link></li>
             <li><Link href="/newsletter">Newsletter</Link></li>

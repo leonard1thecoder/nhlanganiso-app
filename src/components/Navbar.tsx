@@ -79,18 +79,19 @@ export function Navbar() {
           </ul>
         </nav>
 
-        {/* Right actions: Search, Account, Orders, Cart, Admin */}
+        {/* Right actions: FAQ, Account, Orders, Cart, Admin */}
         <div className="navbar__actions">
           {!isAdminArea ? (
             <Link
-              href="/products"
+              href="/faq"
               className="navbar__action-btn"
-              aria-label="Search baked goods"
-              title="Search"
+              aria-label="Frequently asked questions"
+              title="FAQ"
             >
               <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-                <circle cx="11" cy="11" r="8" />
-                <line x1="21" y1="21" x2="16.65" y2="16.65" />
+                <circle cx="12" cy="12" r="9" />
+                <path d="M9.7 9a2.4 2.4 0 1 1 4.4 1.3c-.8.6-1.7 1.1-1.7 2.5" />
+                <path d="M12.4 16.5h.01" />
               </svg>
             </Link>
           ) : null}
