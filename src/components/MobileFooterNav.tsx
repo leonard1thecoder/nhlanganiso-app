@@ -2,6 +2,7 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
+import { useAuth } from '@/context/AuthContext';
 import { cn } from '@/lib/format';
 
 function NavIcon({ href }: { href: string }) {
@@ -72,7 +73,10 @@ function NavIcon({ href }: { href: string }) {
 
 export function MobileFooterNav() {
   const pathname = usePathname();
-  const isAdminArea = pathname === '/admin' || pathname.startsWith('/admin/');
+  const { isAdmin, status } = useAuth();
+  const isAdminArea = pathname === '/admin'
+    || pathname.startsWith('/admin/')
+    || (pathname === '/account' && (isAdmin || status === 'loading'));
   const links = isAdminArea
     ? [
         { href: '/admin', label: 'Dashboard' },

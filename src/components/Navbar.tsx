@@ -26,8 +26,12 @@ export function Navbar() {
   const pathname = usePathname();
   const [notificationCount, setNotificationCount] = useState(0);
 
-  // Back-office screens get a focused header: no shopfront links.
-  const isAdminArea = pathname === '/admin' || pathname.startsWith('/admin/');
+  // Back-office screens and an admin's account page stay in the admin context.
+  // Treat a loading account page as admin context until the restored session is known
+  // so the shopfront links do not flash before the role is loaded.
+  const isAdminArea = pathname === '/admin'
+    || pathname.startsWith('/admin/')
+    || (pathname === '/account' && (isAdmin || status === 'loading'));
 
   const navLinks = [
     { href: '/', label: 'Home' },
