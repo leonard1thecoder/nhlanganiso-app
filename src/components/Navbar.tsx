@@ -81,7 +81,11 @@ export function Navbar() {
   return (
     <header className={cn('navbar', isAdmin && 'navbar--admin-user')}>
       <div className="container navbar__inner">
-        <Link href="/" className="brand" aria-label="Nhlanganiso Catering & Baking Home">
+        <Link
+          href={isAdminArea ? '/admin' : '/'}
+          className="brand"
+          aria-label={isAdminArea ? 'Admin dashboard' : 'Nhlanganiso Catering & Baking Home'}
+        >
           <Image src="/brand/mark.png" alt="" width={44} height={44} priority className="brand__mark" />
           <span className="brand__text">
             <strong>Nhlanganiso</strong>
