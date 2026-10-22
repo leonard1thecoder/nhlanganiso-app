@@ -160,7 +160,7 @@ export default function ProductDetailPage() {
           {outOfStock ? (
             <div className="product-detail__oos-box card">
               <p className="muted">This item is currently sold out for the day. Please check back tomorrow morning!</p>
-              <Link href="/catering" className="btn btn-outline btn-block">Enquire for Custom Catering</Link>
+              <Link href="/contact" className="btn btn-outline btn-block">Ask us about catering</Link>
             </div>
           ) : (
             <div className="product-detail__actions card">

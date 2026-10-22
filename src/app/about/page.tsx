@@ -25,7 +25,7 @@ export default function AboutPage() {
           <p>Use the shop to browse current products and prices. For a tailored event menu, send an enquiry with your date, guest numbers and requirements.</p>
           <div className="cta-row">
             <Link href="/products" className="btn btn-primary">Browse baked goods</Link>
-            <Link href="/catering" className="btn btn-outline">Enquire about catering</Link>
+            <Link href="/contact" className="btn btn-outline">Enquire about catering</Link>
           </div>
         </article>
         <aside className="card">

@@ -8,6 +8,9 @@ const upstream = (
 const nextConfig = {
   reactStrictMode: true,
   poweredByHeader: false,
+  async redirects() {
+    return [{ source: '/catering', destination: '/contact', permanent: true }];
+  },
   // Same-origin proxy for the API so the browser never hits CORS:
   // the app calls /api/v1/* on its own origin, Next rewrites it to the
   // Rust API. Set API_UPSTREAM (server-only) or NEXT_PUBLIC_API_URL to the

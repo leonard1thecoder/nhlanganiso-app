@@ -73,16 +73,16 @@ export default function CateringPage() {
       <section className="container section center catering-success-section">
         <div className="empty-cart-icon">🥂</div>
         <p className="eyebrow"><span className="rule" aria-hidden="true" />Enquiry Received</p>
-        <h1 className="success-heading">Thank You — We&apos;re Crafting Your Feast</h1>
+        <h1 className="success-heading">Thanks for getting in touch</h1>
         <p className="muted success-desc">
-          We have safely received your catering specifications. Our head culinary team will review your menu requirements and follow up with a tailored quote.
+          Your enquiry has been received. We&apos;ll review your message and follow up using the email address you provided.
         </p>
         <div className="cta-row center">
           <button type="button" className="btn btn-outline" onClick={() => setSent(false)}>
             Send Another Enquiry
           </button>
           <Link href="/products" className="btn btn-primary">
-            Explore Everyday Bakery Shop
+            Browse the bakery
           </Link>
         </div>
       </section>
@@ -93,10 +93,10 @@ export default function CateringPage() {
     <section className="container section catering-page-section">
       <div className="catering-hero-card">
         <div className="catering-hero-content">
-          <p className="eyebrow"><span className="rule" aria-hidden="true" />Bespoke Food Design</p>
-          <h1 className="catering-title">Exceptional Catering for Every Celebration</h1>
+          <p className="eyebrow"><span className="rule" aria-hidden="true" />Contact Nhlanganiso</p>
+          <h1 className="catering-title">Let&apos;s plan something worth sharing</h1>
           <p className="catering-lead">
-            From intimate gatherings and corporate banquets to unforgettable weddings — we create bespoke dessert tables, savoury platter spreads, and artisanal banquets tailored to your taste.
+            Ask us about celebration cakes, catering for your event, or anything else we can help with. Share a few details and we&apos;ll get back to you.
           </p>
         </div>
       </div>
@@ -105,8 +105,8 @@ export default function CateringPage() {
         <div className="catering-form-wrap">
           <form className="catering-form card" onSubmit={onSubmit} noValidate>
             <div className="form-head">
-              <h2>Request a Tailored Quote</h2>
-              <p className="muted small">Tell us about your event, expected guest count, and date. We will send a formal quote.</p>
+              <h2>Send us a message</h2>
+              <p className="muted small">For event enquiries, include your date, guest numbers and any menu ideas.</p>
             </div>
 
             {serverError && <Notice tone="error">{serverError}</Notice>}
@@ -138,7 +138,7 @@ export default function CateringPage() {
 
             <Field
               id="cat-subject"
-              label="Event Type &amp; Occasion"
+              label="Subject or event type"
               required
               hint="e.g. Wedding banquet, 50th Birthday dessert bar, Corporate breakfast platter"
               error={errors.subject}
@@ -154,7 +154,7 @@ export default function CateringPage() {
 
             <Field
               id="cat-message"
-              label="Menu Requirements &amp; Details"
+              label="Your message"
               required
               hint="Include estimated guest count, target date, dietary requests, or specific treats you love."
               error={errors.message}
@@ -174,14 +174,14 @@ export default function CateringPage() {
               className="btn btn-primary btn-lg btn-block"
               disabled={submitting}
             >
-              {submitting ? 'Sending Request…' : 'Submit Catering Enquiry →'}
+              {submitting ? 'Sending message…' : 'Send enquiry →'}
             </button>
           </form>
         </div>
 
         <aside className="catering-info-sidebar">
           <div className="catering-features-card card">
-            <h3 className="sidebar-title">What We Offer</h3>
+            <h3 className="sidebar-title">How can we help?</h3>
             <ul className="catering-services-list">
               <li>
                 <strong>Celebration &amp; Wedding Cakes</strong>
@@ -202,7 +202,7 @@ export default function CateringPage() {
             </ul>
 
             <div className="catering-contact-direct">
-              <h4>Prefer to contact directly?</h4>
+              <h4>Contact details</h4>
               {HAS_REAL_CONTACT_EMAIL && (
                 <p className="contact-row">
                   <span>Email:</span> <a href={`mailto:${CONTACT.email}`}>{CONTACT.email}</a>

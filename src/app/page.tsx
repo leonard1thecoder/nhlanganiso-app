@@ -51,8 +51,8 @@ export default function HomePage() {
                 Shop Baked Goods
                 <span className="btn-arrow" aria-hidden="true">→</span>
               </Link>
-              <Link href="/catering" className="btn btn-outline btn-lg">
-                Explore Catering
+              <Link href="/contact" className="btn btn-outline btn-lg">
+                Contact &amp; Catering
               </Link>
             </div>
             <div className="hero__trust-strip">
@@ -155,7 +155,7 @@ export default function HomePage() {
           {featured && featured.length === 0 ? (
             <div className="empty-catalog-state">
               <p className="muted">Our shelves are currently being freshly restocked. Please check back shortly!</p>
-              <Link href="/catering" className="btn btn-outline">Enquire about Custom Bakes</Link>
+              <Link href="/contact" className="btn btn-outline">Enquire about Custom Bakes</Link>
             </div>
           ) : null}
 
@@ -233,8 +233,8 @@ export default function HomePage() {
                 From intimate dinner celebrations and corporate functions to lavish wedding banquets, Nhlanganiso delivers curated catering platters and dessert bars crafted to impress your guests.
               </p>
               <div className="cta-row">
-                <Link href="/catering" className="btn btn-secondary btn-lg">
-                  Request a Tailored Quote
+                <Link href="/contact" className="btn btn-secondary btn-lg">
+                  Contact us about your event
                 </Link>
                 <Link href="/products" className="btn btn-ghost btn-lg">
                   View Pastry Platters

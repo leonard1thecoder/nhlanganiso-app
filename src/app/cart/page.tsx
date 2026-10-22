@@ -84,7 +84,7 @@ export default function CartPage() {
         </p>
         <div className="cta-row center">
           <Link href="/products" className="btn btn-primary btn-lg">Explore Bakery Shop</Link>
-          <Link href="/catering" className="btn btn-outline btn-lg">Catering Enquiries</Link>
+          <Link href="/contact" className="btn btn-outline btn-lg">Contact &amp; Catering</Link>
         </div>
       </section>
     );

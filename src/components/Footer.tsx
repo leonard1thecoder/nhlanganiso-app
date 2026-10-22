@@ -32,7 +32,7 @@ export function Footer() {
             <li><Link href="/products">All Baked Goods</Link></li>
             <li><Link href="/products?q=cake">Celebration Cakes</Link></li>
             <li><Link href="/products?q=pastry">Pastries &amp; Savoury</Link></li>
-            <li><Link href="/catering">Catering Enquiries</Link></li>
+            <li><Link href="/contact">Contact &amp; Catering</Link></li>
             <li><Link href="/about">Our Story</Link></li>
             <li><Link href="/cart">Shopping Bag</Link></li>
           </ul>
@@ -41,7 +41,7 @@ export function Footer() {
         <div>
           <h4 className="footer__heading">Customer Care</h4>
           <ul className="footer__list">
-            <li><Link href="/catering">Contact &amp; Event Booking</Link></li>
+            <li><Link href="/contact">Contact &amp; Event Enquiries</Link></li>
             <li><Link href="/orders">Track My Order</Link></li>
             <li><Link href="/account">My Account</Link></li>
             <li><Link href="/newsletter">Newsletter</Link></li>

@@ -206,7 +206,7 @@ function ProductsView() {
             >
               View Full Collection
             </button>
-            <Link href="/catering" className="btn btn-outline">
+            <Link href="/contact" className="btn btn-outline">
               Request Custom Catering Order
             </Link>
           </div>

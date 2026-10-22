@@ -3565,3 +3565,55 @@ code {
   .auth-box, .auth-card { padding: 24px 20px; border-radius: 18px; }
   .auth-title { font-size: 1.8rem; }
 }
+
+/* Contact and catering enquiry page */
+.catering-page-section { max-width: 1120px; padding-top: 42px; padding-bottom: 72px; }
+.catering-hero-card {
+  position: relative;
+  overflow: hidden;
+  margin-bottom: 26px;
+  padding: clamp(30px, 6vw, 62px);
+  border: 1px solid var(--line);
+  border-radius: 26px;
+  background:
+    radial-gradient(circle at 86% 24%, rgba(201, 154, 67, 0.15), transparent 25%),
+    radial-gradient(circle at 78% 92%, rgba(135, 146, 122, 0.13), transparent 30%),
+    linear-gradient(135deg, #fff 0%, #faf7f2 100%);
+}
+.catering-hero-content { position: relative; z-index: 1; max-width: 700px; }
+.catering-title { max-width: 640px; margin: 8px 0 14px; font-size: clamp(2.25rem, 5.5vw, 4rem); line-height: 1.06; letter-spacing: -0.035em; }
+.catering-lead { max-width: 600px; margin: 0; color: var(--muted); font-size: clamp(1rem, 1.6vw, 1.15rem); }
+.catering-grid { display: grid; grid-template-columns: minmax(0, 1.25fr) minmax(280px, 0.75fr); gap: 24px; align-items: start; }
+.catering-form { display: flex; flex-direction: column; gap: 18px; padding: clamp(22px, 3vw, 34px); border: 1px solid var(--line); border-radius: 22px; background: #fff; box-shadow: 0 16px 42px rgba(57, 40, 31, 0.07); }
+.catering-form .form-head { margin-bottom: 2px; }
+.catering-form .form-head h2 { margin-bottom: 6px; font-size: 1.55rem; }
+.catering-form .form-head p { margin: 0; }
+.catering-form .field { margin: 0; }
+.field-grid-2 { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; }
+.catering-info-sidebar { position: sticky; top: 100px; }
+.catering-features-card { padding: clamp(22px, 3vw, 30px); border: 1px solid var(--line); border-radius: 22px; background: #fff; box-shadow: 0 10px 30px rgba(57, 40, 31, 0.05); }
+.catering-features-card .sidebar-title { margin-bottom: 16px; font-size: 1.35rem; }
+.catering-services-list { display: grid; gap: 0; margin: 0; padding: 0; list-style: none; }
+.catering-services-list li { padding: 14px 0; border-top: 1px solid var(--line); }
+.catering-services-list li:first-child { border-top: 0; padding-top: 0; }
+.catering-services-list strong { color: var(--brown-deep); }
+.catering-services-list p { margin: 4px 0 0; line-height: 1.5; }
+.catering-contact-direct { margin-top: 18px; padding: 18px; border: 1px solid var(--line); border-radius: 14px; background: var(--bg-soft); }
+.catering-contact-direct h4 { margin: 0 0 12px; font-family: var(--font-sans); font-size: 0.95rem; }
+.contact-row { display: flex; flex-wrap: wrap; gap: 6px; margin: 8px 0; font-size: 0.9rem; }
+.contact-row span { color: var(--muted); }
+.contact-row a { color: var(--brown); font-weight: 650; overflow-wrap: anywhere; }
+.catering-contact-direct > p:last-child { margin-bottom: 0; }
+.catering-success-section { min-height: 55vh; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+.catering-success-section .success-desc { max-width: 560px; }
+
+@media (max-width: 820px) {
+  .catering-grid { grid-template-columns: 1fr; }
+  .catering-info-sidebar { position: static; }
+}
+@media (max-width: 560px) {
+  .catering-page-section { padding-top: 26px; padding-bottom: 48px; }
+  .catering-hero-card { margin-bottom: 18px; border-radius: 20px; }
+  .field-grid-2 { grid-template-columns: 1fr; }
+  .catering-form, .catering-features-card { border-radius: 18px; }
+}
