@@ -2,6 +2,7 @@
 
 import Link from 'next/link';
 import { useCallback, useEffect, useState } from 'react';
+import { AdminNav } from '@/components/AdminNav';
 import { Notice } from '@/components/Notice';
 import { RequireAuth } from '@/components/RequireAuth';
 import { useAuth } from '@/context/AuthContext';
@@ -54,7 +55,7 @@ function AccountView() {
     }
   };
 
-  return (
+  const accountSection = (
     <section className="container section account-section">
       <header className="page-head account-head">
         <div>
@@ -137,6 +138,13 @@ function AccountView() {
       </div>
     </section>
   );
+
+  return user?.role === 'admin' ? (
+    <div className="admin-layout">
+      <AdminNav />
+      <div className="admin-content">{accountSection}</div>
+    </div>
+  ) : accountSection;
 }
 
 export default function AccountPage() {
