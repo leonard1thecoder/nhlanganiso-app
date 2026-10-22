@@ -10,6 +10,12 @@ import { productService, categoryService } from '@/lib/services';
 import type { Category, PageMeta, Product } from '@/lib/types';
 
 const PER_PAGE = 12;
+const CAKE_CATEGORY_RE = /cake|birthday|muffin|cupcake|wedding|celebration/i;
+
+interface ProductSection {
+  category: Category;
+  products: Product[];
+}
 
 function ProductsView() {
   const router = useRouter();
@@ -20,8 +26,12 @@ function ProductsView() {
   const [input, setInput] = useState(q);
   const [products, setProducts] = useState<Product[] | null>(null);
   const [categories, setCategories] = useState<Category[] | null>(null);
+  const [cakeSections, setCakeSections] = useState<ProductSection[] | null>(null);
   const [meta, setMeta] = useState<PageMeta | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const isCakeBrowse = q.trim().toLowerCase() === 'cake';
+  const cakeCategories = (categories ?? []).filter((category) => CAKE_CATEGORY_RE.test(category.name));
+  const visibleCategories = isCakeBrowse ? cakeCategories : categories ?? [];
 
   useEffect(() => setInput(q), [q]);
 
@@ -35,6 +45,53 @@ function ProductsView() {
       cancelled = true;
     };
   }, []);
+
+  useEffect(() => {
+    if (!isCakeBrowse || !categories) {
+      setCakeSections(null);
+      return;
+    }
+
+    const matchingCategories = categories
+      .filter((category) => CAKE_CATEGORY_RE.test(category.name))
+      .sort((a, b) => a.name.localeCompare(b.name));
+    if (matchingCategories.length === 0) {
+      setCakeSections([]);
+      return;
+    }
+
+    let cancelled = false;
+    setCakeSections(null);
+    Promise.all(
+      matchingCategories.map(async (category) => {
+        try {
+          const result = await productService.list({ search: category.name, page: 1, per_page: 4 });
+          return { category, products: result.data };
+        } catch {
+          return { category, products: [] };
+        }
+      }),
+    ).then((sections) => {
+      if (cancelled) return;
+      const seen = new Set<string>();
+      setCakeSections(
+        sections
+          .map((section) => ({
+            ...section,
+            products: section.products.filter((product) => {
+              if (seen.has(product.id)) return false;
+              seen.add(product.id);
+              return true;
+            }),
+          }))
+          .filter((section) => section.products.length > 0),
+      );
+    });
+
+    return () => {
+      cancelled = true;
+    };
+  }, [categories, isCakeBrowse]);
 
   useEffect(() => {
     let cancelled = false;
@@ -75,10 +132,12 @@ function ProductsView() {
       {/* Editorial Header */}
       <header className="shop-header">
         <div className="shop-header__content">
-          <p className="eyebrow"><span className="rule" aria-hidden="true" />The Marketplace</p>
-          <h1 className="shop-header__title">Fresh from the Bakery</h1>
+          <p className="eyebrow"><span className="rule" aria-hidden="true" />Cakes &amp; Collections</p>
+          <h1 className="shop-header__title">{isCakeBrowse ? 'Cakes made to share' : 'Fresh from the Bakery'}</h1>
           <p className="shop-header__desc">
-            Explore our daily inventory of wholesome artisan loaves, decorative celebration cakes, flaky pastries, and catering spreads.
+            {isCakeBrowse
+              ? 'Browse the cakes available now, from celebration favourites to other bakery treats.'
+              : 'Browse the current bakery collection, or search for something you have in mind.'}
           </p>
         </div>
 
@@ -94,7 +153,7 @@ function ProductsView() {
               id="product-search"
               className="shop-search__input"
               type="search"
-              placeholder="Search cakes, sourdough, croissants…"
+              placeholder={isCakeBrowse ? 'Search birthday cakes, muffins…' : 'Search baked goods…'}
               value={input}
               onChange={(e) => setInput(e.target.value)}
             />
@@ -112,26 +171,27 @@ function ProductsView() {
               </button>
             )}
           </div>
-          <button type="submit" className="btn btn-primary shop-search__btn">Find Bakes</button>
+          <button type="submit" className="btn btn-primary shop-search__btn">{isCakeBrowse ? 'Find Cakes' : 'Find Bakes'}</button>
         </form>
       </header>
 
       {/* Category Filter Pills (if categories available) */}
-      {categories && categories.length > 0 && (
+      {visibleCategories.length > 0 && (
         <div className="shop-filter-bar">
-          <div className="shop-filter-bar__label">Categories:</div>
+          <div className="shop-filter-bar__label">{isCakeBrowse ? 'Cake collections:' : 'Categories:'}</div>
           <div className="shop-filter-pills">
             <button
               type="button"
-              className={`shop-filter-pill ${!q ? 'is-active' : ''}`}
+              className={`shop-filter-pill ${isCakeBrowse || !q ? 'is-active' : ''}`}
               onClick={() => {
-                setInput('');
-                go('', 1);
+                const nextQuery = isCakeBrowse ? 'cake' : '';
+                setInput(nextQuery);
+                go(nextQuery, 1);
               }}
             >
-              All Items
+              {isCakeBrowse ? 'All Cakes' : 'All Items'}
             </button>
-            {categories.map((c) => {
+            {visibleCategories.map((c) => {
               const active = q.toLowerCase() === c.name.toLowerCase();
               return (
                 <button
@@ -191,7 +251,7 @@ function ProductsView() {
       {products && products.length === 0 ? (
         <div className="empty-catalog-state card">
           <div className="empty-catalog-icon" aria-hidden="true">🥖</div>
-          <h2>No baked goods match this query</h2>
+          <h2>{isCakeBrowse ? 'No cakes match this query' : 'No baked goods match this query'}</h2>
           <p className="muted">
             We couldn&apos;t find any items matching &ldquo;{q}&rdquo;. Try another term or browse our complete collection.
           </p>
@@ -207,18 +267,45 @@ function ProductsView() {
               View Full Collection
             </button>
             <Link href="/contact" className="btn btn-outline">
-              Request Custom Catering Order
+              Contact us about a custom cake
             </Link>
           </div>
         </div>
       ) : null}
 
       {products && products.length > 0 ? (
-        <div className="grid-products">
-          {products.map((p) => (
-            <ProductCard key={p.id} product={p} />
-          ))}
-        </div>
+        isCakeBrowse && cakeSections && cakeSections.length > 0 ? (
+          <div className="cake-collections">
+            {cakeSections.map(({ category, products: sectionProducts }) => (
+              <section className="cake-collection" key={category.id} aria-labelledby={`cake-collection-${category.id}`}>
+                <div className="cake-collection__head">
+                  <div>
+                    <p className="eyebrow"><span className="rule" aria-hidden="true" />From the cake collection</p>
+                    <h2 id={`cake-collection-${category.id}`}>{category.name}</h2>
+                  </div>
+                  <button type="button" className="link-arrow cake-collection__link" onClick={() => { setInput(category.name); go(category.name, 1); }}>
+                    View collection <span aria-hidden="true">→</span>
+                  </button>
+                </div>
+                <div className="grid-products">
+                  {sectionProducts.map((product) => <ProductCard key={product.id} product={product} />)}
+                </div>
+              </section>
+            ))}
+            {products.some((product) => !cakeSections.some((section) => section.products.some((item) => item.id === product.id))) ? (
+              <section className="cake-collection" aria-labelledby="more-cakes-heading">
+                <div className="cake-collection__head"><h2 id="more-cakes-heading">More cakes</h2></div>
+                <div className="grid-products">
+                  {products.filter((product) => !cakeSections.some((section) => section.products.some((item) => item.id === product.id))).map((product) => <ProductCard key={product.id} product={product} />)}
+                </div>
+              </section>
+            ) : null}
+          </div>
+        ) : (
+          <div className="grid-products">
+            {products.map((p) => <ProductCard key={p.id} product={p} />)}
+          </div>
+        )
       ) : null}
 
       {/* Pagination */}

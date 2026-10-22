@@ -8,6 +8,17 @@ import { useAuth } from '@/context/AuthContext';
 import { useCart } from '@/context/CartContext';
 import { cn } from '@/lib/format';
 
+function CakeIcon() {
+  return (
+    <svg className="navbar__cake-icon" width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+      <path d="M4 13h16v6H4z" />
+      <path d="M4 13c0-1.5 1.7-2.5 4-2.5s4 1 4 2.5 1.7-2.5 4-2.5 4 1 4 2.5" />
+      <path d="M8 7v1M12 6v2M16 7v1" />
+      <path d="M4 21h16" />
+    </svg>
+  );
+}
+
 export function Navbar() {
   const { status, user, isAdmin, logout } = useAuth();
   const { count, ready } = useCart();
@@ -28,8 +39,7 @@ export function Navbar() {
         ]
       : [
           { href: '/', label: 'Home' },
-          { href: '/products', label: 'Shop' },
-          { href: '/products?q=cake', label: 'Celebration Cakes' },
+          { href: '/products?q=cake', label: 'Cakes' },
           { href: '/contact', label: 'Contact' },
           { href: '/about', label: 'Our Story' },
         ]),
@@ -60,6 +70,7 @@ export function Navbar() {
                   href={l.href}
                   className={cn('navbar__link', isActive(l.href) && 'is-active')}
                 >
+                  {l.label === 'Cakes' && <CakeIcon />}
                   {l.label}
                 </Link>
               </li>
@@ -212,6 +223,7 @@ export function Navbar() {
                   className={cn('navbar__drawer-link', isActive(l.href) && 'is-active')}
                   onClick={() => setOpen(false)}
                 >
+                  {l.label === 'Cakes' && <CakeIcon />}
                   {l.label}
                 </Link>
               </li>
