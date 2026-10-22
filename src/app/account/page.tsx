@@ -10,6 +10,15 @@ import { formatDateTime } from '@/lib/format';
 import { authService } from '@/lib/services';
 import type { Session } from '@/lib/types';
 
+function PowerIcon() {
+  return (
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+      <path d="M12 2v10" />
+      <path d="M18.36 6.64a9 9 0 1 1-12.73 0" />
+    </svg>
+  );
+}
+
 function AccountView() {
   const { user, logout, refreshUser } = useAuth();
   const [sessions, setSessions] = useState<Session[] | null>(null);
@@ -56,6 +65,7 @@ function AccountView() {
         <div className="account-quick-links">
           <Link href="/orders" className="btn btn-primary btn-sm">View My Orders →</Link>
           <button type="button" className="btn btn-outline btn-sm" onClick={() => void logout()}>
+            <PowerIcon />
             Sign Out
           </button>
         </div>
@@ -116,6 +126,7 @@ function AccountView() {
                     disabled={busyId === s.id}
                     onClick={() => revoke(s.id)}
                   >
+                    <PowerIcon />
                     {busyId === s.id ? 'Revoking…' : 'Sign out'}
                   </button>
                 </li>
