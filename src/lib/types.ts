@@ -86,6 +86,7 @@ export interface Product {
    */
   description?: string | null;
   image_url?: string | null;
+  category_id?: Uuid | null;
 }
 
 export interface ProductDetail {

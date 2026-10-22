@@ -13,6 +13,7 @@ function CouponsView() {
   const [error, setError] = useState<string | null>(null);
   const [notice, setNotice] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
+  const [productName, setProductName] = useState<string | null>(null);
 
   const [form, setForm] = useState<CreateCouponBody>({
     code: '',
@@ -29,6 +30,13 @@ function CouponsView() {
   };
 
   useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const productId = params.get('product_id');
+    const selectedProductName = params.get('product_name');
+    if (productId) {
+      setForm((current) => ({ ...current, product_id: productId }));
+      setProductName(selectedProductName);
+    }
     loadCoupons();
   }, []);
 
@@ -43,9 +51,16 @@ function CouponsView() {
         discount_percentage: Number(form.discount_percentage),
         max_usages: form.max_usages ? Number(form.max_usages) : undefined,
         active: true,
+        product_id: form.product_id || undefined,
       });
       setNotice(`Coupon ${form.code.toUpperCase()} created successfully.`);
-      setForm({ code: '', discount_percentage: 10, max_usages: 50, active: true });
+      setForm({
+        code: '',
+        discount_percentage: 10,
+        max_usages: 50,
+        active: true,
+        product_id: form.product_id,
+      });
       loadCoupons();
     } catch (err) {
       setError(describeError(err));
@@ -95,7 +110,12 @@ function CouponsView() {
       <div className="admin-grid-layout">
         {/* Create Coupon Card */}
         <div className="admin-card card">
-          <h2>Create New Coupon</h2>
+          <h2>{form.product_id ? 'Create Coupon Promotion' : 'Create New Coupon'}</h2>
+          {form.product_id ? (
+            <p className="muted small">
+              This coupon is limited to {productName ? <strong>{productName}</strong> : 'the selected product'}.
+            </p>
+          ) : null}
           <form onSubmit={handleCreate} className="admin-form mt-3">
             <div className="field">
               <label htmlFor="cp-code" className="field__label">Coupon Code *</label>

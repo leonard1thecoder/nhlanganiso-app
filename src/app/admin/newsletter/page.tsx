@@ -6,6 +6,7 @@ import { Field, Select, TextArea, TextInput } from '@/components/Field';
 import { Notice } from '@/components/Notice';
 import { RequireAuth } from '@/components/RequireAuth';
 import { describeError } from '@/lib/api';
+import { formatZAR } from '@/lib/format';
 import { newsletterAdminService, subscriberAdminService } from '@/lib/services';
 import type { AdminNewsletter, AdminSubscriber, SubscriberStats } from '@/lib/types';
 
@@ -39,6 +40,23 @@ function Newsletters() {
 
   useEffect(() => {
     void load();
+  }, []);
+
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const productName = params.get('product_name');
+    if (!productName) return;
+
+    const productSlug = params.get('product_slug');
+    const priceCents = Number(params.get('product_price_cents'));
+    const productUrl = productSlug
+      ? `${window.location.origin}/products/${encodeURIComponent(productSlug)}`
+      : window.location.origin;
+
+    setTitle(`A special feature: ${productName}`);
+    setBody(
+      `Discover ${productName} from Nhlanganiso Catering & Baking.\n${Number.isFinite(priceCents) ? `Current price: ${formatZAR(priceCents)}.\n` : ''}\nShop here: ${productUrl}`,
+    );
   }, []);
 
   const onSubmit = async (ev: FormEvent) => {

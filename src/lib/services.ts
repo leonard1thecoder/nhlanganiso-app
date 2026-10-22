@@ -266,6 +266,9 @@ export const adminService = {
   createProduct: (body: CreateProductBody) =>
     api.post<Product>('/products', body).then((r) => r.data),
 
+  updateProduct: (productId: string, body: Partial<CreateProductBody>) =>
+    api.patch<{ ok: boolean }>(`/products/${encodeURIComponent(productId)}`, body).then((r) => r.data),
+
   orders: () => api.get<OrderDetail[]>('/admin/orders').then((r) => r.data),
 
   setFulfilment: (id: string, status: FulfilmentStatus) =>
