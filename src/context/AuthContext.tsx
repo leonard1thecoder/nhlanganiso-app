@@ -20,7 +20,7 @@ interface AuthContextValue {
   status: AuthStatus;
   user: Me | null;
   isAdmin: boolean;
-  login: (email: string, password: string) => Promise<void>;
+  login: (email: string, password: string) => Promise<Me>;
   logout: () => Promise<void>;
   refreshUser: () => Promise<void>;
   /** Navigates the browser to Google to start the OAuth flow. */
@@ -79,6 +79,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     const me = await authService.me();
     setUser(me);
     setStatus('authenticated');
+    return me;
   }, []);
 
   const logout = useCallback(async () => {

@@ -1767,12 +1767,18 @@ code {
 }
 
 .admin-nav__link {
-  display: block;
+  display: flex;
+  align-items: center;
+  gap: 12px;
   padding: 10px 12px;
   border-radius: var(--radius-sm);
   color: var(--brown);
   font-weight: 600;
   font-size: 0.93rem;
+}
+
+.admin-nav__icon {
+  flex: 0 0 auto;
 }
 
 .admin-nav__link:hover {
@@ -1851,15 +1857,7 @@ code {
   }
 
   .admin-nav {
-    position: static;
-    width: auto;
-    border-right: 0;
-    border-bottom: 1px solid var(--line);
-  }
-
-  .admin-nav ul {
-    flex-direction: row;
-    flex-wrap: wrap;
+    display: none;
   }
 
   .admin-content {

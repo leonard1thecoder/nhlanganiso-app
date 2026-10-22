@@ -30,21 +30,11 @@ export function Navbar() {
   const isAdminArea = pathname === '/admin' || pathname.startsWith('/admin/');
 
   const navLinks = [
-    ...(isAdminArea
-      ? [
-          { href: '/admin', label: 'Dashboard' },
-          { href: '/admin/products', label: 'Products' },
-          { href: '/admin/orders', label: 'Orders' },
-          { href: '/admin/catering', label: 'Enquiries' },
-          { href: '/admin/newsletter', label: 'Newsletter' },
-        ]
-      : [
-          { href: '/', label: 'Home' },
-          { href: '/cakes', label: 'Cakes' },
-          { href: '/dessert', label: 'Desserts' },
-          { href: '/contact', label: 'Contact' },
-          { href: '/about', label: 'Our Story' },
-        ]),
+    { href: '/', label: 'Home' },
+    { href: '/cakes', label: 'Cakes' },
+    { href: '/dessert', label: 'Desserts' },
+    { href: '/contact', label: 'Contact' },
+    { href: '/about', label: 'Our Story' },
   ];
 
   const isActive = (href: string) => {
@@ -96,23 +86,25 @@ export function Navbar() {
         </Link>
 
         {/* Desktop Nav */}
-        <nav className="navbar__nav-desktop" aria-label="Primary Navigation">
-          <ul className="navbar__menu">
-            {navLinks.map((l) => (
-              <li key={l.href}>
-                <Link
-                  href={l.href}
-                  className={cn('navbar__link', isActive(l.href) && 'is-active')}
-                >
-                  {(l.label === 'Cakes' || l.label === 'Desserts') && <CakeIcon />}
-                  {l.label}
-                </Link>
-              </li>
-            ))}
-          </ul>
-        </nav>
+        {!isAdminArea ? (
+          <nav className="navbar__nav-desktop" aria-label="Primary Navigation">
+            <ul className="navbar__menu">
+              {navLinks.map((l) => (
+                <li key={l.href}>
+                  <Link
+                    href={l.href}
+                    className={cn('navbar__link', isActive(l.href) && 'is-active')}
+                  >
+                    {(l.label === 'Cakes' || l.label === 'Desserts') && <CakeIcon />}
+                    {l.label}
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </nav>
+        ) : null}
 
-        {/* Right actions: FAQ, Account, Orders, Cart, Admin */}
+        {/* Right actions: FAQ, Account, Orders, Cart, Notifications, Sign out */}
         <div className="navbar__actions">
           {!isAdminArea ? (
             <Link
@@ -189,16 +181,6 @@ export function Navbar() {
                   {notificationCount > 9 ? '9+' : notificationCount}
                 </span>
               ) : null}
-            </Link>
-          ) : null}
-
-          {isAdmin && !isAdminArea ? (
-            <Link
-              href="/admin"
-              className="navbar__action-badge"
-              title="Admin Portal"
-            >
-              Admin
             </Link>
           ) : null}
 

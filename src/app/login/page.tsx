@@ -35,14 +35,14 @@ function LoginForm() {
     }
     setSubmitting(true);
     try {
-      await login(email.trim().toLowerCase(), password);
+      const signedInUser = await login(email.trim().toLowerCase(), password);
 
       if (next === '/link-google') {
         await linkGoogle();
         return;
       }
 
-      router.push(next);
+      router.push(signedInUser.role === 'admin' && next === '/products' ? '/admin' : next);
     } catch (err) {
       setError(describeError(err));
     } finally {
