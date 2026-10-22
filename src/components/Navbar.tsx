@@ -159,7 +159,7 @@ export function Navbar() {
             </Link>
           ) : null}
 
-          {status === 'authenticated' ? (
+          {status === 'authenticated' && !isAdminArea ? (
             <Link
               href={isAdmin ? '/admin/orders' : '/orders'}
               className="navbar__action-btn"
