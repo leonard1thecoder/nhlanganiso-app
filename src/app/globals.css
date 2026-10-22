@@ -3865,6 +3865,65 @@ code {
 .navbar__drawer-link.is-active { color: var(--pink-deep); }
 .cart-badge { background: var(--pink-deep); }
 
+/* Keep off-canvas content from creating page-wide horizontal scrolling. */
+html,
+body {
+  max-width: 100%;
+  overflow-x: clip;
+}
+
+.navbar__inner {
+  min-width: 0;
+}
+
+@media (max-width: 420px) {
+  .navbar__inner {
+    gap: 0.5rem;
+    padding-inline: 0.75rem;
+  }
+
+  .navbar__inner > .brand {
+    min-width: 0;
+    gap: 0.45rem;
+  }
+
+  .navbar__inner > .brand .brand__mark {
+    width: 36px;
+    height: 36px;
+    flex: 0 0 36px;
+  }
+
+  .navbar__inner > .brand .brand__text {
+    min-width: 0;
+  }
+
+  .navbar__inner > .brand .brand__text strong {
+    font-size: 1rem;
+    white-space: nowrap;
+  }
+
+  .navbar__inner > .brand .brand__text small {
+    display: none;
+  }
+
+  .navbar__actions {
+    flex: 0 0 auto;
+    gap: 0.25rem;
+  }
+
+  .navbar__action-btn,
+  .navbar__cart-btn,
+  .navbar__hamburger {
+    width: 34px;
+    height: 34px;
+    flex: 0 0 34px;
+  }
+
+  .navbar__hamburger {
+    padding: 7px;
+  }
+}
+
 .btn-primary,
 .cart-summary-actions .btn-primary {
   border-color: var(--pink);
