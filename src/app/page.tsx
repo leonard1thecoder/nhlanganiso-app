@@ -2,11 +2,11 @@
 
 import Image from 'next/image';
 import Link from 'next/link';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, type FormEvent } from 'react';
 import { ProductCard } from '@/components/ProductCard';
 import { Notice } from '@/components/Notice';
 import { describeError } from '@/lib/api';
-import { categoryService, productService } from '@/lib/services';
+import { categoryService, newsletterService, productService } from '@/lib/services';
 import type { Category, Product } from '@/lib/types';
 
 const CAKE_CATEGORY_RE = /cake|birthday|muffin|cupcake|wedding|celebration/i;
@@ -49,6 +49,9 @@ export default function HomePage() {
   const [desserts, setDesserts] = useState<Product[] | null>(null);
   const [categories, setCategories] = useState<Category[] | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [newsletterEmail, setNewsletterEmail] = useState('');
+  const [newsletterFeedback, setNewsletterFeedback] = useState<{ kind: 'success' | 'error'; message: string } | null>(null);
+  const [subscribing, setSubscribing] = useState(false);
 
   useEffect(() => {
     let cancelled = false;
@@ -86,6 +89,26 @@ export default function HomePage() {
       cancelled = true;
     };
   }, []);
+
+  const onNewsletterSubmit = async (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    setNewsletterFeedback(null);
+    setSubscribing(true);
+    try {
+      const receipt = await newsletterService.subscribe(newsletterEmail.trim().toLowerCase());
+      setNewsletterEmail('');
+      setNewsletterFeedback({
+        kind: 'success',
+        message: receipt.already_subscribed
+          ? 'You are already on the list. Keep an eye on your inbox for bakery recipes and subscriber coupons.'
+          : 'Thanks for joining us. Check your inbox to confirm your subscription and receive bakery updates.',
+      });
+    } catch (err) {
+      setNewsletterFeedback({ kind: 'error', message: describeError(err) });
+    } finally {
+      setSubscribing(false);
+    }
+  };
 
   return (
     <>
@@ -355,6 +378,50 @@ export default function HomePage() {
                 </Link>
               </div>
             </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Newsletter Signup */}
+      <section className="section newsletter-signup-section">
+        <div className="container">
+          <div className="newsletter-signup-card">
+            <div className="newsletter-signup-copy">
+              <p className="eyebrow"><span className="rule" aria-hidden="true" />A little sweetness in your inbox</p>
+              <h2>Join the Nhlanganiso bakery list</h2>
+              <p className="newsletter-signup-lead">
+                Get subscriber-only discount coupons, baking recipes, and first notice of new seasonal treats.
+              </p>
+              <div className="newsletter-benefits">
+                <span><strong>01</strong> Special coupon offers</span>
+                <span><strong>02</strong> Recipes and bakery updates</span>
+              </div>
+            </div>
+
+            <form className="newsletter-signup-form" onSubmit={onNewsletterSubmit}>
+              <label htmlFor="home-newsletter-email">Your email address</label>
+              <div className="newsletter-signup-input-row">
+                <input
+                  id="home-newsletter-email"
+                  type="email"
+                  value={newsletterEmail}
+                  onChange={(event) => setNewsletterEmail(event.target.value)}
+                  placeholder="name@example.com"
+                  autoComplete="email"
+                  required
+                />
+                <button type="submit" className="btn btn-primary" disabled={subscribing}>
+                  {subscribing ? 'Joining...' : 'Subscribe'}
+                </button>
+              </div>
+              {newsletterFeedback ? (
+                <p className={`newsletter-signup-feedback is-${newsletterFeedback.kind}`} role={newsletterFeedback.kind === 'error' ? 'alert' : 'status'}>
+                  {newsletterFeedback.message}
+                </p>
+              ) : (
+                <p className="newsletter-signup-note">Occasional bakery news only. Unsubscribe whenever you like.</p>
+              )}
+            </form>
           </div>
         </div>
       </section>

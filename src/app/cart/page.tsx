@@ -80,11 +80,15 @@ export default function CartPage() {
         <p className="eyebrow"><span className="rule" aria-hidden="true" />Your Order</p>
         <h1 className="empty-cart-title">Your shopping bag is empty</h1>
         <p className="muted empty-cart-desc">
-          Your basket currently has no baked goods. Browse our fresh sourdough, celebration cakes, and delicious treats!
+          There&apos;s something lovely waiting in the bakery. Explore freshly made cakes and sweet treats, then add your favourites here.
         </p>
+        <div className="empty-cart-highlights" aria-label="Fresh bakery collections">
+          <span>Made fresh to order</span>
+          <span>Easy bakery collection</span>
+        </div>
         <div className="cta-row center">
-          <Link href="/products" className="btn btn-primary btn-lg">Explore Bakery Shop</Link>
-          <Link href="/contact" className="btn btn-outline btn-lg">Contact &amp; Catering</Link>
+          <Link href="/cakes" className="btn btn-primary btn-lg">Explore Cakes</Link>
+          <Link href="/dessert" className="btn btn-outline btn-lg">Browse Desserts</Link>
         </div>
       </section>
     );
