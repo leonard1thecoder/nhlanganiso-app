@@ -28,6 +28,15 @@ function NavIcon({ href }: { href: string }) {
     );
   }
 
+  if (href === '/products') {
+    return (
+      <svg {...common}>
+        <path d="M6 8h12l-1 12H7L6 8Z" />
+        <path d="M9 8V6a3 3 0 0 1 6 0v2" />
+      </svg>
+    );
+  }
+
   if (href === '/' || href === '/admin') {
     return (
       <svg {...common}>
@@ -85,11 +94,11 @@ export function MobileFooterNav() {
         { href: '/admin/newsletter', label: 'Newsletter' },
       ]
     : [
-        { href: '/', label: 'Home' },
+        { href: '/products', label: 'Shop' },
         { href: '/cakes', label: 'Cakes' },
         { href: '/dessert', label: 'Desserts' },
-        { href: '/contact', label: 'Contact' },
-        { href: '/about', label: 'Our Story' },
+        { href: '/contact', label: 'Catering' },
+        { href: '/about', label: 'Our story' },
       ];
 
   return (

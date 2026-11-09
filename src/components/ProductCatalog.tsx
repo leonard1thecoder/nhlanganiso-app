@@ -141,12 +141,12 @@ function ProductsView({ mode }: { mode: CatalogMode }) {
       {/* Editorial Header */}
       <header className="shop-header">
         <div className="shop-header__content">
-          <p className="eyebrow"><span className="rule" aria-hidden="true" />{isCollectionBrowse ? `${collectionLabel} & Collections` : 'The Bakery'}</p>
-          <h1 className="shop-header__title">{isCollectionBrowse ? `${collectionLabel} made to share` : 'Fresh from the Bakery'}</h1>
+          <p className="eyebrow">{isCollectionBrowse ? `${collectionLabel} collections` : 'The bakery'}</p>
+          <h1 className="shop-header__title">{isCollectionBrowse ? collectionLabel : 'Shop the bakery'}</h1>
           <p className="shop-header__desc">
             {isCollectionBrowse
-              ? `Browse the ${collectionLabel.toLowerCase()} available now, grouped into collections when categories are available.`
-              : 'Browse the current bakery collection, or search for something you have in mind.'}
+              ? `Browse our ${collectionLabel.toLowerCase()}. Add what you like to your bag, then collect from the bakery.`
+              : 'Browse everything we have on the menu, or search for something specific.'}
           </p>
         </div>
 
@@ -162,7 +162,7 @@ function ProductsView({ mode }: { mode: CatalogMode }) {
               id="product-search"
               className="shop-search__input"
               type="search"
-              placeholder={isCakeBrowse ? 'Search birthday cakes, muffins…' : isDessertBrowse ? 'Search tarts, brownies, pastries…' : 'Search baked goods…'}
+              placeholder={isCakeBrowse ? 'Search cakes' : isDessertBrowse ? 'Search desserts' : 'Search the bakery'}
               value={input}
               onChange={(e) => setInput(e.target.value)}
             />
@@ -180,17 +180,18 @@ function ProductsView({ mode }: { mode: CatalogMode }) {
               </button>
             )}
           </div>
-          <button type="submit" className="btn btn-primary shop-search__btn">{isCollectionBrowse ? `Find ${collectionLabel}` : 'Find Bakes'}</button>
+          <button type="submit" className="btn btn-primary shop-search__btn">Search</button>
         </form>
       </header>
 
       {/* Category Filter Pills (if categories available) */}
       {visibleCategories.length > 0 && (
         <div className="shop-filter-bar">
-          <div className="shop-filter-bar__label">{isCollectionBrowse ? `${collectionLabel} collections:` : 'Categories:'}</div>
-          <div className="shop-filter-pills">
+          <div className="shop-filter-bar__label" id="shop-filter-label">{isCollectionBrowse ? `${collectionLabel} collections` : 'Categories'}</div>
+          <div className="shop-filter-pills" role="group" aria-labelledby="shop-filter-label">
             <button
               type="button"
+              aria-pressed={isCollectionBrowse ? q.trim().toLowerCase() === (isCakeBrowse ? 'cake' : 'dessert') : !q}
               className={`shop-filter-pill ${(isCollectionBrowse ? q.trim().toLowerCase() === (isCakeBrowse ? 'cake' : 'dessert') : !q) ? 'is-active' : ''}`}
               onClick={() => {
                 const nextQuery = isCollectionBrowse ? isDessertBrowse ? 'dessert' : 'cake' : '';
@@ -198,7 +199,7 @@ function ProductsView({ mode }: { mode: CatalogMode }) {
                 go(nextQuery, 1);
               }}
             >
-              {isCollectionBrowse ? `All ${collectionLabel}` : 'All Items'}
+              {isCollectionBrowse ? `All ${collectionLabel.toLowerCase()}` : 'All'}
             </button>
             {visibleCategories.map((c) => {
               const active = q.toLowerCase() === c.name.toLowerCase();
@@ -206,6 +207,7 @@ function ProductsView({ mode }: { mode: CatalogMode }) {
                 <button
                   key={c.id}
                   type="button"
+                  aria-pressed={active}
                   className={`shop-filter-pill ${active ? 'is-active' : ''}`}
                   onClick={() => {
                     setInput(c.name);
@@ -226,11 +228,11 @@ function ProductsView({ mode }: { mode: CatalogMode }) {
           {meta ? (
             <span>Showing <strong>{meta.total}</strong> {meta.total === 1 ? 'item' : 'items'}</span>
           ) : (
-            <span>Fetching the freshest bakes…</span>
+            <span>Loading products…</span>
           )}
           {q && (
             <span className="shop-query-badge">
-              matching &ldquo;{q}&rdquo;
+              Showing results for &ldquo;{q}&rdquo;
               <button
                 type="button"
                 onClick={() => {
@@ -252,17 +254,16 @@ function ProductsView({ mode }: { mode: CatalogMode }) {
       {!error && products === null ? (
         <div className="grid-products" aria-busy="true">
           {Array.from({ length: 8 }).map((_, i) => (
-            <div key={i} className="product-card product-card--skeleton" />
+            <div key={i} className="tile tile--skeleton" />
           ))}
         </div>
       ) : null}
 
       {products && products.length === 0 ? (
         <div className="empty-catalog-state card">
-          <div className="empty-catalog-icon" aria-hidden="true">🥖</div>
-          <h2>{isCollectionBrowse ? `No ${collectionLabel.toLowerCase()} match this query` : 'No baked goods match this query'}</h2>
+          <h2>{isCollectionBrowse ? `No ${collectionLabel.toLowerCase()} match` : 'Nothing matches that search'}</h2>
           <p className="muted">
-            We couldn&apos;t find any items matching &ldquo;{q}&rdquo;. Try another term or browse our complete collection.
+            We could not find anything for &ldquo;{q}&rdquo;. Try another word, or browse everything.
           </p>
           <div className="cta-row center">
             <button
@@ -273,10 +274,10 @@ function ProductsView({ mode }: { mode: CatalogMode }) {
                 go('', 1);
               }}
             >
-              View Full Collection
+              Browse everything
             </button>
             <Link href="/contact" className="btn btn-outline">
-              Contact us about a custom order
+              Enquire about a custom order
             </Link>
           </div>
         </div>
@@ -289,11 +290,11 @@ function ProductsView({ mode }: { mode: CatalogMode }) {
               <section className="cake-collection" key={category.id} aria-labelledby={`cake-collection-${category.id}`}>
                 <div className="cake-collection__head">
                   <div>
-                    <p className="eyebrow"><span className="rule" aria-hidden="true" />From the {collectionNoun} collection</p>
+                    <p className="eyebrow">From the {collectionNoun} collection</p>
                     <h2 id={`cake-collection-${category.id}`}>{category.name}</h2>
                   </div>
                   <button type="button" className="link-arrow cake-collection__link" onClick={() => { setInput(category.name); go(category.name, 1); }}>
-                    View collection <span aria-hidden="true">→</span>
+                    See all {category.name.toLowerCase()} <span aria-hidden="true">→</span>
                   </button>
                 </div>
                 <div className="grid-products">
@@ -326,7 +327,7 @@ function ProductsView({ mode }: { mode: CatalogMode }) {
             disabled={page <= 1}
             onClick={() => go(q, page - 1)}
           >
-            ← Previous
+            Previous
           </button>
           <span className="pagination__info">
             Page {page} of {totalPages}
@@ -337,7 +338,7 @@ function ProductsView({ mode }: { mode: CatalogMode }) {
             disabled={page >= totalPages}
             onClick={() => go(q, page + 1)}
           >
-            Next →
+            Next
           </button>
         </nav>
       ) : null}

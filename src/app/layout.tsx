@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from 'next';
 import './globals.css';
+import './storefront.css';
 import { FooterGate } from '@/components/FooterGate';
 import { Navbar } from '@/components/Navbar';
 import { AnnouncementBanner } from '@/components/AnnouncementBanner';
