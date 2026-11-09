@@ -18,39 +18,39 @@ export function Footer() {
             </span>
           </Link>
           <p className="footer__desc">
-            Artisanal sourdough, bespoke celebration cakes, and memorable catering feasts made fresh daily with love in South Africa.
+            Baked goods, celebration cakes and catering from our bakery in South Africa.
           </p>
-          <div className="footer__badges">
-            <span className="footer__pill">🇿🇦 Proudly South African</span>
-            <span className="footer__pill">✨ Baked to Order</span>
-          </div>
-        </div>
-
-        <div>
-          <h4 className="footer__heading">Shop &amp; Menu</h4>
-          <ul className="footer__list">
-            <li><Link href="/products">All Baked Goods</Link></li>
-            <li><Link href="/cakes">Celebration Cakes</Link></li>
-            <li><Link href="/dessert?q=pastry">Pastries &amp; Savoury</Link></li>
-            <li><Link href="/contact">Contact &amp; Catering</Link></li>
-            <li><Link href="/about">Our Story</Link></li>
-            <li><Link href="/cart">Shopping Bag</Link></li>
+          <ul className="footer__badges" aria-label="Good to know">
+            <li className="footer__pill">Prices in South African rand</li>
+            <li className="footer__pill">Pay securely with PayFast</li>
           </ul>
         </div>
 
         <div>
-          <h4 className="footer__heading">Customer Care</h4>
+          <h4 className="footer__heading">Shop</h4>
           <ul className="footer__list">
-            <li><Link href="/contact">Contact &amp; Event Enquiries</Link></li>
-            <li><Link href="/faq">Frequently Asked Questions</Link></li>
-            <li><Link href="/orders">Track My Order</Link></li>
-            <li><Link href="/account">My Account</Link></li>
+            <li><Link href="/products">Shop the bakery</Link></li>
+            <li><Link href="/cakes">Cakes</Link></li>
+            <li><Link href="/dessert">Desserts</Link></li>
+            <li><Link href="/cart">Your bag</Link></li>
+            <li><Link href="/about">Our story</Link></li>
+          </ul>
+        </div>
+
+        <div>
+          <h4 className="footer__heading">Help</h4>
+          <ul className="footer__list">
+            <li><Link href="/contact">Contact and catering</Link></li>
+            <li><Link href="/faq">Frequently asked questions</Link></li>
+            <li><Link href="/orders">My orders</Link></li>
+            <li><Link href="/account">My account</Link></li>
             <li><Link href="/newsletter">Newsletter</Link></li>
           </ul>
         </div>
 
+        {showContact ? (
         <div>
-          <h4 className="footer__heading">Connect &amp; Pickup</h4>
+          <h4 className="footer__heading">Get in touch</h4>
           <ul className="footer__list">
             {HAS_REAL_CONTACT_EMAIL ? (
               <li>
@@ -66,15 +66,15 @@ export function Footer() {
                 </a>
               </li>
             ) : null}
-            <li className="footer__note">Orders are prepared fresh for scheduled bakery collection.</li>
           </ul>
         </div>
+        ) : null}
       </div>
 
       <div className="footer__bottom">
         <div className="container footer__bottom-inner">
           <p>© {year} {SITE_NAME}. All rights reserved.</p>
-          <p className="footer__currency">Prices in South African Rand (ZAR) · Secured via PayFast</p>
+          <p className="footer__currency">Prices in South African rand (ZAR). Payments processed by PayFast.</p>
         </div>
       </div>
     </footer>

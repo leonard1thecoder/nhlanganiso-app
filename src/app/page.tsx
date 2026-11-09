@@ -52,6 +52,7 @@ export default function HomePage() {
   const [newsletterEmail, setNewsletterEmail] = useState('');
   const [newsletterFeedback, setNewsletterFeedback] = useState<{ kind: 'success' | 'error'; message: string } | null>(null);
   const [subscribing, setSubscribing] = useState(false);
+  const heroProduct = featured?.find((product) => product.image_url) ?? null;
 
   useEffect(() => {
     let cancelled = false;
@@ -100,8 +101,8 @@ export default function HomePage() {
       setNewsletterFeedback({
         kind: 'success',
         message: receipt.already_subscribed
-          ? 'You are already on the list. Keep an eye on your inbox for bakery recipes and subscriber coupons.'
-          : 'Thanks for joining us. Check your inbox to confirm your subscription and receive bakery updates.',
+          ? 'You are already subscribed.'
+          : 'Thanks for subscribing. Check your inbox and confirm to start receiving bakery news.',
       });
     } catch (err) {
       setNewsletterFeedback({ kind: 'error', message: describeError(err) });
@@ -112,114 +113,83 @@ export default function HomePage() {
 
   return (
     <>
-      {/* Hero Section */}
-      <section className="hero">
-        <div className="container hero__grid">
-          <div className="hero__copy">
-            <div className="hero__tagline">
-              <span className="hero__sparkle" aria-hidden="true">✦</span>
-              <span>Handcrafted in South Africa</span>
-            </div>
-            <h1 className="hero__title">
-              Freshly baked. <br />
-              <span className="accent">Made to be shared.</span>
-            </h1>
-            <p className="hero__lead">
-              Fresh breads, celebration cakes and catering for life&apos;s special moments.
+      <section className="home-hero">
+        <div className="container home-hero__grid">
+          <div className="home-hero__copy">
+            <p className="eyebrow">Bakery and catering · South Africa</p>
+            <h1 className="home-hero__title">Fresh bakes and celebration cakes, ready to collect.</h1>
+            <p className="home-hero__lead">
+              Order online and collect from our bakery. For a larger event, send us an enquiry and we will reply with a quote.
             </p>
-            <div className="cta-row hero__cta-group">
-              <Link href="/products" className="btn btn-primary btn-lg">
-                Shop Baked Goods
-                <span className="btn-arrow" aria-hidden="true">→</span>
-              </Link>
-              <Link href="/contact" className="btn btn-outline btn-lg">
-                Contact &amp; Catering
-              </Link>
+            <div className="cta-row">
+              <Link href="/products" className="btn btn-primary btn-lg">Shop the bakery</Link>
+              <Link href="/contact" className="btn btn-outline btn-lg">Plan a catering order</Link>
             </div>
-            <div className="hero__trust-strip">
-              <div className="hero__trust-item">
-                <span className="hero__trust-icon" aria-hidden="true">✓</span>
-                <span>Browse the bakery</span>
-              </div>
-              <div className="hero__trust-item">
-                <span className="hero__trust-icon" aria-hidden="true">✓</span>
-                <span>Secure PayFast Checkout</span>
-              </div>
-              <div className="hero__trust-item">
-                <span className="hero__trust-icon" aria-hidden="true">✓</span>
-                <span>South African Rand pricing</span>
-              </div>
-            </div>
+            <ul className="home-hero__facts">
+              <li>Prices in South African rand</li>
+              <li>Pay securely with PayFast</li>
+              <li>Collect from our bakery</li>
+            </ul>
           </div>
 
-          <div className="hero__art-container">
-            <div className="hero__art-card">
-              <div className="hero__art-image-wrap">
-                <Image
-                  src={featured?.find((product) => product.image_url)?.image_url ?? '/brand/mark.png'}
-                  alt={featured?.find((product) => product.image_url)?.name ?? 'Nhlanganiso Catering & Baking'}
-                  width={1200}
-                  height={800}
-                  priority
-                  className="hero__img"
-                  sizes="(max-width: 900px) 90vw, 560px"
-                />
-              </div>
-              <div className="hero__floating-card">
-                <div className="hero__floating-badge">Made for sharing</div>
-                <p className="hero__floating-text">Explore baked goods and plan a celebration with Nhlanganiso.</p>
-              </div>
-            </div>
+          <div className="home-hero__media">
+            {heroProduct ? (
+              <Image
+                src={heroProduct.image_url as string}
+                alt={heroProduct.name}
+                width={1200}
+                height={900}
+                priority
+                className="home-hero__image"
+                sizes="(max-width: 900px) 92vw, 560px"
+              />
+            ) : (
+              <Image
+                src="/brand/logo.jpg"
+                alt="Nhlanganiso Catering & Baking logo"
+                width={1920}
+                height={1280}
+                priority
+                className="home-hero__image home-hero__image--logo"
+                sizes="(max-width: 900px) 92vw, 560px"
+              />
+            )}
           </div>
         </div>
       </section>
 
-      {/* Featured Categories Carousel / Grid */}
       {categories && categories.length > 0 ? (
-        <section className="section section--tint">
+        <section className="section section--tint" aria-labelledby="home-categories">
           <div className="container">
             <div className="section__head">
-              <div>
-                <p className="eyebrow"><span className="rule" aria-hidden="true" />Browse by Craving</p>
-                <h2>Signature Categories</h2>
-              </div>
+              <h2 id="home-categories">Browse by category</h2>
               <Link href="/products" className="link-arrow">
-                View all categories <span aria-hidden="true">→</span>
+                See the full shop <span aria-hidden="true">→</span>
               </Link>
             </div>
-            <div className="category-grid">
+            <ul className="category-grid">
               {categories.map((c) => (
-                <Link
-                  key={c.id}
-                  href={`${CAKE_CATEGORY_RE.test(c.name) ? '/cakes' : DESSERT_CATEGORY_RE.test(c.name) ? '/dessert' : '/products'}?q=${encodeURIComponent(c.name)}`}
-                  className="category-card"
-                >
-                  <div className="category-card__visual">
-                    <span className="category-card__monogram" aria-hidden="true">
-                      {c.name.charAt(0).toUpperCase()}
-                    </span>
-                  </div>
-                  <div className="category-card__info">
-                    <h3 className="category-card__title">{c.name}</h3>
-                    <span className="category-card__action">Explore collection →</span>
-                  </div>
-                </Link>
+                <li key={c.id}>
+                  <Link
+                    href={`${CAKE_CATEGORY_RE.test(c.name) ? '/cakes' : DESSERT_CATEGORY_RE.test(c.name) ? '/dessert' : '/products'}?q=${encodeURIComponent(c.name)}`}
+                    className="category-card"
+                  >
+                    <span className="category-card__title">{c.name}</span>
+                    <span className="category-card__action">View <span aria-hidden="true">→</span></span>
+                  </Link>
+                </li>
               ))}
-            </div>
+            </ul>
           </div>
         </section>
       ) : null}
 
-      {/* Featured Products / Best Sellers */}
-      <section className="section">
+      <section className="section" aria-labelledby="home-best-sellers">
         <div className="container">
           <div className="section__head">
-            <div>
-              <p className="eyebrow"><span className="rule" aria-hidden="true" />Fresh from the Oven</p>
-              <h2>Best Sellers &amp; Bakery Favourites</h2>
-            </div>
+            <h2 id="home-best-sellers">Best sellers</h2>
             <Link href="/products" className="link-arrow">
-              Browse Full Shop <span aria-hidden="true">→</span>
+              Browse the full shop <span aria-hidden="true">→</span>
             </Link>
           </div>
 
@@ -228,15 +198,15 @@ export default function HomePage() {
           {!error && featured === null ? (
             <div className="grid-products" aria-busy="true">
               {Array.from({ length: 4 }).map((_, i) => (
-                <div key={i} className="product-card product-card--skeleton" />
+                <div key={i} className="tile tile--skeleton" />
               ))}
             </div>
           ) : null}
 
           {featured && featured.length === 0 ? (
-            <div className="empty-catalog-state">
-              <p className="muted">Our shelves are currently being freshly restocked. Please check back shortly!</p>
-              <Link href="/contact" className="btn btn-outline">Enquire about Custom Bakes</Link>
+            <div className="empty-state">
+              <p className="muted">Our shelves are being restocked. Check back soon, or send us an enquiry for a custom bake.</p>
+              <Link href="/contact" className="btn btn-outline">Enquire about a custom bake</Link>
             </div>
           ) : null}
 
@@ -250,22 +220,18 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* Cakes */}
-      <section className="section section--tint">
+      <section className="section section--tint" aria-labelledby="home-cakes">
         <div className="container">
           <div className="section__head">
-            <div>
-              <p className="eyebrow"><span className="rule" aria-hidden="true" />Made for celebrating</p>
-              <h2>Cakes</h2>
-            </div>
+            <h2 id="home-cakes">Cakes</h2>
             <Link href="/cakes" className="link-arrow">
-              Explore all cakes <span aria-hidden="true">&rarr;</span>
+              All cakes <span aria-hidden="true">→</span>
             </Link>
           </div>
           {cakes === null ? (
             <div className="grid-products" aria-busy="true">
               {Array.from({ length: 4 }).map((_, i) => (
-                <div key={i} className="product-card product-card--skeleton" />
+                <div key={i} className="tile tile--skeleton" />
               ))}
             </div>
           ) : cakes.length > 0 ? (
@@ -273,27 +239,23 @@ export default function HomePage() {
               {cakes.map((product) => <ProductCard key={product.id} product={product} />)}
             </div>
           ) : (
-            <p className="muted">Our cake collection is being freshly prepared. Contact us for a custom celebration cake.</p>
+            <p className="muted">Our cake range is being refreshed. Enquire about a custom celebration cake.</p>
           )}
         </div>
       </section>
 
-      {/* Desserts */}
-      <section className="section">
+      <section className="section" aria-labelledby="home-desserts">
         <div className="container">
           <div className="section__head">
-            <div>
-              <p className="eyebrow"><span className="rule" aria-hidden="true" />A little something sweet</p>
-              <h2>Desserts</h2>
-            </div>
+            <h2 id="home-desserts">Desserts</h2>
             <Link href="/dessert" className="link-arrow">
-              Explore all desserts <span aria-hidden="true">&rarr;</span>
+              All desserts <span aria-hidden="true">→</span>
             </Link>
           </div>
           {desserts === null ? (
             <div className="grid-products" aria-busy="true">
               {Array.from({ length: 4 }).map((_, i) => (
-                <div key={i} className="product-card product-card--skeleton" />
+                <div key={i} className="tile tile--skeleton" />
               ))}
             </div>
           ) : desserts.length > 0 ? (
@@ -301,128 +263,95 @@ export default function HomePage() {
               {desserts.map((product) => <ProductCard key={product.id} product={product} />)}
             </div>
           ) : (
-            <p className="muted">Our dessert selection is being freshly prepared. Browse the bakery for today&apos;s treats.</p>
+            <p className="muted">Our dessert range is being refreshed. Check back soon.</p>
           )}
         </div>
       </section>
 
-      {/* Brand Craftsmanship / Story */}
-      <section className="section section--tint brand-story-section">
-        <div className="container brand-story-grid">
-          <div className="brand-story-copy">
-            <p className="eyebrow"><span className="rule" aria-hidden="true" />The Nhlanganiso Craft</p>
-            <h2>Baking Worth Gathering Around</h2>
-            <p className="lead-story">
-              At Nhlanganiso Catering &amp; Baking, every loaf, delicate tart, and multi-tiered cake starts with wholesome ingredients, honest technique, and deep devotion to taste.
-            </p>
+      <section className="section section--tint" aria-labelledby="home-how">
+        <div className="container home-how">
+          <div>
+            <p className="eyebrow">How it works</p>
+            <h2 id="home-how">Order online, collect from the bakery</h2>
             <p className="muted">
-              Whether you are stopping by for your family&apos;s daily bread or orchestrating a memorable wedding reception, our bakery is committed to hospitality, warmth, and uncompromised quality.
+              Ordering is for collection only at the moment. Your bag shows the price confirmed by our server before you pay.
             </p>
-            <div className="story-highlights">
-              <div className="story-highlight-item">
-                <strong className="story-highlight-number">Bakes</strong>
-                <span className="story-highlight-label">Shop breads, cakes and pastries</span>
-              </div>
-              <div className="story-highlight-item">
-                <strong className="story-highlight-number">Events</strong>
-                <span className="story-highlight-label">Send a catering enquiry online</span>
-              </div>
-            </div>
           </div>
-
-          <div className="story-steps-box">
-            <h3 className="story-steps-heading">How Our Ordering Works</h3>
-            <ol className="story-steps-list">
-              <li className="story-step-item">
-                <span className="story-step-num">01</span>
-                <div>
-                  <h4>Browse &amp; Pick Your Treats</h4>
-                  <p className="muted small">Select your favourites online, with easy real-time cart review.</p>
-                </div>
-              </li>
-              <li className="story-step-item">
-                <span className="story-step-num">02</span>
-                <div>
-                  <h4>Secure PayFast Checkout</h4>
-                  <p className="muted small">Instant payment via card or EFT, verified directly with our server.</p>
-                </div>
-              </li>
-              <li className="story-step-item">
-                <span className="story-step-num">03</span>
-                <div>
-                  <h4>Bespoke Collection</h4>
-                  <p className="muted small">Freshly prepared and packaged for pickup at your scheduled time.</p>
-                </div>
-              </li>
-            </ol>
-          </div>
+          <ol className="home-how__steps">
+            <li>
+              <span className="home-how__num" aria-hidden="true">1</span>
+              <div>
+                <h3>Choose your bakes</h3>
+                <p className="muted">Add items to your bag and adjust quantities as you go.</p>
+              </div>
+            </li>
+            <li>
+              <span className="home-how__num" aria-hidden="true">2</span>
+              <div>
+                <h3>Pay with PayFast</h3>
+                <p className="muted">You will be taken to PayFast to pay by card or Instant EFT. Your order is confirmed once payment is received.</p>
+              </div>
+            </li>
+            <li>
+              <span className="home-how__num" aria-hidden="true">3</span>
+              <div>
+                <h3>Collect from the bakery</h3>
+                <p className="muted">We prepare your order for collection from our bakery.</p>
+              </div>
+            </li>
+          </ol>
         </div>
       </section>
 
-      {/* Catering Showcase Banner */}
-      <section className="section catering-banner-section">
+      <section className="section" aria-labelledby="home-catering">
         <div className="container">
-          <div className="catering-banner-card">
-            <div className="catering-banner-content">
-              <span className="hero__tagline mb-3">✦ Full-Service Food Design</span>
-              <h2>Hosting an Unforgettable Occasion?</h2>
-              <p className="muted">
-                From intimate dinner celebrations and corporate functions to lavish wedding banquets, Nhlanganiso delivers curated catering platters and dessert bars crafted to impress your guests.
+          <div className="catering-panel">
+            <div>
+              <p className="eyebrow">Catering</p>
+              <h2 id="home-catering">Planning an event?</h2>
+              <p>
+                Tell us the date, the number of guests and what you have in mind. We reply with a quote, and you decide whether to accept it. Accepting a quote does not take payment.
               </p>
-              <div className="cta-row">
-                <Link href="/contact" className="btn btn-secondary btn-lg">
-                  Contact us about your event
-                </Link>
-                <Link href="/products" className="btn btn-ghost btn-lg">
-                  View Pastry Platters
-                </Link>
-              </div>
+            </div>
+            <div className="cta-row">
+              <Link href="/contact" className="btn btn-secondary btn-lg">Send a catering enquiry</Link>
             </div>
           </div>
         </div>
       </section>
 
-      {/* Newsletter Signup */}
-      <section className="section newsletter-signup-section">
-        <div className="container">
-          <div className="newsletter-signup-card">
-            <div className="newsletter-signup-copy">
-              <p className="eyebrow"><span className="rule" aria-hidden="true" />A little sweetness in your inbox</p>
-              <h2>Join the Nhlanganiso bakery list</h2>
-              <p className="newsletter-signup-lead">
-                Get subscriber-only discount coupons, baking recipes, and first notice of new seasonal treats.
-              </p>
-              <div className="newsletter-benefits">
-                <span><strong>01</strong> Special coupon offers</span>
-                <span><strong>02</strong> Recipes and bakery updates</span>
-              </div>
-            </div>
-
-            <form className="newsletter-signup-form" onSubmit={onNewsletterSubmit}>
-              <label htmlFor="home-newsletter-email">Your email address</label>
-              <div className="newsletter-signup-input-row">
-                <input
-                  id="home-newsletter-email"
-                  type="email"
-                  value={newsletterEmail}
-                  onChange={(event) => setNewsletterEmail(event.target.value)}
-                  placeholder="name@example.com"
-                  autoComplete="email"
-                  required
-                />
-                <button type="submit" className="btn btn-primary" disabled={subscribing}>
-                  {subscribing ? 'Joining...' : 'Subscribe'}
-                </button>
-              </div>
-              {newsletterFeedback ? (
-                <p className={`newsletter-signup-feedback is-${newsletterFeedback.kind}`} role={newsletterFeedback.kind === 'error' ? 'alert' : 'status'}>
-                  {newsletterFeedback.message}
-                </p>
-              ) : (
-                <p className="newsletter-signup-note">Occasional bakery news only. Unsubscribe whenever you like.</p>
-              )}
-            </form>
+      <section className="section section--tint" aria-labelledby="home-newsletter">
+        <div className="container newsletter-panel">
+          <div>
+            <p className="eyebrow">Newsletter</p>
+            <h2 id="home-newsletter">Hear about new bakes first</h2>
+            <p className="muted">Seasonal specials and news from the bakery. Unsubscribe at any time.</p>
           </div>
+
+          <form className="newsletter-form" onSubmit={onNewsletterSubmit}>
+            <label htmlFor="home-newsletter-email" className="field__label">Email address</label>
+            <div className="newsletter-form__row">
+              <input
+                id="home-newsletter-email"
+                type="email"
+                value={newsletterEmail}
+                onChange={(event) => setNewsletterEmail(event.target.value)}
+                placeholder="you@example.com"
+                autoComplete="email"
+                required
+              />
+              <button type="submit" className="btn btn-primary" disabled={subscribing}>
+                {subscribing ? 'Subscribing…' : 'Subscribe'}
+              </button>
+            </div>
+            {newsletterFeedback ? (
+              <p className={`newsletter-form__feedback is-${newsletterFeedback.kind}`} role={newsletterFeedback.kind === 'error' ? 'alert' : 'status'}>
+                {newsletterFeedback.message}
+              </p>
+            ) : (
+              <p className="newsletter-form__note">We will send a confirmation email before you receive anything.</p>
+            )}
+          </form>
         </div>
       </section>
     </>

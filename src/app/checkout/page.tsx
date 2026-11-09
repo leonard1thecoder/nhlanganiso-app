@@ -44,6 +44,8 @@ export default function CheckoutPage() {
   const [quote, setQuote] = useState<CartQuote | null>(null);
   const [submitting, setSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState<string | null>(null);
+  const [quoteError, setQuoteError] = useState<string | null>(null);
+  const [quoteAttempt, setQuoteAttempt] = useState(0);
 
   useEffect(() => {
     if (user) {
@@ -57,11 +59,24 @@ export default function CheckoutPage() {
 
   useEffect(() => {
     if (!ready || lines.length === 0) return;
+    let cancelled = false;
+    setQuoteError(null);
     cartService
       .quote(lines.map((l) => ({ product_id: l.product_id, qty: l.qty })))
-      .then(setQuote)
-      .catch((err) => setSubmitError(describeError(err)));
-  }, [ready, lines]);
+      .then((q) => {
+        if (!cancelled) setQuote(q);
+      })
+      .catch((err) => {
+        if (cancelled) return;
+        setQuote(null);
+        setQuoteError(describeError(err));
+      });
+    return () => {
+      cancelled = true;
+    };
+    // Re-quote when the basket changes or the shopper asks to retry.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [ready, lines, quoteAttempt]);
 
   if (!ready) return <div className="page-loading" role="status">Preparing your checkout…</div>;
 
@@ -82,6 +97,10 @@ export default function CheckoutPage() {
   const onSubmit = async (ev: FormEvent) => {
     ev.preventDefault();
     setSubmitError(null);
+    if (quote === null) {
+      setSubmitError('We are still confirming your total. Please wait a moment and try again.');
+      return;
+    }
     const v = validate(form);
     setErrors(v);
     if (Object.keys(v).length) return;
@@ -121,71 +140,77 @@ export default function CheckoutPage() {
     }
   };
 
-  const snapshotTotal = lines.reduce((acc, l) => acc + l.price_cents * l.qty, 0);
-  const payableTotal = quote?.subtotal_cents ?? snapshotTotal;
+  // Only the server-quoted total is shown or charged. No browser-side fallback.
+  const payableTotal = quote?.subtotal_cents;
+  const itemCount = lines.reduce((acc, l) => acc + l.qty, 0);
 
   return (
     <section className="container section checkout-section">
       <nav className="crumbs" aria-label="Breadcrumb">
-        <Link href="/cart">← Return to Shopping Bag</Link>
+        <Link href="/cart">← Back to your bag</Link>
       </nav>
 
-      <header className="page-head checkout-head">
-        <div>
-          <p className="eyebrow"><span className="rule" aria-hidden="true" />Secure Checkout</p>
-          <h1 className="checkout-title">Customer &amp; Collection Details</h1>
-          <p className="muted">
-            Complete your contact details below. You will be redirected to PayFast for protected payment verification.
-          </p>
-        </div>
+      <header className="checkout-head">
+        <p className="eyebrow">Checkout</p>
+        <h1 className="checkout-title">Your details</h1>
+        <p className="muted">
+          Enter your contact details, then continue to PayFast to pay.
+        </p>
       </header>
 
-      {submitError && (
-        <Notice tone="error" title="Checkout Notice">
+      {submitError ? (
+        <Notice tone="error" title="We could not start your payment">
           {submitError}
         </Notice>
-      )}
+      ) : null}
+
+      {quoteError ? (
+        <Notice tone="error" title="We could not confirm your total">
+          <p>{quoteError}</p>
+          <button type="button" className="btn btn-outline btn-sm" onClick={() => setQuoteAttempt((n) => n + 1)}>
+            Try again
+          </button>
+        </Notice>
+      ) : null}
 
       <div className="checkout-grid">
-        <div className="checkout-form-container">
-          <form className="checkout-form card" onSubmit={onSubmit} noValidate>
-            <div className="form-section-head">
-              <span className="form-step-badge">1</span>
-              <div>
-                <h2 className="form-section-title">Contact Information</h2>
-                <p className="muted small">We will send your order confirmation and pickup notification here.</p>
-              </div>
-            </div>
+        <form className="checkout-form" onSubmit={onSubmit} noValidate>
+          <fieldset className="checkout-fieldset">
+            <legend className="form-section-title">
+              <span className="form-step-badge" aria-hidden="true">1</span>
+              Contact details
+            </legend>
+            <p className="muted small">We use these to send your order confirmation.</p>
 
             <div className="field-grid-2">
-              <Field id="checkout-name" label="Full Name" required error={errors.name}>
+              <Field id="checkout-name" label="Full name" required error={errors.name}>
                 <TextInput
                   id="checkout-name"
                   value={form.name}
                   onChange={set('name')}
-                  placeholder="e.g. Nhlanganiso Khumalo"
                   autoComplete="name"
                   aria-invalid={Boolean(errors.name)}
+                  aria-describedby={errors.name ? 'checkout-name-error' : undefined}
                 />
               </Field>
 
-              <Field id="checkout-email" label="Email Address" required error={errors.email}>
+              <Field id="checkout-email" label="Email address" required error={errors.email}>
                 <TextInput
                   id="checkout-email"
                   type="email"
                   value={form.email}
                   onChange={set('email')}
-                  placeholder="name@domain.co.za"
                   autoComplete="email"
                   aria-invalid={Boolean(errors.email)}
+                  aria-describedby={errors.email ? 'checkout-email-error' : undefined}
                 />
               </Field>
             </div>
 
             <Field
               id="checkout-phone"
-              label="Contact Phone Number"
-              hint="Required for SMS or WhatsApp notification when your order is fresh out of the oven."
+              label="Phone number (optional)"
+              hint="Add a number if you would like us to contact you about your order."
               error={errors.phone}
             >
               <TextInput
@@ -193,102 +218,95 @@ export default function CheckoutPage() {
                 type="tel"
                 value={form.phone}
                 onChange={set('phone')}
-                placeholder="+27 82 000 0000"
+                placeholder="e.g. 082 000 0000"
                 autoComplete="tel"
                 aria-invalid={Boolean(errors.phone)}
+                aria-describedby={errors.phone ? 'checkout-phone-error' : 'checkout-phone-hint'}
               />
             </Field>
+          </fieldset>
 
-            <div className="form-divider" />
+          <fieldset className="checkout-fieldset">
+            <legend className="form-section-title">
+              <span className="form-step-badge" aria-hidden="true">2</span>
+              Order notes (optional)
+            </legend>
+            <p className="muted small">Tell us about allergies or a message for a cake.</p>
 
-            <div className="form-section-head">
-              <span className="form-step-badge">2</span>
-              <div>
-                <h2 className="form-section-title">Special Bakery Instructions</h2>
-                <p className="muted small">Specify any allergies, cake inscription notes, or requested collection timing.</p>
-              </div>
-            </div>
-
-            <Field id="checkout-notes" label="Order Notes &amp; Requests (Optional)">
+            <Field id="checkout-notes" label="Notes">
               <TextArea
                 id="checkout-notes"
                 value={form.notes}
                 onChange={set('notes')}
                 rows={3}
-                placeholder="e.g. Please pipe 'Happy 30th Birthday Thando' in chocolate cream; collecting at 14:00."
+                placeholder="For example: a message for the cake, or an allergy"
               />
             </Field>
+          </fieldset>
 
-            <div className="checkout-trust-banner">
-              <div className="trust-strip">
-                <span className="trust-icon" aria-hidden="true">🔒</span>
-                <div>
-                  <strong>PayFast Official Payment Gateway</strong>
-                  <p className="small muted">
-                    Your card and EFT details are processed on PayFast&apos;s 256-bit encrypted banking server. Our server verifies payment signatures securely.
-                  </p>
-                </div>
-              </div>
-            </div>
+          <div className="checkout-payment-note">
+            <p>
+              <strong>Next, you pay on PayFast.</strong> You will be taken to PayFast to pay by card or Instant EFT.
+              We confirm your order once PayFast confirms payment.
+            </p>
+          </div>
 
-            <button
-              type="submit"
-              className="btn btn-primary btn-lg btn-block checkout-submit-btn"
-              disabled={submitting}
-            >
-              {submitting ? (
-                <span className="btn-spinner-wrap">
-                  <span className="spinner" aria-hidden="true" />
-                  <span>Connecting to PayFast…</span>
-                </span>
-              ) : (
-                <span>Pay {formatZAR(payableTotal)} via PayFast →</span>
-              )}
-            </button>
-          </form>
-        </div>
+          <button
+            type="submit"
+            className="btn btn-primary btn-lg btn-block checkout-submit-btn"
+            disabled={submitting || payableTotal === undefined}
+          >
+            {submitting ? (
+              <span className="btn-spinner-wrap">
+                <span className="spinner" aria-hidden="true" />
+                <span>Taking you to PayFast…</span>
+              </span>
+            ) : payableTotal === undefined ? (
+              'Confirming your total…'
+            ) : (
+              `Pay ${formatZAR(payableTotal)} with PayFast`
+            )}
+          </button>
+        </form>
 
-        <aside className="checkout-summary-sidebar">
-          <div className="checkout-summary-card card">
-            <h2 className="summary-card-title">Order Items ({lines.length})</h2>
+        <aside className="checkout-summary" aria-labelledby="checkout-summary-title">
+          <div className="checkout-summary-card">
+            <h2 id="checkout-summary-title" className="summary-card-title">
+              Your order <span className="muted">({itemCount} {itemCount === 1 ? 'item' : 'items'})</span>
+            </h2>
 
             <ul className="checkout-item-list">
               {lines.map((l) => (
                 <li key={l.product_id} className="checkout-item-row">
                   <div className="checkout-item-info">
-                    <strong className="checkout-item-name">{l.name}</strong>
+                    <span className="checkout-item-name">{l.name}</span>
                     <span className="checkout-item-meta">
-                      Qty: {l.qty} × {formatZAR(l.price_cents)}
+                      {l.qty} × {formatZAR(l.price_cents)}
                     </span>
                   </div>
-                  <span className="checkout-item-price">
-                    {formatZAR(l.price_cents * l.qty)}
-                  </span>
+                  <span className="checkout-item-price">{formatZAR(l.price_cents * l.qty)}</span>
                 </li>
               ))}
             </ul>
 
-            <div className="checkout-totals">
+            <dl className="checkout-totals">
               <div className="total-row">
-                <span>Subtotal</span>
-                <span>{formatZAR(payableTotal)}</span>
+                <dt>Subtotal</dt>
+                <dd>{payableTotal !== undefined ? formatZAR(payableTotal) : 'Confirming…'}</dd>
               </div>
               <div className="total-row">
-                <span>Collection Fulfilment</span>
-                <span className="badge-free">Free (Bakery Pickup)</span>
+                <dt>Collection</dt>
+                <dd>From our bakery</dd>
               </div>
               <div className="total-row total-row--final">
-                <strong>Total Due</strong>
-                <strong className="grand-total">{formatZAR(payableTotal)}</strong>
+                <dt>Total</dt>
+                <dd className="grand-total">{payableTotal !== undefined ? formatZAR(payableTotal) : 'Confirming…'}</dd>
               </div>
-            </div>
+            </dl>
 
-            <div className="pickup-notice">
-              <span className="pickup-icon" aria-hidden="true">📍</span>
-              <p className="small muted">
-                <strong>Collection Location:</strong> Nhlanganiso Bakery. We will prepare your items fresh for the appointed date.
-              </p>
-            </div>
+            <p className="checkout-summary-note muted small">
+              Collection is from our bakery. Delivery is not available online yet.
+            </p>
           </div>
         </aside>
       </div>

@@ -1,9 +1,8 @@
 'use client';
 
-import Image from 'next/image';
 import Link from 'next/link';
 import { useParams } from 'next/navigation';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Notice } from '@/components/Notice';
 import { describeError } from '@/lib/api';
 import { useCart } from '@/context/CartContext';
@@ -22,6 +21,7 @@ export default function ProductDetailPage() {
   const [notFound, setNotFound] = useState(false);
   const [qty, setQty] = useState(1);
   const [added, setAdded] = useState(false);
+  const addedTimer = useRef<number | undefined>(undefined);
 
   useEffect(() => {
     let cancelled = false;
@@ -53,10 +53,9 @@ export default function ProductDetailPage() {
   if (notFound) {
     return (
       <section className="container section center product-not-found">
-        <div className="empty-catalog-icon">🥐</div>
-        <h1>Item Not Found</h1>
-        <p className="muted">This delicious bake may have sold out or is no longer listed in our current menu.</p>
-        <Link href="/products" className="btn btn-primary btn-lg">Back to Bakery Shop</Link>
+        <h1>We could not find that bake</h1>
+        <p className="muted">It may have sold out or been taken off the menu.</p>
+        <Link href="/products" className="btn btn-primary btn-lg">Back to the shop</Link>
       </section>
     );
   }
@@ -65,7 +64,7 @@ export default function ProductDetailPage() {
     return (
       <section className="container section">
         <Notice tone="error" title="Could not load this product">{error}</Notice>
-        <Link href="/products" className="link-arrow mt-4">← Return to shop</Link>
+        <Link href="/products" className="link-arrow mt-4">← Back to the shop</Link>
       </section>
     );
   }
@@ -96,10 +95,12 @@ export default function ProductDetailPage() {
   const onAdd = () => {
     addItem({ product_id: product.id, slug: product.slug, name: product.name, price_cents: product.price_cents }, qty);
     setAdded(true);
-    setTimeout(() => setAdded(false), 3000);
+    window.clearTimeout(addedTimer.current);
+    addedTimer.current = window.setTimeout(() => setAdded(false), 3000);
   };
 
   const initial = product.name.trim().charAt(0).toUpperCase() || '•';
+  const inStock = availability?.stock_on_hand != null && availability.stock_on_hand > 0;
 
   return (
     <section className="container section product-detail-section">
@@ -112,61 +113,49 @@ export default function ProductDetailPage() {
       </nav>
 
       <div className="product-detail-layout">
-        {/* Product Media Gallery */}
         <div className="product-detail__media-wrapper">
           {product.image_url ? (
             <div className="product-detail__image-box">
               {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img
-                src={product.image_url}
-                alt={product.name}
-                className="product-detail__image"
-              />
+              <img src={product.image_url} alt={product.name} className="product-detail__image" />
             </div>
           ) : (
-            <div className="product-detail__placeholder">
+            <div className="product-detail__placeholder" role="img" aria-label={`${product.name}: photo not yet available`}>
               <span className="product-detail__monogram" aria-hidden="true">{initial}</span>
-              <p className="product-detail__craft-note">Handcrafted with care by Nhlanganiso bakers</p>
+              <p className="product-detail__placeholder-note">Photo coming soon</p>
             </div>
           )}
         </div>
 
-        {/* Product Summary & Order Action */}
         <div className="product-detail__info">
-          <div className="product-detail__badge-strip">
-            <span className="product-detail__category-badge">Bakery Special</span>
-            {availability && (
-              availability.stock_on_hand != null && availability.stock_on_hand > 0 ? (
-                <span className="stock-pill in-stock">● In stock ({availability.stock_on_hand} available)</span>
-              ) : outOfStock ? (
-                <span className="stock-pill out-of-stock">● Currently out of stock</span>
-              ) : null
-            )}
-          </div>
+          {availability ? (
+            inStock ? (
+              <p className="stock-pill in-stock">In stock{availability.stock_on_hand != null ? `, ${availability.stock_on_hand} available` : ''}</p>
+            ) : outOfStock ? (
+              <p className="stock-pill out-of-stock">Sold out for today</p>
+            ) : null
+          ) : null}
 
           <h1 className="product-detail__title">{product.name}</h1>
 
-          <div className="product-detail__price-container">
-            <span className="product-detail__currency">ZAR</span>
-            <span className="product-detail__price">{formatZAR(product.price_cents)}</span>
-            <span className="product-detail__vat-note">Inclusive of VAT · Collection order</span>
-          </div>
+          <p className="product-detail__price">{formatZAR(product.price_cents)}</p>
 
-          <div className="product-detail__description">
-            <h3 className="product-detail__subhead">About this Bake</h3>
-            <p>{product.description || 'Our signature recipe prepared fresh with premium quality ingredients.'}</p>
-          </div>
+          {product.description ? (
+            <div className="product-detail__description">
+              <p>{product.description}</p>
+            </div>
+          ) : null}
 
           {outOfStock ? (
-            <div className="product-detail__oos-box card">
-              <p className="muted">This item is currently sold out for the day. Please check back tomorrow morning!</p>
-              <Link href="/contact" className="btn btn-outline btn-block">Ask us about catering</Link>
+            <div className="product-detail__oos-box">
+              <p>This bake is sold out for today. Check back tomorrow, or enquire about a custom order.</p>
+              <Link href="/contact" className="btn btn-outline btn-block">Enquire about a custom order</Link>
             </div>
           ) : (
-            <div className="product-detail__actions card">
+            <div className="product-detail__actions">
               <div className="product-detail__qty-row">
-                <label htmlFor="product-qty" className="product-detail__qty-label">Quantity</label>
-                <div className="qty-stepper">
+                <span className="product-detail__qty-label" id="product-qty-label">Quantity</span>
+                <div className="qty-stepper" role="group" aria-labelledby="product-qty-label">
                   <button
                     type="button"
                     className="qty-stepper__btn"
@@ -179,6 +168,7 @@ export default function ProductDetailPage() {
                   <input
                     id="product-qty"
                     type="number"
+                    inputMode="numeric"
                     min={1}
                     max={maxQty}
                     value={qty}
@@ -187,6 +177,7 @@ export default function ProductDetailPage() {
                       setQty(val);
                     }}
                     className="qty-stepper__input"
+                    aria-labelledby="product-qty-label"
                   />
                   <button
                     type="button"
@@ -200,47 +191,36 @@ export default function ProductDetailPage() {
                 </div>
               </div>
 
-              <div className="product-detail__cta-group">
-                <button
-                  type="button"
-                  className={`btn btn-lg btn-block ${added ? 'btn-success' : 'btn-primary'}`}
-                  onClick={onAdd}
-                >
-                  {added ? 'Added to Bag ✓' : `Add to Bag • ${formatZAR(product.price_cents * qty)}`}
-                </button>
-                {inCart > 0 && (
-                  <p className="product-detail__in-cart-note">
-                    You currently have {inCart} of this item in your <Link href="/cart">shopping bag</Link>.
-                  </p>
-                )}
-              </div>
+              <button
+                type="button"
+                className={`btn btn-lg btn-block product-detail__add ${added ? 'btn-success' : 'btn-primary'}`}
+                onClick={onAdd}
+              >
+                {added ? 'Added to bag' : `Add to bag · ${formatZAR(product.price_cents * qty)}`}
+              </button>
 
-              {added && (
-                <div className="product-detail__added-toast">
-                  <span>Bag updated!</span>
-                  <Link href="/cart" className="product-detail__added-link">View Bag &amp; Checkout →</Link>
-                </div>
-              )}
+              <p className="product-detail__status" role="status" aria-live="polite">
+                {added ? (
+                  <>
+                    <Link href="/cart">View your bag and check out</Link>
+                  </>
+                ) : inCart > 0 ? (
+                  <>You already have {inCart} in your <Link href="/cart">bag</Link>.</>
+                ) : null}
+              </p>
             </div>
           )}
 
-          {/* Delivery & Collection Reassurance */}
-          <div className="product-detail__features-list">
-            <div className="feature-item">
-              <span className="feature-icon" aria-hidden="true">⏱</span>
-              <div>
-                <strong>Baked Fresh to Order</strong>
-                <p className="muted small">Prepared directly in our bakery prior to your scheduled collection.</p>
-              </div>
-            </div>
-            <div className="feature-item">
-              <span className="feature-icon" aria-hidden="true">🔒</span>
-              <div>
-                <strong>Verified PayFast Payment</strong>
-                <p className="muted small">Seamless and protected checkout with debit/credit cards or Instant EFT.</p>
-              </div>
-            </div>
-          </div>
+          <ul className="product-detail__notes">
+            <li>
+              <strong>Collect from our bakery</strong>
+              <span className="muted">Orders are for collection. Delivery is not available online yet.</span>
+            </li>
+            <li>
+              <strong>Pay securely with PayFast</strong>
+              <span className="muted">You confirm the total on the checkout page before paying.</span>
+            </li>
+          </ul>
         </div>
       </div>
     </section>

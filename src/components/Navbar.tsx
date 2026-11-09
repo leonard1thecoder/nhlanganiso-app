@@ -9,51 +9,42 @@ import { useCart } from '@/context/CartContext';
 import { cn } from '@/lib/format';
 import { adminService, orderService } from '@/lib/services';
 
-function CakeIcon() {
-  return (
-    <svg className="navbar__cake-icon" width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-      <path d="M4 13h16v6H4z" />
-      <path d="M4 13c0-1.5 1.7-2.5 4-2.5s4 1 4 2.5 1.7-2.5 4-2.5 4 1 4 2.5" />
-      <path d="M8 7v1M12 6v2M16 7v1" />
-      <path d="M4 21h16" />
-    </svg>
-  );
-}
-
+/**
+ * Storefront header. Every action carries a visible text label so shoppers
+ * never have to guess what an icon does. The navbar is shared with the
+ * back office (see isAdminArea), so admin pages keep their own link set.
+ */
 export function Navbar() {
   const { status, user, isAdmin, logout } = useAuth();
   const { count, ready } = useCart();
   const pathname = usePathname();
-  const [notificationCount, setNotificationCount] = useState(0);
+  const [ordersNeedingAttention, setOrdersNeedingAttention] = useState(0);
 
   // Back-office screens and an admin's account page stay in the admin context.
-  // Treat a loading account page as admin context until the restored session is known
-  // so the shopfront links do not flash before the role is loaded.
+  // Treat a loading account page as admin context until the restored session is
+  // known so the shopfront links do not flash before the role is loaded.
   const isAdminArea = pathname === '/admin'
     || pathname.startsWith('/admin/')
     || (pathname === '/account' && (isAdmin || status === 'loading'));
 
   const navLinks = [
-    { href: '/', label: 'Home' },
+    { href: '/products', label: 'Shop all' },
     { href: '/cakes', label: 'Cakes' },
     { href: '/dessert', label: 'Desserts' },
-    { href: '/contact', label: 'Contact' },
-    { href: '/about', label: 'Our Story' },
+    { href: '/contact', label: 'Catering' },
+    { href: '/about', label: 'Our story' },
   ];
 
-  const isActive = (href: string) => {
-    if (href === '/') return pathname === '/';
-    return pathname === href || pathname.startsWith(`${href}/`);
-  };
+  const isActive = (href: string) => pathname === href || pathname.startsWith(`${href}/`);
 
   useEffect(() => {
     if (status !== 'authenticated') {
-      setNotificationCount(0);
+      setOrdersNeedingAttention(0);
       return;
     }
 
     let active = true;
-    const refreshNotifications = async () => {
+    const refreshCounts = async () => {
       try {
         const actionableCount = isAdmin
           ? (await adminService.orders()).filter((order) =>
@@ -63,14 +54,14 @@ export function Navbar() {
             ).length
           : (await orderService.mine()).filter((order) => order.payment_status === 'pending').length;
 
-        if (active) setNotificationCount(actionableCount);
+        if (active) setOrdersNeedingAttention(actionableCount);
       } catch {
-        if (active) setNotificationCount(0);
+        if (active) setOrdersNeedingAttention(0);
       }
     };
 
-    void refreshNotifications();
-    const interval = window.setInterval(() => void refreshNotifications(), 60_000);
+    void refreshCounts();
+    const interval = window.setInterval(() => void refreshCounts(), 60_000);
 
     return () => {
       active = false;
@@ -78,13 +69,16 @@ export function Navbar() {
     };
   }, [isAdmin, status]);
 
+  const ordersHref = isAdmin ? '/admin/orders' : '/orders';
+  const ordersLabel = isAdmin ? 'Orders' : 'My orders';
+
   return (
     <header className={cn('navbar', isAdmin && 'navbar--admin-user')}>
       <div className="container navbar__inner">
         <Link
           href={isAdminArea ? '/admin/products' : '/'}
           className="brand"
-          aria-label={isAdminArea ? 'Admin products' : 'Nhlanganiso Catering & Baking Home'}
+          aria-label={isAdminArea ? 'Admin products' : 'Nhlanganiso Catering & Baking, home'}
         >
           <Image src="/brand/mark.png" alt="" width={44} height={44} priority className="brand__mark" />
           <span className="brand__text">
@@ -93,17 +87,16 @@ export function Navbar() {
           </span>
         </Link>
 
-        {/* Desktop Nav */}
         {!isAdminArea ? (
-          <nav className="navbar__nav-desktop" aria-label="Primary Navigation">
+          <nav className="navbar__nav-desktop" aria-label="Main">
             <ul className="navbar__menu">
               {navLinks.map((l) => (
                 <li key={l.href}>
                   <Link
                     href={l.href}
                     className={cn('navbar__link', isActive(l.href) && 'is-active')}
+                    aria-current={isActive(l.href) ? 'page' : undefined}
                   >
-                    {(l.label === 'Cakes' || l.label === 'Desserts') && <CakeIcon />}
                     {l.label}
                   </Link>
                 </li>
@@ -112,117 +105,51 @@ export function Navbar() {
           </nav>
         ) : null}
 
-        {/* Right actions: FAQ, Account, Orders, Cart, Notifications, Sign out */}
         <div className="navbar__actions">
-          {!isAdminArea ? (
-            <Link
-              href="/faq"
-              className="navbar__action-btn"
-              aria-label="Frequently asked questions"
-              title="FAQ"
-            >
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-                <circle cx="12" cy="12" r="9" />
-                <path d="M9.7 9a2.4 2.4 0 1 1 4.4 1.3c-.8.6-1.7 1.1-1.7 2.5" />
-                <path d="M12.4 16.5h.01" />
-              </svg>
-            </Link>
-          ) : null}
-
-          {status === 'authenticated' && user ? (
-            <div className="navbar__account-dropdown">
-              <Link
-                href="/account"
-                className="navbar__action-btn"
-                aria-label={`My account (${user.full_name})`}
-                title="Account"
-              >
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-                  <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
-                  <circle cx="12" cy="7" r="4" />
-                </svg>
-                <span className="navbar__user-name-short">{user.full_name.split(' ')[0]}</span>
-              </Link>
-            </div>
-          ) : status === 'anonymous' ? (
-            <Link
-              href="/login"
-              className="navbar__action-btn navbar__sign-in-btn"
-              aria-label="Sign in"
-              title="Sign in"
-            >
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
-                <circle cx="12" cy="7" r="4" />
-              </svg>
-              <span>Sign in</span>
-            </Link>
-          ) : null}
-
           {status === 'authenticated' && !isAdminArea ? (
-            <Link
-              href={isAdmin ? '/admin/orders' : '/orders'}
-              className="navbar__action-btn"
-              aria-label={isAdmin ? 'Manage orders' : 'My orders'}
-              title={isAdmin ? 'Manage orders' : 'My orders'}
-            >
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-                <path d="M4 2v20l2-1 2 1 2-1 2 1 2-1 2 1 2-1 2 1V2l-2 1-2-1-2 1-2-1-2 1-2-1-2 1Z" />
-                <path d="M8 7h8M8 11h8M8 15h5" />
-              </svg>
-            </Link>
-          ) : null}
-
-          {status === 'authenticated' ? (
-            <Link
-              href={isAdmin ? '/admin/orders' : '/orders'}
-              className="navbar__action-btn navbar__notification-btn"
-              aria-label={notificationCount > 0 ? `Notifications, ${notificationCount} orders need attention` : 'Notifications'}
-              title="Notifications"
-            >
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-                <path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9" />
-                <path d="M10 21h4" />
-              </svg>
-              {notificationCount > 0 ? (
-                <span className="navbar__notification-badge" aria-hidden="true">
-                  {notificationCount > 9 ? '9+' : notificationCount}
+            <Link href={ordersHref} className="navbar__text-link navbar__orders-link">
+              <span>{ordersLabel}</span>
+              {ordersNeedingAttention > 0 ? (
+                <span
+                  className="navbar__count"
+                  aria-label={`${ordersNeedingAttention} orders need attention`}
+                >
+                  {ordersNeedingAttention > 9 ? '9+' : ordersNeedingAttention}
                 </span>
               ) : null}
             </Link>
           ) : null}
 
+          {status === 'authenticated' && user ? (
+            <Link href="/account" className="navbar__text-link navbar__account-link" title={user.full_name}>
+              <span>{isAdminArea ? 'Account' : user.full_name.split(' ')[0]}</span>
+            </Link>
+          ) : status === 'anonymous' ? (
+            <Link href="/login" className="navbar__text-link navbar__account-link">
+              <span>Sign in</span>
+            </Link>
+          ) : null}
+
           {!isAdminArea ? (
-            <Link
-              href="/cart"
-              className="navbar__cart-btn"
-              aria-label={`Shopping cart${ready && count > 0 ? `, ${count} items` : ''}`}
-              title="Shopping Cart"
-            >
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-                <circle cx="9" cy="21" r="1" />
-                <circle cx="20" cy="21" r="1" />
-                <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6" />
+            <Link href="/cart" className="navbar__bag-btn" aria-label={`Shopping bag${ready && count > 0 ? `, ${count} ${count === 1 ? 'item' : 'items'}` : ', empty'}`}>
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                <path d="M6 7h12l-1 13H7L6 7Z" />
+                <path d="M9 7V5a3 3 0 0 1 6 0v2" />
               </svg>
-              {ready && count > 0 && <span className="cart-badge">{count}</span>}
+              <span>Bag</span>
+              {ready && count > 0 ? <span className="cart-badge" aria-hidden="true">{count}</span> : null}
             </Link>
           ) : null}
 
           {status === 'authenticated' ? (
             <button
               type="button"
-              className="navbar__action-btn navbar__logout-btn"
-              aria-label="Sign out"
-              title="Sign out"
+              className="navbar__text-link navbar__signout-btn"
               onClick={() => void logout()}
             >
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-                <path d="M12 2v10" />
-                <path d="M18.36 6.64a9 9 0 1 1-12.73 0" />
-              </svg>
+              Sign out
             </button>
           ) : null}
-
         </div>
       </div>
     </header>
