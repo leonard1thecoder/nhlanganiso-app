@@ -1553,17 +1553,6 @@ export const DEMO_PRODUCTS: Product[] = [
     "category_id": "demo-category-platters"
   },
   {
-    "id": "demo-dessert-bite-platter",
-    "name": "Dessert Bite Platter",
-    "slug": "dessert-bite-platter",
-    "price_cents": 39000,
-    "currency": "ZAR",
-    "active": true,
-    "description": "A freshly prepared Nhlanganiso platters favourite. Made for sharing, celebrations and everyday treats.",
-    "image_url": "https://images.unsplash.com/photo-1547592180-85f173990554?auto=format&fit=crop&w=1200&q=85",
-    "category_id": "demo-category-platters"
-  },
-  {
     "id": "demo-cupcake-celebration-platter",
     "name": "Cupcake Celebration Platter",
     "slug": "cupcake-celebration-platter",
@@ -1920,17 +1909,6 @@ export const DEMO_PRODUCTS: Product[] = [
     "name": "Other Products - Fruit Yoghurt Cups",
     "slug": "other-products-fruit-yoghurt-cups",
     "price_cents": 3500,
-    "currency": "ZAR",
-    "active": true,
-    "description": "A freshly prepared Nhlanganiso other products favourite. Made for sharing, celebrations and everyday treats.",
-    "image_url": "https://images.unsplash.com/photo-1499636136210-6f4ee915583e?auto=format&fit=crop&w=1200&q=85",
-    "category_id": "demo-category-other-products"
-  },
-  {
-    "id": "demo-other-products-dessert-jar",
-    "name": "Other Products - Dessert Jar",
-    "slug": "other-products-dessert-jar",
-    "price_cents": 4800,
     "currency": "ZAR",
     "active": true,
     "description": "A freshly prepared Nhlanganiso other products favourite. Made for sharing, celebrations and everyday treats.",

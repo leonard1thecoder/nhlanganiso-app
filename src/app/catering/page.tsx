@@ -142,14 +142,14 @@ export default function CateringPage() {
               id="cat-subject"
               label="Subject or event type"
               required
-              hint="e.g. Wedding banquet, 50th Birthday dessert bar, Corporate breakfast platter"
+              hint="e.g. Wedding banquet, 50th birthday party, Corporate breakfast platter"
               error={errors.subject}
             >
               <TextInput
                 id="cat-subject"
                 value={form.subject}
                 onChange={set('subject')}
-                placeholder="e.g. Wedding Reception Cake &amp; Dessert Table"
+                placeholder="e.g. Wedding Reception Cake"
                 aria-invalid={Boolean(errors.subject)}
               />
             </Field>
@@ -192,10 +192,6 @@ export default function CateringPage() {
               <li>
                 <strong>Gourmet Savoury Platters</strong>
                 <p className="muted small">Handmade quiches, mini artisan pies, sliders, and sourdough crostini.</p>
-              </li>
-              <li>
-                <strong>Dessert Bars &amp; Sweet Tables</strong>
-                <p className="muted small">Mini cupcakes, macarons, chocolate brownies, fruit tarts, and pastries.</p>
               </li>
               <li>
                 <strong>Corporate Office Feasts</strong>
