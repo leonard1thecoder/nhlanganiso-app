@@ -99,7 +99,7 @@ export default function AboutPage() {
         <figure className="owner-story__photo">
           <Image
             src="/brand/owner-director.jpg"
-            alt="The owner and director of Nhlanganiso Catering & Baking"
+            alt="Nhlanhla Malapane, owner and director of Nhlanganiso Catering & Baking"
             width={1080}
             height={1440}
             sizes="(max-width: 960px) 100vw, 40vw"
@@ -107,8 +107,9 @@ export default function AboutPage() {
         </figure>
         <div className="card owner-story__body">
           <p className="eyebrow"><span className="rule" aria-hidden="true" />About the owner</p>
-          <h2 id="owner-heading" className="card__title">Owner &amp; Director</h2>
-          <p>Our owner and director leads the bakery and its catering services, from everyday baked goods to celebration cakes for the moments that matter.</p>
+          <h2 id="owner-heading" className="card__title">Nhlanhla Malapane</h2>
+          <p className="owner-story__role">Owner &amp; Director</p>
+          <p>Nhlanhla leads the bakery and its catering services, from everyday baked goods to celebration cakes for the moments that matter.</p>
         </div>
       </section>
       <section className="gallery" aria-labelledby="gallery-heading">
