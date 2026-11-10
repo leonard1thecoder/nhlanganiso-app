@@ -88,7 +88,7 @@ export default function AboutPage() {
   return (
     <section className="container section">
       <nav className="crumbs" aria-label="Breadcrumb"><Link href="/">Home</Link> / Our Story</nav>
-      <header className="page-head">
+      <header className="page-head page-head--center">
         <div>
           <p className="eyebrow"><span className="rule" aria-hidden="true" />About the bakery</p>
           <h1>{SITE_NAME}</h1>
@@ -113,7 +113,7 @@ export default function AboutPage() {
         </div>
       </section>
       <section className="gallery" aria-labelledby="gallery-heading">
-        <div className="section__head">
+        <div className="section__head gallery__head">
           <h2 id="gallery-heading">Gallery</h2>
         </div>
         <div className="gallery__viewport">

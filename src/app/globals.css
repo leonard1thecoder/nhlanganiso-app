@@ -328,6 +328,14 @@ code {
   border: 0;
   border-radius: 0;
 }
+.page-head--center {
+  justify-content: center;
+  text-align: center;
+}
+.gallery__head {
+  justify-content: center;
+  text-align: center;
+}
 @keyframes gallery-scroll {
   to {
     transform: translateX(-50%);
