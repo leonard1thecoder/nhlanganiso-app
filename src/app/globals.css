@@ -2861,3 +2861,16 @@ body {
     aspect-ratio: 5 / 4;
   }
 }
+
+
+/* Site-wide typography alignment: apply to every public, shop, dashboard,
+   content and authentication page while keeping editable controls readable. */
+:where(main, .site-main, .footer) {
+  text-align: center;
+}
+:where(main, .site-main, .footer) :where(*) {
+  text-align: center;
+}
+:where(main, .site-main, .footer) :where(input, textarea, select, [contenteditable="true"]) {
+  text-align: left;
+}
