@@ -138,6 +138,20 @@ const initialState: SeedState = {
   phase: 'idle', total: 180, completed: 0, created: 0, skipped: 0, failed: [], message: '',
 };
 
+function formatSeedError(error: unknown): string {
+  const value = error as { message?: string; code?: string; response?: { status?: number; data?: unknown } };
+  const body = value.response?.data as { message?: string; code?: string; fields?: unknown; request_id?: string; error?: string } | undefined;
+  const status = value.response?.status;
+  const message = body?.message || body?.error || value.message || 'Unknown server error';
+  const details = [
+    status ? 'HTTP ' + status : null,
+    body?.code || value.code || null,
+    body?.fields ? (typeof body.fields === 'string' ? body.fields : JSON.stringify(body.fields)) : null,
+    body?.request_id ? 'Request ID: ' + body.request_id : null,
+  ].filter(Boolean);
+  return details.length ? message + ' (' + details.join(' · ') + ')' : message;
+}
+
 async function loadAllProducts() {
   const first = await productService.list({ page: 1, per_page: 100 });
   const all = [...first.data];
@@ -159,12 +173,14 @@ function DemoCatalogueSeeder() {
     let skipped = 0;
     let completed = 0;
     const failed: string[] = [];
+    let currentStage = 'Loading existing categories';
 
     try {
       const existingCategories = await categoryService.list();
       const categoryByName = new Map<string, Category>(
         existingCategories.map((category) => [category.name.toLowerCase(), category] as const),
       );
+      currentStage = 'Creating missing categories';
       for (const definition of CATALOGUE) {
         if (categoryByName.has(definition.name.toLowerCase())) continue;
         try {
@@ -175,15 +191,16 @@ function DemoCatalogueSeeder() {
           categoryByName.set(definition.name.toLowerCase(), {
             id: category.id, name: definition.name, slug: slugify(definition.name),
           });
-        } catch {
+        } catch (categoryError) {
           // A concurrent run may have created it. Re-read before treating this as a failure.
           const refreshed = await categoryService.list();
           const match = refreshed.find((item) => item.name.toLowerCase() === definition.name.toLowerCase());
-          if (!match) throw new Error(`Could not create category "${definition.name}".`);
+          if (!match) throw new Error(`Category "${definition.name}" failed: ${formatSeedError(categoryError)}`);
           categoryByName.set(definition.name.toLowerCase(), match);
         }
       }
 
+      currentStage = 'Checking existing products';
       const existingProducts = await loadAllProducts();
       const existingSlugs = new Set(existingProducts.map((product) => product.slug));
       const queue = CATALOGUE.flatMap((definition) => {
@@ -203,13 +220,14 @@ function DemoCatalogueSeeder() {
       skipped = 180 - queue.length;
       setState({ phase: 'running', total: 180, completed: skipped, created: 0, skipped, failed: [], message: 'Adding products to the live catalogue…' });
 
+      currentStage = 'Creating products';
       for (let index = 0; index < queue.length; index += 3) {
         const batch = queue.slice(index, index + 3);
         const results = await Promise.allSettled(batch.map((product) => adminService.createProduct(product)));
         for (let offset = 0; offset < results.length; offset += 1) {
           const result = results[offset];
           if (result.status === 'fulfilled') created += 1;
-          else failed.push(`${batch[offset].name}: ${describeError(result.reason)}`);
+          else failed.push(`${batch[offset].name}: ${formatSeedError(result.reason)}`);
           completed += 1;
         }
         setState({
@@ -232,7 +250,7 @@ function DemoCatalogueSeeder() {
     } catch (error) {
       setState({
         phase: 'error', total: 180, completed, created, skipped, failed,
-        message: describeError(error),
+        message: `${currentStage} failed: ${formatSeedError(error)}`,
       });
     }
   }, [state.phase]);
