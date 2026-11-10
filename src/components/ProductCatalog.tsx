@@ -12,8 +12,7 @@ const PER_PAGE = 12;
 const categorySearchTerm = (name: string) => name.toLowerCase() === 'cakes' ? 'cake' : name.toLowerCase() === 'other products' ? 'other products' : name;
 const CATEGORY_SEARCH_TERMS = new Set(['bread', 'cake', 'cupcakes', 'pastries', 'platters', 'other products']);
 const CAKE_CATEGORY_RE = /cake|birthday|wedding|celebration/i;
-const DESSERT_CATEGORY_RE = /dessert|pastry|pastries|tart|pudding|brownie|cookie|macaron|cupcake|muffin/i;
-export type CatalogMode = 'all' | 'cakes' | 'desserts';
+export type CatalogMode = 'all' | 'cakes';
 
 interface ProductSection {
   category: Category;
@@ -23,7 +22,7 @@ interface ProductSection {
 function ProductsView({ mode }: { mode: CatalogMode }) {
   const router = useRouter();
   const params = useSearchParams();
-  const defaultQuery = mode === 'cakes' ? 'cake' : mode === 'desserts' ? 'dessert' : '';
+  const defaultQuery = mode === 'cakes' ? 'cake' : '';
   const q = params.get('q') ?? defaultQuery;
   const page = Math.max(1, Number(params.get('page') ?? '1') || 1);
 
@@ -34,11 +33,10 @@ function ProductsView({ mode }: { mode: CatalogMode }) {
   const [meta, setMeta] = useState<PageMeta | null>(null);
   const [error, setError] = useState<string | null>(null);
   const isCakeBrowse = mode === 'cakes' || (mode === 'all' && q.trim().toLowerCase() === 'cake');
-  const isDessertBrowse = mode === 'desserts' || (mode === 'all' && q.trim().toLowerCase() === 'dessert');
-  const isCollectionBrowse = isCakeBrowse || isDessertBrowse;
-  const collectionPattern = isDessertBrowse ? DESSERT_CATEGORY_RE : CAKE_CATEGORY_RE;
-  const collectionLabel = isDessertBrowse ? 'Desserts' : 'Cakes';
-  const collectionNoun = isDessertBrowse ? 'dessert' : 'cake';
+  const isCollectionBrowse = isCakeBrowse;
+  const collectionPattern = CAKE_CATEGORY_RE;
+  const collectionLabel = 'Cakes';
+  const collectionNoun = 'cake';
   const collectionCategories = (categories ?? []).filter((category) => collectionPattern.test(category.name));
   const visibleCategories = isCollectionBrowse ? collectionCategories : categories ?? [];
 
@@ -123,7 +121,7 @@ function ProductsView({ mode }: { mode: CatalogMode }) {
 
   const go = (nextQ: string, nextPage: number) => {
     const sp = new URLSearchParams();
-    const routePath = mode === 'cakes' ? '/cakes' : mode === 'desserts' ? '/dessert' : '/products';
+    const routePath = mode === 'cakes' ? '/cakes' : '/products';
     if (nextQ && nextQ !== defaultQuery) sp.set('q', nextQ);
     if (nextPage > 1) sp.set('page', String(nextPage));
     const qs = sp.toString();
@@ -163,7 +161,7 @@ function ProductsView({ mode }: { mode: CatalogMode }) {
               id="product-search"
               className="shop-search__input"
               type="search"
-              placeholder={isCakeBrowse ? 'Search cakes' : isDessertBrowse ? 'Search desserts' : 'Search the bakery'}
+              placeholder={isCakeBrowse ? 'Search cakes' : 'Search the bakery'}
               value={input}
               onChange={(e) => setInput(e.target.value)}
             />
@@ -192,10 +190,10 @@ function ProductsView({ mode }: { mode: CatalogMode }) {
           <div className="shop-filter-pills" role="group" aria-labelledby="shop-filter-label">
             <button
               type="button"
-              aria-pressed={isCollectionBrowse ? q.trim().toLowerCase() === (isCakeBrowse ? 'cake' : 'dessert') : !q}
-              className={`shop-filter-pill ${(isCollectionBrowse ? q.trim().toLowerCase() === (isCakeBrowse ? 'cake' : 'dessert') : !q) ? 'is-active' : ''}`}
+              aria-pressed={isCollectionBrowse ? q.trim().toLowerCase() === 'cake' : !q}
+              className={`shop-filter-pill ${(isCollectionBrowse ? q.trim().toLowerCase() === 'cake' : !q) ? 'is-active' : ''}`}
               onClick={() => {
-                const nextQuery = isCollectionBrowse ? isDessertBrowse ? 'dessert' : 'cake' : '';
+                const nextQuery = isCollectionBrowse ? 'cake' : '';
                 setInput(nextQuery);
                 go(nextQuery, 1);
               }}
@@ -350,7 +348,7 @@ function ProductsView({ mode }: { mode: CatalogMode }) {
 
 export function ProductCatalog({ mode }: { mode: CatalogMode }) {
   return (
-    <Suspense fallback={<div className="page-loading" role="status">Loading {mode === 'cakes' ? 'cakes' : mode === 'desserts' ? 'desserts' : 'shop'}…</div>}>
+    <Suspense fallback={<div className="page-loading" role="status">Loading {mode === 'cakes' ? 'cakes' : 'shop'}…</div>}>
       <ProductsView mode={mode} />
     </Suspense>
   );

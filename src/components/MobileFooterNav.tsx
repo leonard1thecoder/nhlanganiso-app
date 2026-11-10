@@ -18,7 +18,7 @@ function NavIcon({ href }: { href: string }) {
     'aria-hidden': true as const,
   };
 
-  if (href === '/cakes' || href === '/dessert' || href === '/admin/products') {
+  if (href === '/cakes' || href === '/admin/products') {
     return (
       <svg {...common}>
         <path d="M4 13h16v6H4z" />
@@ -95,7 +95,6 @@ export function MobileFooterNav() {
       ]
     : [
         { href: '/cakes', label: 'Cakes' },
-        { href: '/dessert', label: 'Desserts' },
         { href: '/recipes', label: 'Recipes' },
         { href: '/about', label: 'Our story' },
         { href: '/contact', label: 'Contact us' },

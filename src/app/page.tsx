@@ -10,14 +10,12 @@ import type { Category, Product } from '@/lib/types';
 import { DEMO_CATEGORIES, DEMO_PRODUCTS } from '@/lib/demo-catalogue';
 
 const CAKE_CATEGORY_RE = /cake|birthday|wedding|celebration/i;
-const DESSERT_CATEGORY_RE = /dessert|pastry|pastries|tart|pudding|brownie|cookie|macaron/i;
 
 const categorySearchTerm = (name: string) => name.toLowerCase() === 'cakes' ? 'cake' : name.toLowerCase() === 'other products' ? 'other products' : name;
 
 export default function HomePage() {
   const [featured, setFeatured] = useState<Product[] | null>(null);
   const [cakes, setCakes] = useState<Product[] | null>(null);
-  const [desserts, setDesserts] = useState<Product[] | null>(null);
   const [categories, setCategories] = useState<Category[] | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [newsletterEmail, setNewsletterEmail] = useState('');
@@ -30,10 +28,6 @@ export default function HomePage() {
     setCakes(DEMO_PRODUCTS.filter((product) => {
       const category = DEMO_CATEGORIES.find((item) => item.id === product.category_id);
       return Boolean(category && CAKE_CATEGORY_RE.test(category.name));
-    }).slice(0, 4));
-    setDesserts(DEMO_PRODUCTS.filter((product) => {
-      const category = DEMO_CATEGORIES.find((item) => item.id === product.category_id);
-      return Boolean(category && DESSERT_CATEGORY_RE.test(category.name));
     }).slice(0, 4));
   }, []);
 
@@ -191,30 +185,6 @@ export default function HomePage() {
             </div>
           ) : (
             <p className="muted">Our cake range is being refreshed. Enquire about a custom celebration cake.</p>
-          )}
-        </div>
-      </section>
-
-      <section className="section" aria-labelledby="home-desserts">
-        <div className="container">
-          <div className="section__head">
-            <h2 id="home-desserts">Desserts</h2>
-            <Link href="/dessert" className="link-arrow">
-              All desserts <span aria-hidden="true">→</span>
-            </Link>
-          </div>
-          {desserts === null ? (
-            <div className="grid-products" aria-busy="true">
-              {Array.from({ length: 4 }).map((_, i) => (
-                <div key={i} className="tile tile--skeleton" />
-              ))}
-            </div>
-          ) : desserts.length > 0 ? (
-            <div className="grid-products">
-              {desserts.map((product) => <ProductCard key={product.id} product={product} />)}
-            </div>
-          ) : (
-            <p className="muted">Our dessert range is being refreshed. Check back soon.</p>
           )}
         </div>
       </section>
