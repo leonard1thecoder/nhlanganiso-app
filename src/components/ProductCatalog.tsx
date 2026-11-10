@@ -5,8 +5,6 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import { Suspense, useEffect, useState, type FormEvent } from 'react';
 import { Notice } from '@/components/Notice';
 import { ProductCard } from '@/components/ProductCard';
-import { describeError } from '@/lib/api';
-import { productService, categoryService } from '@/lib/services';
 import type { Category, PageMeta, Product } from '@/lib/types';
 import { DEMO_CATEGORIES, DEMO_PRODUCTS } from '@/lib/demo-catalogue';
 
