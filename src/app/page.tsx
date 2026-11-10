@@ -1,6 +1,5 @@
 'use client';
 
-import Image from 'next/image';
 import Link from 'next/link';
 import { useEffect, useState, type FormEvent } from 'react';
 import { ProductCard } from '@/components/ProductCard';
@@ -132,14 +131,14 @@ export default function HomePage() {
           </div>
 
           <div className="home-hero__media">
-            <Image
-              src="/brand/hero-bread-still.jpg"
-              alt="A freshly baked loaf with a scored crust, beside wheat stalks and flour"
-              width={640}
-              height={420}
-              priority
+            <img
+              src="/brand/hero-bread.gif"
+              alt="A cinematic view of freshly baked bread being prepared in the bakery"
+              width={1200}
+              height={800}
               className="home-hero__image"
-              sizes="(max-width: 900px) 92vw, 560px"
+              fetchPriority="high"
+              decoding="async"
             />
           </div>
         </div>
