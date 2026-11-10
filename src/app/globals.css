@@ -2911,3 +2911,51 @@ body {
   .home-social-icons { gap: 0.75rem; margin-top: 1rem; }
   .home-social-icons__item { width: 2.5rem; height: 2.5rem; }
 }
+
+
+/* Footer trust badges stay on one row, with clear separation between items. */
+.footer__badges {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: nowrap;
+  gap: 0.75rem;
+  width: 100%;
+  margin: 1rem 0 0;
+  padding: 0;
+  list-style: none;
+  white-space: nowrap;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+.footer__badges::-webkit-scrollbar {
+  display: none;
+}
+.footer__pill {
+  display: inline-flex;
+  flex: 0 0 auto;
+  align-items: center;
+  justify-content: center;
+  padding: 0.45rem 0.7rem;
+  border: 1px solid var(--border, rgba(80, 54, 39, 0.16));
+  border-radius: 999px;
+  font-size: 0.75rem;
+  line-height: 1.2;
+}
+.footer__social-icons {
+  gap: 1.15rem;
+  margin-top: 1.25rem;
+}
+@media (max-width: 560px) {
+  .footer__badges {
+    justify-content: flex-start;
+    gap: 0.5rem;
+  }
+  .footer__pill {
+    padding: 0.4rem 0.6rem;
+    font-size: 0.7rem;
+  }
+  .footer__social-icons {
+    gap: 0.9rem;
+  }
+}
