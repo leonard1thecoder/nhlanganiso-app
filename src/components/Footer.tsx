@@ -23,10 +23,6 @@ export function Footer() {
             <span className="home-social-icons__item home-social-icons__item--tiktok" role="img" aria-label="TikTok" title="TikTok"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M19.6 8.2a6.8 6.8 0 0 1-4.2-1.4v8.1a5.6 5.6 0 1 1-5.6-5.6c.4 0 .8 0 1.2.1v3.1a2.6 2.6 0 1 0 1.7 2.4V2.5h3.1c.2 2.1 1.7 3.8 3.8 4.1v1.6Z"/></svg></span>
             <span className="home-social-icons__item home-social-icons__item--gmail" role="img" aria-label="Gmail" title="Gmail"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 6.5A2.5 2.5 0 0 1 5.5 4h13A2.5 2.5 0 0 1 21 6.5v11a2.5 2.5 0 0 1-2.5 2.5H18V8.2l-6 4.5-6-4.5V20h-.5A2.5 2.5 0 0 1 3 17.5v-11Z" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinejoin="round"/><path d="m4 6 8 6 8-6" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/></svg></span>
           </div>
-          <ul className="footer__badges" aria-label="Good to know">
-            <li className="footer__pill">Prices in South African rand</li>
-            <li className="footer__pill">Pay securely with PayFast</li>
-          </ul>
         </div>
 
         <div>
@@ -93,7 +89,6 @@ export function Footer() {
       <div className="footer__bottom">
         <div className="container footer__bottom-inner">
           <p>© {year} {SITE_NAME}. All rights reserved.</p>
-          <p className="footer__currency">Prices in South African rand (ZAR). Payments processed by PayFast.</p>
         </div>
       </div>
     </footer>
