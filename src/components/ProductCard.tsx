@@ -11,7 +11,7 @@ import type { Product } from '@/lib/types';
  * interactive elements; the image is decorative for keyboard users and
  * duplicates the name link, so it is hidden from assistive tech.
  */
-export function ProductCard({ product }: { product: Product }) {
+export function ProductCard({ product, demo = false }: { product: Product; demo?: boolean }) {
   const initial = product.name.trim().charAt(0).toUpperCase() || '•';
   const { addItem } = useCart();
   const [added, setAdded] = useState(false);
@@ -20,6 +20,7 @@ export function ProductCard({ product }: { product: Product }) {
   useEffect(() => () => window.clearTimeout(resetTimer.current), []);
 
   const onAdd = () => {
+    if (demo) return;
     addItem(
       { product_id: product.id, slug: product.slug, name: product.name, price_cents: product.price_cents },
       1,
@@ -51,14 +52,18 @@ export function ProductCard({ product }: { product: Product }) {
 
         <div className="tile__foot">
           <span className="price tile__price">{formatZAR(product.price_cents)}</span>
-          <button
-            type="button"
-            className={`btn btn-primary btn-sm tile__add ${added ? 'is-added' : ''}`}
-            onClick={onAdd}
-          >
-            {added ? 'Added' : 'Add to bag'}
-            <span className="sr-only"> {product.name}</span>
-          </button>
+          {demo ? (
+            <span className="muted small" aria-label="Demo item, ordering disabled">Preview only</span>
+          ) : (
+            <button
+              type="button"
+              className={`btn btn-primary btn-sm tile__add ${added ? 'is-added' : ''}`}
+              onClick={onAdd}
+            >
+              {added ? 'Added' : 'Add to bag'}
+              <span className="sr-only"> {product.name}</span>
+            </button>
+          )}
         </div>
       </div>
     </article>
