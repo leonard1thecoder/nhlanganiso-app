@@ -135,8 +135,8 @@ export default function HomePage() {
             <Image
               src="/brand/hero-bread-still.jpg"
               alt="A freshly baked loaf with a scored crust, beside wheat stalks and flour"
-              width={506}
-              height={333}
+              width={640}
+              height={420}
               priority
               className="home-hero__image"
               sizes="(max-width: 900px) 92vw, 560px"
