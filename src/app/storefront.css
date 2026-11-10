@@ -8,7 +8,7 @@
    - Product photography leads. Text and price sit close to the action.
    - No decorative filler: no fake badges, letter tiles as hero art, or
      hover-only controls. Every visible control is labelled.
-   - Palette sampled from public/brand/logo.jpg: cream ground, chocolate
+   - Palette sampled from the previous logo: cream ground, chocolate
      text and primary actions, terracotta accent, caramel rules.
    ========================================================================== */
 
@@ -38,9 +38,9 @@
   position: sticky;
   top: 0;
   z-index: 40;
-  background: rgba(251, 244, 232, 0.96);
+  background: rgba(244, 198, 213, 0.97);
   backdrop-filter: saturate(1.2) blur(6px);
-  border-bottom: 1px solid var(--line);
+  border-bottom: 1px solid var(--pink-border);
 }
 
 .navbar__inner {
@@ -64,8 +64,18 @@
 }
 
 .navbar .brand__mark {
-  width: 40px;
-  height: 40px;
+  display: block;
+  width: auto;
+  height: 80px;
+  border-radius: 8px;
+}
+
+.navbar .brand {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 64px;
+  min-height: 56px;
 }
 
 .navbar .brand__text strong {
@@ -505,22 +515,29 @@
   margin: 0;
   overflow: hidden;
   border-radius: 22px;
-  background: var(--surface);
+  background: #15100b;
   box-shadow: var(--shadow);
-  aspect-ratio: 4 / 3;
+  aspect-ratio: 3 / 2;
 }
 
 .home-hero__image {
+  display: block;
   width: 100%;
   height: 100%;
   object-fit: cover;
+  animation: hero-image-drift 18s ease-in-out infinite alternate;
+  will-change: transform;
 }
 
-.home-hero__image--logo {
-  object-fit: contain;
-  background: #f8e8d0;
-  padding: 6%;
+@keyframes hero-image-drift {
+  from { transform: scale(1.02) translate3d(-0.4%, 0, 0); }
+  to { transform: scale(1.1) translate3d(0.4%, -0.5%, 0); }
 }
+
+@media (prefers-reduced-motion: reduce) {
+  .home-hero__image { animation: none; }
+}
+
 
 .category-grid {
   display: grid;
@@ -1638,6 +1655,12 @@
   text-decoration: none;
 }
 
+.footer__logo {
+  width: 200px;
+  height: auto;
+  border-radius: 10px;
+}
+
 .footer__desc {
   margin: 1rem 0;
   max-width: 24rem;
@@ -1826,4 +1849,17 @@
   .container.section {
     padding-inline: 16px;
   }
+}
+
+/* Auth pages: centred brand logo above each card's content */
+.auth-logo {
+  display: flex;
+  justify-content: center;
+  margin: 0 0 20px;
+}
+
+.auth-logo__img {
+  width: 180px;
+  height: auto;
+  border-radius: 10px;
 }

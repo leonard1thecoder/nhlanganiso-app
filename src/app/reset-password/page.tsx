@@ -7,6 +7,7 @@ import { Field, TextInput } from '@/components/Field';
 import { Notice } from '@/components/Notice';
 import { describeError } from '@/lib/api';
 import { authService } from '@/lib/services';
+import { AuthLogo } from '@/components/AuthLogo';
 
 function ResetForm() {
   const token = useSearchParams().get('token');
@@ -20,6 +21,7 @@ function ResetForm() {
     return (
       <section className="container section auth-page-container">
         <div className="auth-box card center">
+          <AuthLogo />
           <h1>Invalid reset link</h1>
           <p className="muted">This link is incomplete. Request a new one.</p>
           <Link href="/forgot-password" className="btn btn-primary">Request a new link</Link>
@@ -47,6 +49,7 @@ function ResetForm() {
   return (
     <section className="container section auth-page-container">
       <div className="auth-box card">
+        <AuthLogo />
         <div className="auth-head">
           <p className="eyebrow"><span className="rule" aria-hidden="true" />Account security</p>
           <h1 className="auth-title">Choose a new password</h1>

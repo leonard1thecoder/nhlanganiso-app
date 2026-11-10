@@ -80,11 +80,14 @@ export function Navbar() {
           className="brand"
           aria-label={isAdminArea ? 'Admin products' : 'Nhlanganiso Catering & Baking, home'}
         >
-          <Image src="/brand/mark.png" alt="" width={44} height={44} priority className="brand__mark" />
-          <span className="brand__text">
-            <strong>Nhlanganiso</strong>
-            <small>Catering &amp; Baking</small>
-          </span>
+          <Image
+            src="/brand/logo.png"
+            alt="Nhlanganiso Catering and Baking"
+            width={1536}
+            height={1024}
+            priority
+            className="brand__mark"
+          />
         </Link>
 
         {!isAdminArea ? (

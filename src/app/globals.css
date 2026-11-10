@@ -6,7 +6,7 @@
    Token names are kept stable so existing components pick up the new palette.
    ========================================================================== */
 :root {
-  /* Palette sampled from public/brand/logo.jpg: cream ground, chocolate, terracotta, caramel. */
+  /* Palette sampled from the previous logo: cream ground, chocolate, terracotta, caramel. */
   --bg: #fffdf9;
   --bg-soft: #fbf4e8;
   --surface: #ffffff;

@@ -52,7 +52,6 @@ export default function HomePage() {
   const [newsletterEmail, setNewsletterEmail] = useState('');
   const [newsletterFeedback, setNewsletterFeedback] = useState<{ kind: 'success' | 'error'; message: string } | null>(null);
   const [subscribing, setSubscribing] = useState(false);
-  const heroProduct = featured?.find((product) => product.image_url) ?? null;
 
   useEffect(() => {
     let cancelled = false;
@@ -133,27 +132,15 @@ export default function HomePage() {
           </div>
 
           <div className="home-hero__media">
-            {heroProduct ? (
-              <Image
-                src={heroProduct.image_url as string}
-                alt={heroProduct.name}
-                width={1200}
-                height={900}
-                priority
-                className="home-hero__image"
-                sizes="(max-width: 900px) 92vw, 560px"
-              />
-            ) : (
-              <Image
-                src="/brand/logo.jpg"
-                alt="Nhlanganiso Catering & Baking logo"
-                width={1920}
-                height={1280}
-                priority
-                className="home-hero__image home-hero__image--logo"
-                sizes="(max-width: 900px) 92vw, 560px"
-              />
-            )}
+            <Image
+              src="/brand/hero-bread-still.jpg"
+              alt="A freshly baked loaf with a scored crust, beside wheat stalks and flour"
+              width={640}
+              height={420}
+              priority
+              className="home-hero__image"
+              sizes="(max-width: 900px) 92vw, 560px"
+            />
           </div>
         </div>
       </section>

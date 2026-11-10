@@ -23,7 +23,7 @@ export const metadata: Metadata = {
     description: 'Baked goods, celebration cakes and catering for special moments.',
     url: SITE_URL,
   },
-  icons: { icon: '/brand/mark.png' },
+  icons: { icon: '/brand/favicon.png' },
 };
 
 export const viewport: Viewport = {
