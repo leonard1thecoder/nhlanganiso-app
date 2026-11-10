@@ -1,5 +1,4 @@
 import Link from 'next/link';
-import Image from 'next/image';
 import { CONTACT, HAS_REAL_CONTACT_EMAIL, HAS_REAL_CONTACT_PHONE, SITE_NAME } from '@/lib/config';
 
 export function Footer() {
@@ -10,9 +9,6 @@ export function Footer() {
     <footer className="footer">
       <div className="container footer__grid">
         <div className="footer__brand-col">
-          <Link href="/" className="footer__brand" aria-label="Nhlanganiso Catering & Baking, home">
-            <Image src="/brand/logo.jpg" alt="" width={1536} height={1024} className="footer__logo" />
-          </Link>
           <p className="footer__desc">
             Baked goods, celebration cakes and catering from our bakery in South Africa.
           </p>
