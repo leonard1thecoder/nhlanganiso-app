@@ -9,7 +9,7 @@ import { describeError } from '@/lib/api';
 import { productService, categoryService } from '@/lib/services';
 import type { Category, PageMeta, Product } from '@/lib/types';
 
-const PER_PAGE = 12;
+const PER_PAGE = 12;\nconst categorySearchTerm = (name: string) => name.toLowerCase() === 'cakes' ? 'cake' : name.toLowerCase() === 'other products' ? 'other products' : name;\nconst CATEGORY_SEARCH_TERMS = new Set(['bread', 'cake', 'cupcakes', 'pastries', 'platters', 'other products']);
 const CAKE_CATEGORY_RE = /cake|birthday|muffin|cupcake|wedding|celebration/i;
 const DESSERT_CATEGORY_RE = /dessert|pastry|pastries|tart|pudding|brownie|cookie|macaron|cupcake|muffin/i;
 export type CatalogMode = 'all' | 'cakes' | 'desserts';
@@ -73,7 +73,7 @@ function ProductsView({ mode }: { mode: CatalogMode }) {
     Promise.all(
       matchingCategories.map(async (category) => {
         try {
-          const result = await productService.list({ search: category.name, page: 1, per_page: 4 });
+          const result = await productService.list({ search: categorySearchTerm(category.name), page: 1, per_page: 4 });
           return { category, products: result.data };
         } catch {
           return { category, products: [] };
@@ -202,7 +202,7 @@ function ProductsView({ mode }: { mode: CatalogMode }) {
               {isCollectionBrowse ? `All ${collectionLabel.toLowerCase()}` : 'All'}
             </button>
             {visibleCategories.map((c) => {
-              const active = q.toLowerCase() === c.name.toLowerCase();
+              const searchTerm = categorySearchTerm(c.name);\n              const active = q.toLowerCase() === searchTerm.toLowerCase();
               return (
                 <button
                   key={c.id}
