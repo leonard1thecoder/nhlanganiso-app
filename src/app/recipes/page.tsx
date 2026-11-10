@@ -199,7 +199,7 @@ function NewsletterForm() {
               <h2 className="recipe-card__title">{recipe.title}</h2>
               <p className="recipe-card__meta">{recipe.meta}</p>
               <details className="recipe-card__details">
-                <summary>View ingredients and method</summary>
+                <summary className="btn btn-outline btn-block recipe-card__toggle">View ingredients and method</summary>
                 <h3>Ingredients</h3>
                 <ul>
                   {recipe.ingredients.map((item) => (

@@ -378,10 +378,15 @@ code {
   padding-top: 12px;
   border-top: 1px solid var(--line);
 }
-.recipe-card__details summary {
+.recipe-card__toggle {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  list-style: none;
   cursor: pointer;
-  font-weight: 700;
-  color: var(--brown-deep);
+}
+.recipe-card__toggle::-webkit-details-marker {
+  display: none;
 }
 .recipe-card__details h3 {
   margin: 14px 0 6px;

@@ -9,7 +9,11 @@ const nextConfig = {
   reactStrictMode: true,
   poweredByHeader: false,
   async redirects() {
-    return [{ source: '/catering', destination: '/contact', permanent: true }];
+    return [
+      { source: '/catering', destination: '/contact', permanent: true },
+      // Keep old newsletter links (including confirmation links with ?token=) working.
+      { source: '/newsletter', destination: '/recipes', permanent: true },
+    ];
   },
   // Same-origin proxy for the API so the browser never hits CORS:
   // the app calls /api/v1/* on its own origin, Next rewrites it to the Rust API.

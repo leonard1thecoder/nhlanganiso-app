@@ -43,7 +43,7 @@ export function Footer() {
             <li><Link href="/faq">Frequently asked questions</Link></li>
             <li><Link href="/orders">My orders</Link></li>
             <li><Link href="/account">My account</Link></li>
-            <li><Link href="/newsletter">Newsletter</Link></li>
+            <li><Link href="/recipes">Newsletter</Link></li>
           </ul>
         </div>
 
