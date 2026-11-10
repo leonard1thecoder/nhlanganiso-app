@@ -300,6 +300,7 @@ code {
   display: flex;
   gap: var(--gallery-gap);
   flex: none;
+  align-items: center;
   margin: 0;
   padding: 0 var(--gallery-gap) 0 0;
   list-style: none;
@@ -315,6 +316,12 @@ code {
   object-fit: cover;
   border-radius: var(--radius);
   border: 1px solid var(--line);
+}
+.gallery__set img.gallery__cutout {
+  aspect-ratio: auto;
+  object-fit: contain;
+  border: 0;
+  border-radius: 0;
 }
 @keyframes gallery-scroll {
   to {

@@ -8,38 +8,76 @@ export const metadata: Metadata = {
   description: 'Meet Nhlanganiso Catering & Baking and explore the bakery, celebration cakes and catering services.',
 };
 
-const GALLERY_PHOTOS = [
+type GalleryPhoto = {
+  src: string;
+  alt: string;
+  width: number;
+  height: number;
+  // Round product cut-outs with transparent corners, shown without a frame.
+  round?: boolean;
+};
+
+const GALLERY_PHOTOS: GalleryPhoto[] = [
   {
     src: '/brand/gallery/cupcakes-cooling.jpg',
     alt: 'Chocolate cupcakes cooling on a wire rack',
+    width: 960,
+    height: 1280,
   },
   {
     src: '/brand/gallery/cupcakes-frosted.jpg',
     alt: 'Chocolate cupcake topped with caramel swirl frosting and gold pearls',
+    width: 960,
+    height: 1280,
+  },
+  {
+    src: '/brand/gallery/scones.png',
+    alt: 'Freshly baked golden scones',
+    width: 381,
+    height: 381,
+    round: true,
+  },
+  {
+    src: '/brand/gallery/red-velvet-cupcakes.png',
+    alt: 'Red velvet cupcakes with white swirl frosting',
+    width: 383,
+    height: 383,
+    round: true,
+  },
+  {
+    src: '/brand/gallery/snowballs.png',
+    alt: 'Pink coconut-coated snowball biscuits with cream filling',
+    width: 391,
+    height: 391,
+    round: true,
+  },
+  {
+    src: '/brand/gallery/butter-biscuits.png',
+    alt: 'Piped butter biscuits with coloured centres',
+    width: 389,
+    height: 358,
+    round: true,
   },
 ];
 
-// The strip repeats the photos so it always fills wide screens. The second copy
-// of the run is hidden from assistive tech so the images aren't announced twice.
-const GALLERY_RUN = Array.from({ length: 5 }, () => GALLERY_PHOTOS).flat();
-
+// One run of the photos is wider than any screen, so the track can loop
+// seamlessly. The second copy is hidden from assistive tech so the images
+// aren't announced twice.
 function GalleryRun({ hidden }: { hidden: boolean }) {
   return (
     <ul className="gallery__set" aria-hidden={hidden || undefined}>
-      {GALLERY_RUN.map((photo, i) => {
-        const isFirstCopy = i < GALLERY_PHOTOS.length;
-        return (
-          <li key={`${hidden ? 'b' : 'a'}-${i}`}>
-            <Image
-              src={photo.src}
-              alt={!hidden && isFirstCopy ? photo.alt : ''}
-              width={960}
-              height={1280}
-              sizes="(max-width: 960px) 200px, 300px"
-            />
-          </li>
-        );
-      })}
+      {GALLERY_PHOTOS.map((photo) => (
+        <li key={`${hidden ? 'b' : 'a'}-${photo.src}`}>
+          <Image
+            src={photo.src}
+            alt={hidden ? '' : photo.alt}
+            width={photo.width}
+            height={photo.height}
+            className={photo.round ? 'gallery__cutout' : undefined}
+            sizes="(max-width: 960px) 200px, 300px"
+          />
+        </li>
+      ))}
     </ul>
   );
 }
