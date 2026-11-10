@@ -31,8 +31,8 @@ export function Navbar() {
     { href: '/products', label: 'Shop all' },
     { href: '/cakes', label: 'Cakes' },
     { href: '/dessert', label: 'Desserts' },
-    { href: '/contact', label: 'Contact us' },
     { href: '/about', label: 'Our story' },
+    { href: '/contact', label: 'Contact us' },
   ];
 
   const isActive = (href: string) => pathname === href || pathname.startsWith(`${href}/`);

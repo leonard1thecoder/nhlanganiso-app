@@ -97,8 +97,8 @@ export function MobileFooterNav() {
         { href: '/products', label: 'Shop' },
         { href: '/cakes', label: 'Cakes' },
         { href: '/dessert', label: 'Desserts' },
-        { href: '/contact', label: 'Contact us' },
         { href: '/about', label: 'Our story' },
+        { href: '/contact', label: 'Contact us' },
       ];
 
   return (
