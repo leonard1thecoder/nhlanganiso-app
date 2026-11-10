@@ -9,7 +9,9 @@ import { categoryService, newsletterService, productService } from '@/lib/servic
 import type { Category, Product } from '@/lib/types';
 
 const CAKE_CATEGORY_RE = /cake|birthday|muffin|cupcake|wedding|celebration/i;
-const DESSERT_CATEGORY_RE = /dessert|pastry|pastries|tart|pudding|brownie|cookie|macaron/i;\n\nconst categorySearchTerm = (name: string) => name.toLowerCase() === 'cakes' ? 'cake' : name.toLowerCase() === 'other products' ? 'other products' : name;
+const DESSERT_CATEGORY_RE = /dessert|pastry|pastries|tart|pudding|brownie|cookie|macaron/i;
+
+const categorySearchTerm = (name: string) => name.toLowerCase() === 'cakes' ? 'cake' : name.toLowerCase() === 'other products' ? 'other products' : name;
 
 async function loadCollectionProducts(categories: Category[], pattern: RegExp, fallbackSearch: string) {
   const matchingCategories = categories.filter((category) => pattern.test(category.name));
