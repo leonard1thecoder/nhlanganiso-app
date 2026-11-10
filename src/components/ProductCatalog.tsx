@@ -12,7 +12,7 @@ import type { Category, PageMeta, Product } from '@/lib/types';
 const PER_PAGE = 12;
 const categorySearchTerm = (name: string) => name.toLowerCase() === 'cakes' ? 'cake' : name.toLowerCase() === 'other products' ? 'other products' : name;
 const CATEGORY_SEARCH_TERMS = new Set(['bread', 'cake', 'cupcakes', 'pastries', 'platters', 'other products']);
-const CAKE_CATEGORY_RE = /cake|birthday|muffin|cupcake|wedding|celebration/i;
+const CAKE_CATEGORY_RE = /cake|birthday|wedding|celebration/i;
 const DESSERT_CATEGORY_RE = /dessert|pastry|pastries|tart|pudding|brownie|cookie|macaron|cupcake|muffin/i;
 export type CatalogMode = 'all' | 'cakes' | 'desserts';
 
