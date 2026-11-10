@@ -28,9 +28,9 @@ export function Navbar() {
     || (pathname === '/account' && (isAdmin || status === 'loading'));
 
   const navLinks = [
-    { href: '/newsletter', label: 'Recipes' },
     { href: '/cakes', label: 'Cakes' },
     { href: '/dessert', label: 'Desserts' },
+    { href: '/newsletter', label: 'Recipes' },
     { href: '/about', label: 'Our story' },
     { href: '/contact', label: 'Contact us' },
   ];
