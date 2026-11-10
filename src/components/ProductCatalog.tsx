@@ -107,12 +107,15 @@ function ProductsView({ mode }: { mode: CatalogMode }) {
     let cancelled = false;
     setError(null);
     setProducts(null);
+    const isCategoryFilter = CATEGORY_SEARCH_TERMS.has(q.trim().toLowerCase());
     productService
-      .list({ search: q || undefined, page, per_page: PER_PAGE })
+      .list({ search: q || undefined, page: isCategoryFilter ? 1 : page, per_page: isCategoryFilter ? 100 : PER_PAGE })
       .then((res) => {
         if (cancelled) return;
         setProducts(res.data);
-        setMeta(res.meta);
+        setMeta(isCategoryFilter
+          ? { ...res.meta, total: res.data.length, per_page: Math.max(1, res.data.length) }
+          : res.meta);
       })
       .catch((err) => {
         if (!cancelled) setError(describeError(err));
