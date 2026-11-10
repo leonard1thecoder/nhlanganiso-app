@@ -94,7 +94,7 @@ export function MobileFooterNav() {
         { href: '/admin/newsletter', label: 'Newsletter' },
       ]
     : [
-        { href: '/products', label: 'Shop' },
+        { href: '/newsletter', label: 'Recipes' },
         { href: '/cakes', label: 'Cakes' },
         { href: '/dessert', label: 'Desserts' },
         { href: '/about', label: 'Our story' },

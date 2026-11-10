@@ -28,7 +28,7 @@ export function Navbar() {
     || (pathname === '/account' && (isAdmin || status === 'loading'));
 
   const navLinks = [
-    { href: '/products', label: 'Shop all' },
+    { href: '/newsletter', label: 'Recipes' },
     { href: '/cakes', label: 'Cakes' },
     { href: '/dessert', label: 'Desserts' },
     { href: '/about', label: 'Our story' },
