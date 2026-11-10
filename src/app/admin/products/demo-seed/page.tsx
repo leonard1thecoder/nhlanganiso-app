@@ -4,9 +4,8 @@ import Link from 'next/link';
 import { useCallback, useState } from 'react';
 import { Notice } from '@/components/Notice';
 import { RequireAuth } from '@/components/RequireAuth';
-import { describeError } from '@/lib/api';
 import { adminService, categoryService, productService } from '@/lib/services';
-import type { Category, Product } from '@/lib/types';
+import type { Category } from '@/lib/types';
 
 type SeedCategory = {
   name: string;
