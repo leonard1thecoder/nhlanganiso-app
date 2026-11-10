@@ -87,7 +87,7 @@ export function Footer() {
       </div>
 
       <div className="footer__bottom">
-        <div className="container footer__bottom-inner">
+        <div className="container footer__bottom-inner footer__bottom-inner--center">
           <p>© {year} {SITE_NAME}. All rights reserved.</p>
         </div>
       </div>

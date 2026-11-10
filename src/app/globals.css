@@ -333,6 +333,10 @@ code {
   justify-content: center;
   text-align: center;
 }
+.footer__bottom-inner.footer__bottom-inner--center {
+  justify-content: center;
+  text-align: center;
+}
 @keyframes gallery-scroll {
   to {
     transform: translateX(-50%);
