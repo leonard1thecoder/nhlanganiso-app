@@ -81,10 +81,10 @@ export function Navbar() {
           aria-label={isAdminArea ? 'Admin products' : 'Nhlanganiso Catering & Baking, home'}
         >
           <Image
-            src="/brand/emblem.png"
+            src="/brand/logo.png"
             alt="Nhlanganiso Catering and Baking"
-            width={70}
-            height={53}
+            width={1536}
+            height={1024}
             priority
             className="brand__mark"
           />
