@@ -289,12 +289,12 @@ function DemoCatalogueSeeder() {
 
         {state.phase !== 'idle' ? (
           <div aria-live="polite" className="form-stack">
-            <div className="row-between">
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", gap: "1rem", flexWrap: "wrap" }}>
               <strong>{state.message}</strong>
               <span className="muted small">{state.completed}/{state.total}</span>
             </div>
-            <div className="progress-track" role="progressbar" aria-valuenow={percent} aria-valuemin={0} aria-valuemax={100}>
-              <div className="progress-track__bar" style={{ width: `${percent}%` }} />
+            <div role="progressbar" aria-valuenow={percent} aria-valuemin={0} aria-valuemax={100} style={{ height: 10, borderRadius: 999, overflow: "hidden", background: "var(--surface-silver, #eee5d8)" }}>
+              <div style={{ width: `${percent}%`, height: "100%", borderRadius: 999, background: "var(--brown, #5b3525)", transition: "width 180ms ease" }} />
             </div>
             <div className="admin-products-actions">
               <span className="muted small">{state.created} created · {state.skipped} already existed · {state.failed.length} failed</span>
