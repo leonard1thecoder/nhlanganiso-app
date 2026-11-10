@@ -8,7 +8,7 @@
    - Product photography leads. Text and price sit close to the action.
    - No decorative filler: no fake badges, letter tiles as hero art, or
      hover-only controls. Every visible control is labelled.
-   - Palette sampled from public/brand/logo.jpg: cream ground, chocolate
+   - Palette sampled from the previous logo: cream ground, chocolate
      text and primary actions, terracotta accent, caramel rules.
    ========================================================================== */
 
@@ -63,9 +63,33 @@
   text-decoration: none;
 }
 
+.brand__emblem {
+  display: inline-grid;
+  place-items: center;
+  flex: 0 0 auto;
+  height: 52px;
+  padding: 3px 5px;
+  border-radius: 10px;
+  background: #0c0906;
+  box-shadow: inset 0 0 0 1px rgba(184, 122, 46, 0.45);
+}
+
 .navbar .brand__mark {
-  width: 40px;
-  height: 40px;
+  width: auto;
+  height: 46px;
+}
+
+.footer__logo {
+  width: 220px;
+  height: auto;
+  border-radius: 14px;
+  box-shadow: var(--shadow-sm);
+}
+
+@media (max-width: 480px) {
+  .footer__logo {
+    width: 180px;
+  }
 }
 
 .navbar .brand__text strong {
@@ -505,9 +529,9 @@
   margin: 0;
   overflow: hidden;
   border-radius: 22px;
-  background: var(--surface);
+  background: #15100b;
   box-shadow: var(--shadow);
-  aspect-ratio: 4 / 3;
+  aspect-ratio: 3 / 2;
 }
 
 .home-hero__image {
@@ -516,11 +540,6 @@
   object-fit: cover;
 }
 
-.home-hero__image--logo {
-  object-fit: contain;
-  background: #f8e8d0;
-  padding: 6%;
-}
 
 .category-grid {
   display: grid;

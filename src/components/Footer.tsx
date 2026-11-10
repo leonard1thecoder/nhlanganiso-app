@@ -10,12 +10,8 @@ export function Footer() {
     <footer className="footer">
       <div className="container footer__grid">
         <div className="footer__brand-col">
-          <Link href="/" className="brand footer__brand" aria-label="Nhlanganiso Home">
-            <Image src="/brand/mark.png" alt="" width={40} height={40} className="brand__mark" />
-            <span className="brand__text">
-              <strong>Nhlanganiso</strong>
-              <small>Catering &amp; Baking</small>
-            </span>
+          <Link href="/" className="footer__brand" aria-label="Nhlanganiso Catering & Baking, home">
+            <Image src="/brand/logo.jpg" alt="" width={1536} height={1024} className="footer__logo" />
           </Link>
           <p className="footer__desc">
             Baked goods, celebration cakes and catering from our bakery in South Africa.
