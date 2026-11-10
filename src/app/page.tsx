@@ -5,44 +5,14 @@ import { useEffect, useState, type FormEvent } from 'react';
 import { ProductCard } from '@/components/ProductCard';
 import { Notice } from '@/components/Notice';
 import { describeError } from '@/lib/api';
-import { categoryService, newsletterService, productService } from '@/lib/services';
+import { newsletterService } from '@/lib/services';
 import type { Category, Product } from '@/lib/types';
+import { DEMO_CATEGORIES, DEMO_PRODUCTS } from '@/lib/demo-catalogue';
 
 const CAKE_CATEGORY_RE = /cake|birthday|wedding|celebration/i;
 const DESSERT_CATEGORY_RE = /dessert|pastry|pastries|tart|pudding|brownie|cookie|macaron/i;
 
 const categorySearchTerm = (name: string) => name.toLowerCase() === 'cakes' ? 'cake' : name.toLowerCase() === 'other products' ? 'other products' : name;
-
-async function loadCollectionProducts(categories: Category[], pattern: RegExp, fallbackSearch: string) {
-  const matchingCategories = categories.filter((category) => pattern.test(category.name));
-  const productGroups = matchingCategories.length > 0
-    ? await Promise.all(
-        matchingCategories.map(async (category) => {
-          try {
-            const result = await productService.list({ search: categorySearchTerm(category.name), per_page: 4 });
-            return result.data;
-          } catch {
-            return [];
-          }
-        }),
-      )
-    : [
-        await productService
-          .list({ search: fallbackSearch, per_page: 8 })
-          .then((result) => result.data)
-          .catch(() => []),
-      ];
-
-  const uniqueProducts = new Map<string, Product>();
-  for (const product of productGroups.flat()) uniqueProducts.set(product.id, product);
-  const products = [...uniqueProducts.values()];
-  if (products.length > 0 || matchingCategories.length === 0) return products.slice(0, 4);
-
-  return productService
-    .list({ search: fallbackSearch, per_page: 4 })
-    .then((result) => result.data)
-    .catch(() => []);
-}
 
 export default function HomePage() {
   const [featured, setFeatured] = useState<Product[] | null>(null);
@@ -55,40 +25,16 @@ export default function HomePage() {
   const [subscribing, setSubscribing] = useState(false);
 
   useEffect(() => {
-    let cancelled = false;
-    productService
-      .list({ per_page: 8 })
-      .then((res) => !cancelled && setFeatured(res.data))
-      .catch((err) => !cancelled && setError(describeError(err)));
-    categoryService
-      .list()
-      .then((cats) => {
-        if (cancelled) return;
-        setCategories(cats);
-        return Promise.all([
-          loadCollectionProducts(cats, CAKE_CATEGORY_RE, 'cake'),
-          loadCollectionProducts(cats, DESSERT_CATEGORY_RE, 'dessert'),
-        ]).then(([cakeProducts, dessertProducts]) => {
-          if (cancelled) return;
-          setCakes(cakeProducts);
-          setDesserts(dessertProducts);
-        });
-      })
-      .catch(() => {
-        if (cancelled) return;
-        setCategories([]);
-        void Promise.all([
-          loadCollectionProducts([], CAKE_CATEGORY_RE, 'cake'),
-          loadCollectionProducts([], DESSERT_CATEGORY_RE, 'dessert'),
-        ]).then(([cakeProducts, dessertProducts]) => {
-          if (cancelled) return;
-          setCakes(cakeProducts);
-          setDesserts(dessertProducts);
-        });
-      });
-    return () => {
-      cancelled = true;
-    };
+    setFeatured(DEMO_PRODUCTS.slice(0, 8));
+    setCategories(DEMO_CATEGORIES);
+    setCakes(DEMO_PRODUCTS.filter((product) => {
+      const category = DEMO_CATEGORIES.find((item) => item.id === product.category_id);
+      return Boolean(category && CAKE_CATEGORY_RE.test(category.name));
+    }).slice(0, 4));
+    setDesserts(DEMO_PRODUCTS.filter((product) => {
+      const category = DEMO_CATEGORIES.find((item) => item.id === product.category_id);
+      return Boolean(category && DESSERT_CATEGORY_RE.test(category.name));
+    }).slice(0, 4));
   }, []);
 
   const onNewsletterSubmit = async (event: FormEvent<HTMLFormElement>) => {
@@ -218,7 +164,7 @@ export default function HomePage() {
           {featured && featured.length > 0 ? (
             <div className="grid-products">
               {featured.map((p) => (
-                <ProductCard key={p.id} product={p} />
+                <ProductCard key={p.id} product={p} demo />
               ))}
             </div>
           ) : null}
@@ -241,7 +187,7 @@ export default function HomePage() {
             </div>
           ) : cakes.length > 0 ? (
             <div className="grid-products">
-              {cakes.map((product) => <ProductCard key={product.id} product={product} />)}
+              {cakes.map((product) => <ProductCard key={product.id} product={product} demo />)}
             </div>
           ) : (
             <p className="muted">Our cake range is being refreshed. Enquire about a custom celebration cake.</p>
