@@ -2788,3 +2788,89 @@ body {
 @media (prefers-reduced-motion: reduce) {
   .home-hero__image { animation: none; }
 }
+
+
+/* Center the complete homepage hero, not just its primary copy column. */
+.home-hero {
+  text-align: center;
+}
+.home-hero__grid {
+  grid-template-columns: minmax(0, 1fr);
+  justify-items: center;
+  gap: clamp(2rem, 4vw, 3rem);
+}
+.home-hero__copy {
+  display: flex;
+  width: min(100%, 900px);
+  min-width: 0;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+.home-hero__copy > *,
+.home-hero__copy :is(h1, h2, h3, h4, p, span, a, li, small, strong, em) {
+  text-align: center;
+}
+.home-hero__title {
+  width: 100%;
+  max-width: 20ch;
+  margin-inline: auto;
+}
+.home-hero__lead {
+  width: 100%;
+  max-width: 700px;
+  margin-inline: auto;
+}
+.home-hero__copy .cta-row {
+  width: 100%;
+  justify-content: center;
+  align-items: center;
+}
+.home-hero__facts {
+  width: 100%;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+}
+.home-hero__facts li {
+  text-align: center;
+}
+.home-hero__media {
+  width: min(100%, 1080px);
+  justify-self: center;
+  aspect-ratio: 16 / 9;
+}
+@media (max-width: 900px) {
+  .home-hero__grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .home-hero__media {
+    aspect-ratio: 16 / 10;
+  }
+}
+@media (max-width: 560px) {
+  .home-hero__copy .cta-row {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  .home-hero__copy .cta-row .btn {
+    width: 100%;
+    justify-content: center;
+  }
+  .home-hero__media {
+    aspect-ratio: 5 / 4;
+  }
+}
+
+
+/* Site-wide typography alignment: apply to every public, shop, dashboard,
+   content and authentication page while keeping editable controls readable. */
+:where(main, .site-main, .footer) {
+  text-align: center;
+}
+:where(main, .site-main, .footer) :where(*) {
+  text-align: center;
+}
+:where(main, .site-main, .footer) :where(input, textarea, select, [contenteditable="true"]) {
+  text-align: left;
+}
