@@ -222,7 +222,8 @@ function ProductsView({ mode }: { mode: CatalogMode }) {
         </div>
       )}
 
-      {/* Results Count & Active Filter Indicator */}
+      {/* Results Count & Active Filter Indicator (not shown on the cakes page) */}
+      {mode !== 'cakes' && (
       <div className="shop-status-bar">
         <div className="shop-status-text">
           {meta ? (
@@ -248,6 +249,7 @@ function ProductsView({ mode }: { mode: CatalogMode }) {
           )}
         </div>
       </div>
+      )}
 
       {error ? <Notice tone="error" title="Could not load products">{error}</Notice> : null}
 
