@@ -9,7 +9,7 @@ import { categoryService, newsletterService, productService } from '@/lib/servic
 import type { Category, Product } from '@/lib/types';
 
 const CAKE_CATEGORY_RE = /cake|birthday|muffin|cupcake|wedding|celebration/i;
-const DESSERT_CATEGORY_RE = /dessert|pastry|pastries|tart|pudding|brownie|cookie|macaron/i;
+const DESSERT_CATEGORY_RE = /dessert|pastry|pastries|tart|pudding|brownie|cookie|macaron/i;\n\nconst categorySearchTerm = (name: string) => name.toLowerCase() === 'cakes' ? 'cake' : name.toLowerCase() === 'other products' ? 'other products' : name;
 
 async function loadCollectionProducts(categories: Category[], pattern: RegExp, fallbackSearch: string) {
   const matchingCategories = categories.filter((category) => pattern.test(category.name));
@@ -17,7 +17,7 @@ async function loadCollectionProducts(categories: Category[], pattern: RegExp, f
     ? await Promise.all(
         matchingCategories.map(async (category) => {
           try {
-            const result = await productService.list({ search: category.name, per_page: 4 });
+            const result = await productService.list({ search: categorySearchTerm(category.name), per_page: 4 });
             return result.data;
           } catch {
             return [];
@@ -174,7 +174,7 @@ export default function HomePage() {
               {categories.map((c) => (
                 <li key={c.id}>
                   <Link
-                    href={`${CAKE_CATEGORY_RE.test(c.name) ? '/cakes' : DESSERT_CATEGORY_RE.test(c.name) ? '/dessert' : '/products'}?q=${encodeURIComponent(c.name)}`}
+                    href={`${CAKE_CATEGORY_RE.test(c.name) ? '/cakes' : DESSERT_CATEGORY_RE.test(c.name) ? '/dessert' : '/products'}?q=${encodeURIComponent(categorySearchTerm(c.name))}`}
                     className="category-card"
                   >
                     <span className="category-card__title">{c.name}</span>
