@@ -297,10 +297,6 @@ code {
   width: max-content;
   animation: gallery-scroll 60s linear infinite;
 }
-.gallery:hover .gallery__track,
-.gallery:focus-within .gallery__track {
-  animation-play-state: paused;
-}
 .gallery__set {
   display: flex;
   gap: var(--gallery-gap);
