@@ -72,6 +72,22 @@ export function Footer() {
           </ul>
         </div>
         ) : null}
+
+        <div>
+          <h4 className="footer__heading">Documents</h4>
+          <ul className="footer__list">
+            <li>
+              <a href="/brand/Nhlanganiso_Business_Plan_Nov_2026.pdf" download>
+                <span className="footer__icon" aria-hidden="true">↓</span> Business Plan
+              </a>
+            </li>
+            <li>
+              <a href="/brand/Nhlanganiso_Company_Profile_Nov_2026.pdf" download>
+                <span className="footer__icon" aria-hidden="true">↓</span> Company Profile
+              </a>
+            </li>
+          </ul>
+        </div>
       </div>
 
       <div className="footer__bottom">
