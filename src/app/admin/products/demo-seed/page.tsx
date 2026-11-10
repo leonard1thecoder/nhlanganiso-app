@@ -11,14 +11,12 @@ import type { Category, Product } from '@/lib/types';
 type SeedCategory = {
   name: string;
   image: string;
-  prefix: string;
-  products: Array<[string, number]>;
+    products: Array<[string, number]>;
 };
 
 const CATALOGUE: SeedCategory[] = [
   {
     name: 'Bread',
-    prefix: 'bread',
     image: 'https://images.unsplash.com/photo-1509440159596-0249088772ff?auto=format&fit=crop&w=1200&q=85',
     products: [
       ['Classic Sourdough Bread', 68], ['Seeded Sourdough Bread', 78], ['Country White Bread', 48],
@@ -36,7 +34,6 @@ const CATALOGUE: SeedCategory[] = [
   },
   {
     name: 'Cakes',
-    prefix: 'cakes',
     image: 'https://images.unsplash.com/photo-1578985545062-69928b1d9587?auto=format&fit=crop&w=1200&q=85',
     products: [
       ['Chocolate Fudge Cake', 420], ['Vanilla Celebration Cake', 380], ['Red Velvet Cake', 440],
@@ -53,7 +50,6 @@ const CATALOGUE: SeedCategory[] = [
   },
   {
     name: 'Cupcakes',
-    prefix: 'cupcakes',
     image: 'https://images.unsplash.com/photo-1486427944299-d1955d23e34d?auto=format&fit=crop&w=1200&q=85',
     products: [
       ['Vanilla Bean Cupcakes', 28], ['Chocolate Ganache Cupcakes', 32], ['Red Velvet Cupcakes', 34],
@@ -71,7 +67,6 @@ const CATALOGUE: SeedCategory[] = [
   },
   {
     name: 'Pastries',
-    prefix: 'pastries',
     image: 'https://images.unsplash.com/photo-1555507036-ab1f4038808a?auto=format&fit=crop&w=1200&q=85',
     products: [
       ['Butter Croissant Pastry', 32], ['Almond Croissant Pastry', 42], ['Chocolate Pain au Chocolat Pastry', 38],
@@ -88,7 +83,6 @@ const CATALOGUE: SeedCategory[] = [
   },
   {
     name: 'Platters',
-    prefix: 'platters',
     image: 'https://images.unsplash.com/photo-1547592180-85f173990554?auto=format&fit=crop&w=1200&q=85',
     products: [
       ['Classic Sandwich Platter', 320], ['Chicken Wrap Platter', 360], ['Mini Burger Platter', 420],
@@ -105,7 +99,6 @@ const CATALOGUE: SeedCategory[] = [
   },
   {
     name: 'Other Products',
-    prefix: 'other',
     image: "https://images.unsplash.com/photo-1499636136210-6f4ee915583e?auto=format&fit=crop&w=1200&q=85",
     products: [
       ['Other Products - Chocolate Chip Cookies', 18], ['Other Products - Oatmeal Raisin Cookies', 18],
@@ -169,7 +162,9 @@ function DemoCatalogueSeeder() {
 
     try {
       const existingCategories = await categoryService.list();
-      const categoryByName = new Map(existingCategories.map((category) => [category.name.toLowerCase(), category]));
+      const categoryByName = new Map<string, Category>(
+        existingCategories.map((category) => [category.name.toLowerCase(), category] as const),
+      );
       for (const definition of CATALOGUE) {
         if (categoryByName.has(definition.name.toLowerCase())) continue;
         try {
