@@ -1,4 +1,5 @@
 import type { Metadata } from 'next';
+import Image from 'next/image';
 import Link from 'next/link';
 import { SITE_NAME } from '@/lib/config';
 
@@ -18,6 +19,22 @@ export default function AboutPage() {
           <p className="lead">Baked goods, celebration cakes and catering for moments worth sharing.</p>
         </div>
       </header>
+      <section className="owner-story" aria-labelledby="owner-heading">
+        <figure className="owner-story__photo">
+          <Image
+            src="/brand/owner-director.jpg"
+            alt="The owner and director of Nhlanganiso Catering & Baking"
+            width={1080}
+            height={1440}
+            sizes="(max-width: 960px) 100vw, 40vw"
+          />
+        </figure>
+        <div className="card owner-story__body">
+          <p className="eyebrow"><span className="rule" aria-hidden="true" />About the owner</p>
+          <h2 id="owner-heading" className="card__title">Owner &amp; Director</h2>
+          <p>Our owner and director leads the bakery and its catering services, from everyday baked goods to celebration cakes for the moments that matter.</p>
+        </div>
+      </section>
       <div className="two-col">
         <article className="card">
           <h2 className="card__title">A bakery for everyday and special occasions</h2>

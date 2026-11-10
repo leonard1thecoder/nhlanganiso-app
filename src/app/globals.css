@@ -244,6 +244,41 @@ code {
   font-size: 1.15rem;
   margin-bottom: 12px;
 }
+.owner-story {
+  display: grid;
+  grid-template-columns: minmax(0, 2fr) minmax(0, 3fr);
+  gap: 24px;
+  align-items: stretch;
+  margin-bottom: 28px;
+}
+.owner-story__photo {
+  margin: 0;
+  min-width: 0;
+}
+.owner-story__photo img {
+  display: block;
+  width: 100%;
+  height: auto;
+  aspect-ratio: 3 / 4;
+  object-fit: cover;
+  border-radius: var(--radius);
+  border: 1px solid var(--line);
+  box-shadow: var(--shadow-sm);
+}
+.owner-story__body {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  min-width: 0;
+}
+@media (max-width: 960px) {
+  .owner-story {
+    grid-template-columns: 1fr;
+  }
+  .owner-story__photo img {
+    aspect-ratio: 4 / 5;
+  }
+}
 .cta-row {
   display: flex;
   gap: 12px;
