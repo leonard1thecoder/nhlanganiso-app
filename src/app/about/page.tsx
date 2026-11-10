@@ -8,6 +8,42 @@ export const metadata: Metadata = {
   description: 'Meet Nhlanganiso Catering & Baking and explore the bakery, celebration cakes and catering services.',
 };
 
+const GALLERY_PHOTOS = [
+  {
+    src: '/brand/gallery/cupcakes-cooling.jpg',
+    alt: 'Chocolate cupcakes cooling on a wire rack',
+  },
+  {
+    src: '/brand/gallery/cupcakes-frosted.jpg',
+    alt: 'Chocolate cupcake topped with caramel swirl frosting and gold pearls',
+  },
+];
+
+// The strip repeats the photos so it always fills wide screens. The second copy
+// of the run is hidden from assistive tech so the images aren't announced twice.
+const GALLERY_RUN = Array.from({ length: 5 }, () => GALLERY_PHOTOS).flat();
+
+function GalleryRun({ hidden }: { hidden: boolean }) {
+  return (
+    <ul className="gallery__set" aria-hidden={hidden || undefined}>
+      {GALLERY_RUN.map((photo, i) => {
+        const isFirstCopy = i < GALLERY_PHOTOS.length;
+        return (
+          <li key={`${hidden ? 'b' : 'a'}-${i}`}>
+            <Image
+              src={photo.src}
+              alt={!hidden && isFirstCopy ? photo.alt : ''}
+              width={960}
+              height={1280}
+              sizes="(max-width: 960px) 200px, 300px"
+            />
+          </li>
+        );
+      })}
+    </ul>
+  );
+}
+
 export default function AboutPage() {
   return (
     <section className="container section">
@@ -33,6 +69,17 @@ export default function AboutPage() {
           <p className="eyebrow"><span className="rule" aria-hidden="true" />About the owner</p>
           <h2 id="owner-heading" className="card__title">Owner &amp; Director</h2>
           <p>Our owner and director leads the bakery and its catering services, from everyday baked goods to celebration cakes for the moments that matter.</p>
+        </div>
+      </section>
+      <section className="gallery" aria-labelledby="gallery-heading">
+        <div className="section__head">
+          <h2 id="gallery-heading">Gallery</h2>
+        </div>
+        <div className="gallery__viewport">
+          <div className="gallery__track">
+            <GalleryRun hidden={false} />
+            <GalleryRun hidden />
+          </div>
         </div>
       </section>
       <div className="two-col">
