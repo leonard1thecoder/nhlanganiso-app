@@ -19,16 +19,18 @@ type GalleryPhoto = {
 
 const GALLERY_PHOTOS: GalleryPhoto[] = [
   {
-    src: '/brand/gallery/cupcakes-cooling.jpg',
+    src: '/brand/gallery/cupcakes-cooling.png',
     alt: 'Chocolate cupcakes cooling on a wire rack',
-    width: 960,
-    height: 1280,
+    width: 600,
+    height: 600,
+    round: true,
   },
   {
-    src: '/brand/gallery/cupcakes-frosted.jpg',
+    src: '/brand/gallery/cupcakes-frosted.png',
     alt: 'Chocolate cupcake topped with caramel swirl frosting and gold pearls',
-    width: 960,
-    height: 1280,
+    width: 600,
+    height: 600,
+    round: true,
   },
   {
     src: '/brand/gallery/scones.png',
