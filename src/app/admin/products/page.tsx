@@ -1,3 +1,4 @@
+/* existing admin product list with a direct entry to the public demo-catalogue seeder */
 'use client';
 
 import Link from 'next/link';
@@ -15,13 +16,10 @@ function AdminProducts() {
 
   useEffect(() => {
     let cancelled = false;
-    productService
-      .list({ per_page: 100 })
+    productService.list({ per_page: 100 })
       .then((res) => !cancelled && setProducts(res.data))
       .catch((err) => !cancelled && setError(describeError(err)));
-    return () => {
-      cancelled = true;
-    };
+    return () => { cancelled = true; };
   }, []);
 
   return (
@@ -33,15 +31,12 @@ function AdminProducts() {
         <div>
           <p className="eyebrow">Back office</p>
           <h1>Products</h1>
-          <p className="muted small">{products ? `${products.length} products` : 'Loading…'}</p>
+          <p className="muted small">{products ? `${products.length} products on this page` : 'Loading…'}</p>
         </div>
         <div className="admin-products-actions">
-          <Link href="/admin/categories" className="btn btn-outline">
-            View categories
-          </Link>
-          <Link href="/admin/products/new" className="btn btn-primary">
-            New product
-          </Link>
+          <Link href="/admin/categories" className="btn btn-outline">View categories</Link>
+          <Link href="/admin/products/demo-seed" className="btn btn-outline">Seed demo catalogue</Link>
+          <Link href="/admin/products/new" className="btn btn-primary">New product</Link>
         </div>
       </header>
 
@@ -73,32 +68,13 @@ function AdminProducts() {
                     {product.active ? 'Active' : 'Hidden'}
                   </span>
                 </div>
-
                 <p className="admin-product-card__slug"><code>{product.slug}</code></p>
                 <p className="admin-product-card__price">{formatZAR(product.price_cents)}</p>
-                {product.description ? (
-                  <p className="admin-product-card__description">{product.description}</p>
-                ) : null}
-
+                {product.description ? <p className="admin-product-card__description">{product.description}</p> : null}
                 <div className="admin-product-card__actions">
-                  <Link
-                    href={`/admin/newsletter?${promotionQuery.toString()}`}
-                    className="btn btn-outline btn-sm"
-                  >
-                    Create promotion
-                  </Link>
-                  <Link
-                    href={`/admin/coupons?${couponQuery.toString()}`}
-                    className="btn btn-outline btn-sm"
-                  >
-                    Create coupon promotion
-                  </Link>
-                  <Link
-                    href={`/admin/products/${encodeURIComponent(product.id)}/edit`}
-                    className="btn btn-primary btn-sm"
-                  >
-                    Edit product
-                  </Link>
+                  <Link href={`/admin/newsletter?${promotionQuery.toString()}`} className="btn btn-outline btn-sm">Create promotion</Link>
+                  <Link href={`/admin/coupons?${couponQuery.toString()}`} className="btn btn-outline btn-sm">Create coupon promotion</Link>
+                  <Link href={`/admin/products/${encodeURIComponent(product.id)}/edit`} className="btn btn-primary btn-sm">Edit product</Link>
                 </div>
               </article>
             );
@@ -110,9 +86,5 @@ function AdminProducts() {
 }
 
 export default function AdminProductsPage() {
-  return (
-    <RequireAuth adminOnly>
-      <AdminProducts />
-    </RequireAuth>
-  );
+  return <RequireAuth adminOnly><AdminProducts /></RequireAuth>;
 }

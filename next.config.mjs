@@ -2,7 +2,7 @@
 const upstream = (
   process.env.API_UPSTREAM ??
   process.env.NEXT_PUBLIC_API_URL ??
-  'http://localhost:8080'
+  'https://fluffy-octo-computing-machine-byij.vercel.app'
 ).replace(/\/+$/, '');
 
 const nextConfig = {
@@ -12,9 +12,9 @@ const nextConfig = {
     return [{ source: '/catering', destination: '/contact', permanent: true }];
   },
   // Same-origin proxy for the API so the browser never hits CORS:
-  // the app calls /api/v1/* on its own origin, Next rewrites it to the
-  // Rust API. Set API_UPSTREAM (server-only) or NEXT_PUBLIC_API_URL to the
-  // API base (no trailing slash, no /api/v1). Falls back to localhost:8080.
+  // the app calls /api/v1/* on its own origin, Next rewrites it to the Rust API.
+  // Production has a safe default; API_UPSTREAM can override it per environment.
+  // Local development uses API_UPSTREAM=http://localhost:8080 from .env.local.
   async rewrites() {
     if (!upstream) return [];
     return [{ source: '/api/v1/:path*', destination: `${upstream}/api/v1/:path*` }];
