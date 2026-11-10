@@ -8,6 +8,7 @@ import { Notice } from '@/components/Notice';
 import { useAuth } from '@/context/AuthContext';
 import { describeError, OAUTH_ERROR_MESSAGES } from '@/lib/api';
 import { safeNext } from '@/lib/redirect';
+import { AuthLogo } from '@/components/AuthLogo';
 
 function LoginForm() {
   const router = useRouter();
@@ -58,6 +59,7 @@ function LoginForm() {
   return (
     <section className="container section auth-page-container">
       <div className="auth-box card">
+        <AuthLogo />
         <div className="auth-head">
           <p className="eyebrow"><span className="rule" aria-hidden="true" />Welcome Back</p>
           <h1 className="auth-title">Sign in to Nhlanganiso</h1>

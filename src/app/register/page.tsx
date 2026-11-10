@@ -8,6 +8,7 @@ import { Notice } from '@/components/Notice';
 import { describeError, OAUTH_ERROR_MESSAGES } from '@/lib/api';
 import { authService } from '@/lib/services';
 import { useAuth } from '@/context/AuthContext';
+import { AuthLogo } from '@/components/AuthLogo';
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
@@ -66,6 +67,7 @@ function RegisterForm() {
     return (
       <section className="container section center auth-page-container">
         <div className="auth-box card text-center">
+          <AuthLogo />
           <div className="empty-cart-icon">✉️</div>
           <p className="eyebrow"><span className="rule" aria-hidden="true" />Check Your Inbox</p>
           <h1 className="auth-title">Verify your email</h1>
@@ -83,6 +85,7 @@ function RegisterForm() {
   return (
     <section className="container section auth-page-container">
       <div className="auth-box card">
+        <AuthLogo />
         <div className="auth-head">
           <p className="eyebrow"><span className="rule" aria-hidden="true" />Join Nhlanganiso</p>
           <h1 className="auth-title">Create an Account</h1>

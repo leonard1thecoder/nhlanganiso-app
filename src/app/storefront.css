@@ -1850,3 +1850,16 @@
     padding-inline: 16px;
   }
 }
+
+/* Auth pages: centred brand logo above each card's content */
+.auth-logo {
+  display: flex;
+  justify-content: center;
+  margin: 0 0 20px;
+}
+
+.auth-logo__img {
+  width: 180px;
+  height: auto;
+  border-radius: 10px;
+}

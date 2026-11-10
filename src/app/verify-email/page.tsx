@@ -6,6 +6,7 @@ import { Suspense, useEffect, useRef, useState } from 'react';
 import { Notice } from '@/components/Notice';
 import { describeError } from '@/lib/api';
 import { authService } from '@/lib/services';
+import { AuthLogo } from '@/components/AuthLogo';
 
 function VerifyView() {
   const token = useSearchParams().get('token');
@@ -36,6 +37,7 @@ function VerifyView() {
   return (
     <section className="container section auth-page-container">
       <div className="auth-box card center">
+        <AuthLogo />
         <p className="eyebrow"><span className="rule" aria-hidden="true" />Email verification</p>
         {state === 'checking' ? <p className="muted" role="status">Verifying your email…</p> : null}
 

@@ -6,6 +6,7 @@ import { Field, TextInput } from '@/components/Field';
 import { Notice } from '@/components/Notice';
 import { describeError } from '@/lib/api';
 import { authService } from '@/lib/services';
+import { AuthLogo } from '@/components/AuthLogo';
 
 export default function ForgotPasswordPage() {
   const [email, setEmail] = useState('');
@@ -31,6 +32,7 @@ export default function ForgotPasswordPage() {
   return (
     <section className="container section auth-page-container">
       <div className="auth-box card">
+        <AuthLogo />
         <div className="auth-head">
           <p className="eyebrow"><span className="rule" aria-hidden="true" />Account security</p>
           <h1 className="auth-title">Reset your password</h1>
