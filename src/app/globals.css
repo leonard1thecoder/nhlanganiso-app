@@ -2500,6 +2500,7 @@ code {
 .catering-hero-content { position: relative; z-index: 1; max-width: 700px; }
 .catering-title { max-width: 640px; margin: 8px 0 14px; font-size: clamp(2.25rem, 5.5vw, 4rem); line-height: 1.06; letter-spacing: -0.035em; }
 .catering-lead { max-width: 600px; margin: 0; color: var(--muted); font-size: clamp(1rem, 1.6vw, 1.15rem); }
+.catering-hero-content .catering-social { max-width: 600px; margin: 1.5rem 0 0; }
 .catering-grid { display: grid; grid-template-columns: minmax(0, 1.25fr) minmax(280px, 0.75fr); gap: 24px; align-items: start; }
 .catering-form { display: flex; flex-direction: column; gap: 18px; padding: clamp(22px, 3vw, 34px); border: 1px solid var(--line); border-radius: 22px; background: #fff; box-shadow: 0 16px 42px rgba(57, 40, 31, 0.07); }
 .catering-form .form-head { margin-bottom: 2px; }

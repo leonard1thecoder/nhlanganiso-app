@@ -4,6 +4,7 @@ import Link from 'next/link';
 import { useState, type FormEvent } from 'react';
 import { Field, TextArea, TextInput } from '@/components/Field';
 import { Notice } from '@/components/Notice';
+import SocialIcons from '@/components/SocialIcons';
 import { describeError } from '@/lib/api';
 import { CONTACT, HAS_REAL_CONTACT_EMAIL, HAS_REAL_CONTACT_PHONE } from '@/lib/config';
 import { cateringService } from '@/lib/services';
@@ -98,6 +99,7 @@ export default function CateringPage() {
           <p className="catering-lead">
             Ask us about celebration cakes, catering for your event, or anything else we can help with. Share a few details and we&apos;ll get back to you.
           </p>
+          <SocialIcons className="catering-social" />
         </div>
       </div>
 
