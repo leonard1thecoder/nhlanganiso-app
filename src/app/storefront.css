@@ -1655,6 +1655,12 @@
   text-decoration: none;
 }
 
+.footer__logo {
+  width: 200px;
+  height: auto;
+  border-radius: 10px;
+}
+
 .footer__desc {
   margin: 1rem 0;
   max-width: 24rem;
