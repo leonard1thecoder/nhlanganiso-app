@@ -337,6 +337,65 @@ code {
   justify-content: center;
   text-align: center;
 }
+/* Recipes page */
+.recipe-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 300px), 1fr));
+  gap: 24px;
+  margin: 0 0 40px;
+  padding: 0;
+  list-style: none;
+}
+.recipe-card {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.recipe-card__media {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  aspect-ratio: 4 / 3;
+  border-radius: var(--radius);
+  background: #fbf6ef;
+}
+.recipe-card__media img {
+  width: 72%;
+  height: auto;
+}
+.recipe-card__title {
+  margin: 6px 0 0;
+  font-size: 1.35rem;
+}
+.recipe-card__meta {
+  margin: 0;
+  color: var(--muted);
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+.recipe-card__details {
+  margin-top: 6px;
+  padding-top: 12px;
+  border-top: 1px solid var(--line);
+}
+.recipe-card__details summary {
+  cursor: pointer;
+  font-weight: 700;
+  color: var(--brown-deep);
+}
+.recipe-card__details h3 {
+  margin: 14px 0 6px;
+  font-size: 1rem;
+}
+.recipe-card__details ul,
+.recipe-card__details ol {
+  margin: 0;
+  padding-left: 1.25rem;
+  line-height: 1.6;
+}
+.recipe-card__details li + li {
+  margin-top: 4px;
+}
 @keyframes gallery-scroll {
   to {
     transform: translateX(-50%);
