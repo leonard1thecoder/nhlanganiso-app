@@ -216,8 +216,8 @@ function ProductsView({ mode }: { mode: CatalogMode }) {
                   aria-pressed={active}
                   className={`shop-filter-pill ${active ? 'is-active' : ''}`}
                   onClick={() => {
-                    setInput(c.name);
-                    go(c.name, 1);
+                    setInput(searchTerm);
+                    go(searchTerm, 1);
                   }}
                 >
                   {c.name}
