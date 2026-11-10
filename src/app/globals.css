@@ -324,11 +324,12 @@ code {
   border: 0;
   border-radius: 0;
 }
-.page-head--center {
+/* Two classes so these beat the later storefront.css rules for .page-head and .section__head. */
+.page-head.page-head--center {
   justify-content: center;
   text-align: center;
 }
-.gallery__head {
+.section__head.gallery__head {
   justify-content: center;
   text-align: center;
 }
