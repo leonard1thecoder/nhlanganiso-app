@@ -8,6 +8,7 @@ import { ProductCard } from '@/components/ProductCard';
 import { describeError } from '@/lib/api';
 import { productService, categoryService } from '@/lib/services';
 import type { Category, PageMeta, Product } from '@/lib/types';
+import { DEMO_CATEGORIES, DEMO_PRODUCTS } from '@/lib/demo-catalogue';
 
 const PER_PAGE = 12;
 const categorySearchTerm = (name: string) => name.toLowerCase() === 'cakes' ? 'cake' : name.toLowerCase() === 'other products' ? 'other products' : name;
@@ -47,10 +48,7 @@ function ProductsView({ mode }: { mode: CatalogMode }) {
 
   useEffect(() => {
     let cancelled = false;
-    categoryService
-      .list()
-      .then((res) => !cancelled && setCategories(res))
-      .catch(() => !cancelled && setCategories([]));
+    setCategories(DEMO_CATEGORIES);
     return () => {
       cancelled = true;
     };
@@ -75,8 +73,8 @@ function ProductsView({ mode }: { mode: CatalogMode }) {
     Promise.all(
       matchingCategories.map(async (category) => {
         try {
-          const result = await productService.list({ search: categorySearchTerm(category.name), page: 1, per_page: 4 });
-          return { category, products: result.data };
+          const products = DEMO_PRODUCTS.filter((product) => product.category_id === category.id).slice(0, 4);
+          return { category, products };
         } catch {
           return { category, products: [] };
         }
@@ -108,18 +106,18 @@ function ProductsView({ mode }: { mode: CatalogMode }) {
     setError(null);
     setProducts(null);
     const isCategoryFilter = CATEGORY_SEARCH_TERMS.has(q.trim().toLowerCase());
-    productService
-      .list({ search: q || undefined, page: isCategoryFilter ? 1 : page, per_page: isCategoryFilter ? 100 : PER_PAGE })
-      .then((res) => {
-        if (cancelled) return;
-        setProducts(res.data);
-        setMeta(isCategoryFilter
-          ? { ...res.meta, total: res.data.length, per_page: Math.max(1, res.data.length) }
-          : res.meta);
-      })
-      .catch((err) => {
-        if (!cancelled) setError(describeError(err));
-      });
+    const normalizedQuery = q.trim().toLowerCase();
+    const matching = DEMO_PRODUCTS.filter((product) => {
+      if (!normalizedQuery) return true;
+      const category = DEMO_CATEGORIES.find((item) => item.id === product.category_id);
+      return [product.name, product.description ?? '', category?.name ?? '']
+        .some((value) => value.toLowerCase().includes(normalizedQuery));
+    });
+    const filtered = isCategoryFilter
+      ? matching
+      : matching.slice((page - 1) * PER_PAGE, page * PER_PAGE);
+    setProducts(filtered);
+    setMeta({ page, per_page: isCategoryFilter ? Math.max(1, matching.length) : PER_PAGE, total: matching.length });
     return () => {
       cancelled = true;
     };
@@ -146,7 +144,7 @@ function ProductsView({ mode }: { mode: CatalogMode }) {
       {/* Editorial Header */}
       <header className="shop-header">
         <div className="shop-header__content">
-          <p className="eyebrow">{isCollectionBrowse ? `${collectionLabel} collections` : 'The bakery'}</p>
+          <p className="eyebrow">{isCollectionBrowse ? `${collectionLabel} collections` : 'Demo bakery'}</p>
           <h1 className="shop-header__title">{isCollectionBrowse ? collectionLabel : 'Shop the bakery'}</h1>
           <p className="shop-header__desc">
             {isCollectionBrowse
@@ -304,7 +302,7 @@ function ProductsView({ mode }: { mode: CatalogMode }) {
                   </button>
                 </div>
                 <div className="grid-products">
-                  {sectionProducts.map((product) => <ProductCard key={product.id} product={product} />)}
+                  {sectionProducts.map((product) => <ProductCard key={product.id} product={product} demo />)}
                 </div>
               </section>
             ))}
@@ -319,7 +317,7 @@ function ProductsView({ mode }: { mode: CatalogMode }) {
           </div>
         ) : (
           <div className="grid-products">
-            {products.map((p) => <ProductCard key={p.id} product={p} />)}
+            {products.map((p) => <ProductCard key={p.id} product={p} demo />)}
           </div>
         )
       ) : null}
