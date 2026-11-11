@@ -68,6 +68,7 @@ function FavoritesView() {
           {favorites.map((p) => (
             <ProductCard
               key={p.id}
+              showLike={false}
               product={{
                 id: p.id,
                 name: p.name,

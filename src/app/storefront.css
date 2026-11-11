@@ -346,6 +346,7 @@
 /* ---------- Product tile (product cards in every grid) ---------- */
 
 .tile {
+  position: relative;
   display: flex;
   flex-direction: column;
   overflow: hidden;
@@ -353,6 +354,62 @@
   border-radius: 16px;
   background: var(--surface);
   box-shadow: var(--shadow-sm);
+}
+
+/* Like heart on a product tile (device-only; see ProductLikeButton) */
+.product-like {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  z-index: 2;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  padding: 0;
+  border: 1px solid rgba(57, 40, 31, 0.12);
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.94);
+  color: var(--muted);
+  box-shadow: 0 4px 12px rgba(57, 40, 31, 0.12);
+  cursor: pointer;
+  transition: transform var(--motion-fast) var(--motion-spring), color var(--motion-fast) ease, background-color var(--motion-fast) ease, border-color var(--motion-fast) ease;
+}
+.product-like svg {
+  width: 20px;
+  height: 20px;
+}
+.product-like:hover {
+  color: var(--pink-deep);
+  transform: scale(1.08);
+}
+.product-like:active {
+  transform: scale(0.92);
+}
+.product-like.is-liked {
+  color: var(--pink-deep);
+  border-color: var(--pink-deep);
+  background: #fff5f5;
+}
+.product-like:focus-visible {
+  outline: 2px solid var(--gold);
+  outline-offset: 2px;
+}
+/* Labelled version on the product page, sitting under the price */
+.product-like--labelled {
+  position: static;
+  width: auto;
+  height: auto;
+  min-height: 44px;
+  gap: 8px;
+  padding: 0 16px;
+  font: inherit;
+  font-size: 0.95rem;
+  font-weight: 700;
+}
+.product-detail__like {
+  margin: 0.25rem 0 0.5rem;
 }
 
 .tile__media {

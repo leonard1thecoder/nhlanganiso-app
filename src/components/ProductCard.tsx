@@ -2,6 +2,7 @@
 
 import Link from 'next/link';
 import { useEffect, useRef, useState } from 'react';
+import { ProductLikeButton } from '@/components/ProductLikeButton';
 import { useCart } from '@/context/CartContext';
 import { formatZAR } from '@/lib/format';
 import type { Product } from '@/lib/types';
@@ -11,7 +12,16 @@ import type { Product } from '@/lib/types';
  * interactive elements; the image is decorative for keyboard users and
  * duplicates the name link, so it is hidden from assistive tech.
  */
-export function ProductCard({ product, demo = false }: { product: Product; demo?: boolean }) {
+export function ProductCard({
+  product,
+  demo = false,
+  showLike = true,
+}: {
+  product: Product;
+  demo?: boolean;
+  /** Hide the heart where it would mean something else, such as the account Favourites page. */
+  showLike?: boolean;
+}) {
   const initial = product.name.trim().charAt(0).toUpperCase() || '•';
   const { addItem } = useCart();
   const [added, setAdded] = useState(false);
@@ -40,6 +50,8 @@ export function ProductCard({ product, demo = false }: { product: Product; demo?
           <span className="tile__initial">{initial}</span>
         )}
       </Link>
+
+      {showLike ? <ProductLikeButton id={product.id} name={product.name} /> : null}
 
       <div className="tile__body">
         <h3 className="tile__name">

@@ -4,6 +4,7 @@ import Link from 'next/link';
 import { useParams } from 'next/navigation';
 import { useEffect, useRef, useState } from 'react';
 import { Notice } from '@/components/Notice';
+import { ProductLikeButton } from '@/components/ProductLikeButton';
 import { describeError } from '@/lib/api';
 import { useCart } from '@/context/CartContext';
 import { MAX_QTY_PER_LINE } from '@/lib/config';
@@ -148,6 +149,10 @@ export default function ProductDetailPage() {
           <h1 className="product-detail__title">{product.name}</h1>
 
           <p className="product-detail__price">{formatZAR(product.price_cents)}</p>
+
+          <div className="product-detail__like">
+            <ProductLikeButton id={product.id} name={product.name} showLabel />
+          </div>
 
           {product.description ? (
             <div className="product-detail__description">
