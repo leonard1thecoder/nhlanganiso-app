@@ -1,0 +1,190 @@
+/*
+ * Storefront motion system.
+ *
+ * One set of tokens drives every reveal, hover and press, so the whole site
+ * moves with the same timing and spring feel. This file loads last so it can
+ * refine the hover rules in globals.css and storefront.css.
+ *
+ * Reveals animate the individual `translate` and `opacity` properties rather
+ * than `transform`, so the hover `transform` rules still work after an element
+ * has appeared. Everything here is disabled for users who prefer reduced motion.
+ */
+
+:root {
+  /* Fallback spring for browsers without linear(). */
+  --motion-spring: cubic-bezier(0.22, 1.2, 0.36, 1);
+  --motion-fast: 220ms;
+  --motion-base: 420ms;
+  --motion-slow: 800ms;
+  --motion-stagger: 90ms;
+}
+
+/* Damped spring (stiffness 170, damping 18): about 5% overshoot, settles in ~0.9s. */
+@supports (animation-timing-function: linear(0, 1)) {
+  :root {
+    --motion-spring: linear(0, 0.0948 4.17%, 0.2973 8.33%, 0.5202 12.5%, 0.7155 16.67%, 0.8634 20.83%, 0.962 25%, 1.0186 29.17%, 1.0443 33.33%, 1.0498 37.5%, 1.0442 41.67%, 1.0337 45.83%, 1.0227 50%, 1.0132 54.17%, 1.0061 58.33%, 1.0015 62.5%, 0.9988 66.67%, 0.9977 70.83%, 0.9975 75%, 0.9978 79.17%, 0.9984 83.33%, 0.9989 87.5%, 0.9994 91.67%, 0.9997 95.83%, 1);
+  }
+}
+
+@keyframes motion-rise {
+  from {
+    opacity: 0;
+    translate: 0 32px;
+  }
+  to {
+    opacity: 1;
+    translate: 0 0;
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  /* Arrival: the lead content of a page rises in each time it opens, e.g. when Home is clicked. */
+  .home-hero__copy > *,
+  .home-hero__media,
+  .page-head > div > *,
+  .catering-hero-content > * {
+    animation: motion-rise var(--motion-slow) var(--motion-spring) both;
+  }
+  .home-hero__copy > :nth-child(2),
+  .page-head > div > :nth-child(2),
+  .catering-hero-content > :nth-child(2) {
+    animation-delay: var(--motion-stagger);
+  }
+  .home-hero__copy > :nth-child(3),
+  .page-head > div > :nth-child(3),
+  .catering-hero-content > :nth-child(3) {
+    animation-delay: calc(var(--motion-stagger) * 2);
+  }
+  .home-hero__copy > :nth-child(4),
+  .page-head > div > :nth-child(4),
+  .catering-hero-content > :nth-child(4) {
+    animation-delay: calc(var(--motion-stagger) * 3);
+  }
+  .home-hero__media {
+    animation-delay: calc(var(--motion-stagger) * 2);
+  }
+
+  /* Buttons: lift on hover, press on click. */
+  .btn {
+    transition:
+      transform var(--motion-fast) var(--motion-spring),
+      box-shadow var(--motion-base) var(--motion-spring),
+      background-color var(--motion-fast) ease,
+      color var(--motion-fast) ease,
+      border-color var(--motion-fast) ease;
+  }
+  .btn:not(:disabled):hover {
+    transform: translateY(-2px);
+    box-shadow: 0 12px 24px rgba(57, 40, 31, 0.14);
+  }
+  .btn:not(:disabled):active {
+    transform: translateY(0) scale(0.97);
+    transition-duration: 90ms;
+  }
+
+  /* Tiles, product cards and recipe cards: float up on a spring, image zooms gently. */
+  .tile,
+  .product-card,
+  .recipe-card {
+    transition:
+      transform var(--motion-base) var(--motion-spring),
+      box-shadow var(--motion-base) var(--motion-spring),
+      border-color var(--motion-fast) ease;
+  }
+  .tile:hover,
+  .product-card:hover,
+  .recipe-card:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 22px 44px rgba(57, 40, 31, 0.14);
+  }
+  .tile__image,
+  .product-card__media img,
+  .recipe-card__media img {
+    transition: transform var(--motion-slow) var(--motion-spring);
+  }
+  .tile:hover .tile__image,
+  .product-card:hover .product-card__media img,
+  .recipe-card:hover .recipe-card__media img {
+    transform: scale(1.06);
+  }
+
+  /* Cards: soft shadow lift on hover. */
+  .card {
+    transition: box-shadow var(--motion-base) var(--motion-spring), border-color var(--motion-base) ease;
+  }
+  .card:hover {
+    box-shadow: 0 16px 36px rgba(57, 40, 31, 0.1);
+  }
+
+  /* Links inside text: an underline sweeps in on hover. */
+  .section p a:not(.btn),
+  .section li a:not(.btn),
+  .card p a:not(.btn),
+  .page-head p a:not(.btn) {
+    background-image: linear-gradient(currentColor, currentColor);
+    background-repeat: no-repeat;
+    background-position: 0 100%;
+    background-size: 0% 1px;
+    transition: background-size var(--motion-base) var(--motion-spring);
+  }
+  .section p a:not(.btn):hover,
+  .section li a:not(.btn):hover,
+  .card p a:not(.btn):hover,
+  .page-head p a:not(.btn):hover {
+    background-size: 100% 1px;
+  }
+
+  /* Arrow links: the arrow slides forward on hover. */
+  .link-arrow span {
+    display: inline-block;
+    transition: transform var(--motion-fast) var(--motion-spring);
+  }
+  .link-arrow:hover span {
+    transform: translateX(5px);
+  }
+
+  /* Social marks: bob up and grow on hover. */
+  .home-social-icons__item {
+    transition: transform var(--motion-fast) var(--motion-spring), box-shadow var(--motion-fast) ease;
+  }
+  .home-social-icons__item:hover {
+    transform: translateY(-3px) scale(1.06);
+  }
+
+  /* Gallery photos: zoom inside their frame. */
+  .gallery__set img {
+    transition: transform var(--motion-base) var(--motion-spring);
+  }
+  .gallery__set li:hover img {
+    transform: scale(1.05);
+  }
+
+  /* Footer links: nudge right on hover. */
+  .footer__list a {
+    display: inline-block;
+    transition: transform var(--motion-fast) var(--motion-spring), color var(--motion-fast) ease;
+  }
+  .footer__list a:hover {
+    transform: translateX(4px);
+  }
+}
+
+/* Scroll reveal: sections, cards and tiles rise in as they enter the viewport.
+   Browsers without scroll-linked animations simply show the content. */
+@supports (animation-timeline: view()) {
+  @media (prefers-reduced-motion: no-preference) {
+    .section__head,
+    .card:not([class*='skeleton']),
+    .tile:not([class*='skeleton']),
+    .product-card:not([class*='skeleton']),
+    .recipe-card,
+    .gallery,
+    .owner-story {
+      animation-name: motion-rise;
+      animation-timing-function: var(--motion-spring);
+      animation-fill-mode: both;
+      animation-timeline: view();
+      animation-range: entry 0% entry 40%;
+    }
+  }
+}
