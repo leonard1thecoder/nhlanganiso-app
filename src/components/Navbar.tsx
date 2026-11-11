@@ -28,6 +28,7 @@ export function Navbar() {
     || (pathname === '/account' && (isAdmin || status === 'loading'));
 
   const navLinks = [
+    { href: '/', label: 'Home' },
     { href: '/cakes', label: 'Cakes' },
     { href: '/recipes', label: 'Recipes' },
     { href: '/about', label: 'Our story' },
