@@ -87,6 +87,8 @@ export interface Product {
   description?: string | null;
   image_url?: string | null;
   category_id?: Uuid | null;
+  /** Total saved-as-favourite count across all shoppers. Not returned by the API yet. */
+  favorite_count?: number | null;
 }
 
 export interface ProductDetail {
@@ -96,6 +98,8 @@ export interface ProductDetail {
   price_cents: number;
   description?: string | null;
   image_url?: string | null;
+  /** Total saved-as-favourite count across all shoppers. Not returned by the API yet. */
+  favorite_count?: number | null;
 }
 
 export interface Availability {

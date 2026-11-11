@@ -4,6 +4,7 @@ import Link from 'next/link';
 import { useEffect, useRef, useState } from 'react';
 import { ProductLikeButton } from '@/components/ProductLikeButton';
 import { useCart } from '@/context/CartContext';
+import { findDemoProduct } from '@/lib/demo-catalogue';
 import { formatZAR } from '@/lib/format';
 import type { Product } from '@/lib/types';
 
@@ -23,6 +24,9 @@ export function ProductCard({
   showLike?: boolean;
 }) {
   const initial = product.name.trim().charAt(0).toUpperCase() || '•';
+  // Demo catalogue items cannot be saved to an account, so they get no heart. Some grids
+  // pass items without the demo flag, so check the catalogue as well.
+  const isPreview = demo || findDemoProduct(product.slug) !== undefined;
   const { addItem } = useCart();
   const [added, setAdded] = useState(false);
   const resetTimer = useRef<number | undefined>(undefined);
@@ -51,7 +55,9 @@ export function ProductCard({
         )}
       </Link>
 
-      {showLike ? <ProductLikeButton id={product.id} name={product.name} /> : null}
+      {showLike && !isPreview ? (
+        <ProductLikeButton id={product.id} name={product.name} count={product.favorite_count} />
+      ) : null}
 
       <div className="tile__body">
         <h3 className="tile__name">

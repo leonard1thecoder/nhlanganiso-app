@@ -396,6 +396,18 @@
   outline: 2px solid var(--gold);
   outline-offset: 2px;
 }
+/* Heart with a count: the circle widens into a pill */
+.product-like--counted {
+  width: auto;
+  padding: 0 12px 0 10px;
+  gap: 6px;
+}
+.product-like__count {
+  color: inherit;
+  font-size: 0.85rem;
+  font-weight: 700;
+  line-height: 1;
+}
 /* Labelled version on the product page, sitting under the price */
 .product-like--labelled {
   position: static;
