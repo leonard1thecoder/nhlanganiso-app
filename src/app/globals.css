@@ -388,6 +388,49 @@ code {
 .recipe-card__toggle::-webkit-details-marker {
   display: none;
 }
+.recipe-card__actions {
+  display: flex;
+  align-items: stretch;
+  gap: 10px;
+  margin-top: 6px;
+}
+.recipe-card__actions .recipe-card__toggle {
+  flex: 1;
+  min-width: 0;
+}
+.recipe-card__like {
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+  justify-content: center;
+  width: 48px;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: #fff;
+  color: var(--muted);
+  cursor: pointer;
+  transition: transform var(--motion-fast) var(--motion-spring), color var(--motion-fast) ease, background-color var(--motion-fast) ease, border-color var(--motion-fast) ease;
+}
+.recipe-card__like svg {
+  width: 22px;
+  height: 22px;
+}
+.recipe-card__like:hover {
+  transform: scale(1.08);
+  color: var(--pink-deep);
+}
+.recipe-card__like:active {
+  transform: scale(0.92);
+}
+.recipe-card__like.is-liked {
+  color: var(--pink-deep);
+  border-color: var(--pink-deep);
+  background: #fff5f5;
+}
+.recipe-card__like:focus-visible {
+  outline: 2px solid var(--gold);
+  outline-offset: 2px;
+}
 .recipe-card__details h3 {
   margin: 14px 0 6px;
   font-size: 1rem;

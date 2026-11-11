@@ -133,6 +133,121 @@ const RECIPES: Recipe[] = [
   },
 ];
 
+const RECIPE_LIKES_KEY = 'nhl.recipe-likes.v1';
+
+// A stable id for each recipe, taken from its title.
+function recipeId(title: string) {
+  return title.toLowerCase().replace(/[^a-z0-9]+/g, '-');
+}
+
+// Likes are saved on this device only, until a shared count is available from the API.
+function useRecipeLikes() {
+  const [likedIds, setLikedIds] = useState<string[]>([]);
+
+  useEffect(() => {
+    try {
+      const stored = window.localStorage.getItem(RECIPE_LIKES_KEY);
+      const parsed: unknown = stored ? JSON.parse(stored) : [];
+      if (Array.isArray(parsed)) {
+        setLikedIds(parsed.filter((id): id is string => typeof id === 'string'));
+      }
+    } catch {
+      // Storage can be unavailable (for example in private browsing); likes then last for this visit.
+    }
+  }, []);
+
+  const toggle = (id: string) => {
+    const next = likedIds.includes(id) ? likedIds.filter((x) => x !== id) : [...likedIds, id];
+    setLikedIds(next);
+    try {
+      window.localStorage.setItem(RECIPE_LIKES_KEY, JSON.stringify(next));
+    } catch {
+      // Ignore write failures; the like still shows for this visit.
+    }
+  };
+
+  return { isLiked: (id: string) => likedIds.includes(id), toggle };
+}
+
+function HeartIcon({ filled }: { filled: boolean }) {
+  return (
+    <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+      <path
+        d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"
+        fill={filled ? 'currentColor' : 'none'}
+        stroke="currentColor"
+        strokeWidth="2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+    </svg>
+  );
+}
+
+function RecipeCard({
+  recipe,
+  liked,
+  onToggleLike,
+}: {
+  recipe: Recipe;
+  liked: boolean;
+  onToggleLike: () => void;
+}) {
+  const [open, setOpen] = useState(false);
+  const detailsId = `${recipeId(recipe.title)}-details`;
+
+  return (
+    <li className="card recipe-card">
+      <div className="recipe-card__media">
+        <Image
+          src={recipe.image}
+          alt={recipe.alt}
+          width={recipe.imageWidth}
+          height={recipe.imageHeight}
+          sizes="(max-width: 960px) 100vw, 360px"
+        />
+      </div>
+      <h2 className="recipe-card__title">{recipe.title}</h2>
+      <p className="recipe-card__meta">{recipe.meta}</p>
+      <div className="recipe-card__actions">
+        <button
+          type="button"
+          className="btn btn-outline recipe-card__toggle"
+          aria-expanded={open}
+          aria-controls={detailsId}
+          onClick={() => setOpen((value) => !value)}
+        >
+          View ingredients and method
+        </button>
+        <button
+          type="button"
+          className={`recipe-card__like${liked ? ' is-liked' : ''}`}
+          aria-pressed={liked}
+          aria-label={liked ? `Unlike ${recipe.title}` : `Like ${recipe.title}`}
+          title={liked ? 'Unlike' : 'Like'}
+          onClick={onToggleLike}
+        >
+          <HeartIcon filled={liked} />
+        </button>
+      </div>
+      <div id={detailsId} className="recipe-card__details" hidden={!open}>
+        <h3>Ingredients</h3>
+        <ul>
+          {recipe.ingredients.map((item) => (
+            <li key={item}>{item}</li>
+          ))}
+        </ul>
+        <h3>Method</h3>
+        <ol>
+          {recipe.steps.map((step) => (
+            <li key={step}>{step}</li>
+          ))}
+        </ol>
+      </div>
+    </li>
+  );
+}
+
 function NewsletterForm() {
   const params = useSearchParams();
   const token = params.get('token');
@@ -142,6 +257,7 @@ function NewsletterForm() {
   const [error, setError] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
   const [verifying, setVerifying] = useState(Boolean(token));
+  const recipeLikes = useRecipeLikes();
 
   useEffect(() => {
     if (!token) return;
@@ -185,36 +301,17 @@ function NewsletterForm() {
         </header>
 
         <ul className="recipe-grid">
-          {RECIPES.map((recipe) => (
-            <li key={recipe.title} className="card recipe-card">
-              <div className="recipe-card__media">
-                <Image
-                  src={recipe.image}
-                  alt={recipe.alt}
-                  width={recipe.imageWidth}
-                  height={recipe.imageHeight}
-                  sizes="(max-width: 960px) 100vw, 360px"
-                />
-              </div>
-              <h2 className="recipe-card__title">{recipe.title}</h2>
-              <p className="recipe-card__meta">{recipe.meta}</p>
-              <details className="recipe-card__details">
-                <summary className="btn btn-outline btn-block recipe-card__toggle">View ingredients and method</summary>
-                <h3>Ingredients</h3>
-                <ul>
-                  {recipe.ingredients.map((item) => (
-                    <li key={item}>{item}</li>
-                  ))}
-                </ul>
-                <h3>Method</h3>
-                <ol>
-                  {recipe.steps.map((step) => (
-                    <li key={step}>{step}</li>
-                  ))}
-                </ol>
-              </details>
-            </li>
-          ))}
+          {RECIPES.map((recipe) => {
+            const id = recipeId(recipe.title);
+            return (
+              <RecipeCard
+                key={id}
+                recipe={recipe}
+                liked={recipeLikes.isLiked(id)}
+                onToggleLike={() => recipeLikes.toggle(id)}
+              />
+            );
+          })}
         </ul>
       </section>
 
