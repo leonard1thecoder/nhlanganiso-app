@@ -373,20 +373,12 @@ code {
   font-size: 0.9rem;
   font-weight: 600;
 }
-.recipe-card__details {
-  margin-top: 6px;
-  padding-top: 12px;
-  border-top: 1px solid var(--line);
-}
 .recipe-card__toggle {
   display: flex;
   justify-content: center;
   align-items: center;
   list-style: none;
   cursor: pointer;
-}
-.recipe-card__toggle::-webkit-details-marker {
-  display: none;
 }
 .recipe-card__actions {
   display: flex;
@@ -431,18 +423,79 @@ code {
   outline: 2px solid var(--gold);
   outline-offset: 2px;
 }
-.recipe-card__details h3 {
-  margin: 14px 0 6px;
+.recipe-card__like--labelled {
+  width: auto;
+  min-height: 48px;
+  gap: 8px;
+  padding: 0 18px;
+  font: inherit;
+  font-size: 0.95rem;
+  font-weight: 700;
+}
+
+/* Recipe detail page: /recipes/<id> */
+.recipe-detail__grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: 40px;
+  align-items: center;
+  margin: 0 0 40px;
+}
+.recipe-detail__media {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  aspect-ratio: 1 / 1;
+  border-radius: var(--radius);
+  background: #fbf6ef;
+}
+.recipe-detail__media img {
+  width: 72%;
+  height: auto;
+}
+.recipe-detail__body {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+.recipe-detail__body h1 {
+  margin: 0;
+}
+.recipe-detail__body .recipe-card__meta {
   font-size: 1rem;
 }
-.recipe-card__details ul,
-.recipe-card__details ol {
+.recipe-detail__actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 16px 20px;
+  margin-top: 8px;
+}
+.recipe-detail__panel {
+  margin: 0 0 40px;
+  padding: 28px;
+}
+.recipe-detail__panel h2 {
+  margin: 0 0 12px;
+  font-size: 1.35rem;
+}
+.recipe-detail__panel h2:not(:first-child) {
+  margin-top: 28px;
+}
+.recipe-detail__panel ul,
+.recipe-detail__panel ol {
   margin: 0;
   padding-left: 1.25rem;
-  line-height: 1.6;
+  line-height: 1.7;
 }
-.recipe-card__details li + li {
-  margin-top: 4px;
+.recipe-detail__panel li + li {
+  margin-top: 6px;
+}
+@media (max-width: 720px) {
+  .recipe-detail__grid {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 24px;
+  }
 }
 @keyframes gallery-scroll {
   to {
