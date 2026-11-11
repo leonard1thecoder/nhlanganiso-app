@@ -22,18 +22,21 @@ function HeartIcon({ filled }: { filled: boolean }) {
 /**
  * A product's like heart. Likes are saved to the shopper's account (the Favourites list), so
  * signed-out shoppers are sent to log in first. `count` is the total across all shoppers;
- * when the API does not provide it yet, the heart shows without a number.
+ * when the API does not provide it yet, the heart shows without a number. `preview` is for
+ * demo catalogue items: the heart is shown for design review but does nothing when tapped.
  */
 export function ProductLikeButton({
   id,
   name,
   count,
   showLabel = false,
+  preview = false,
 }: {
   id: string;
   name: string;
   count?: number | null;
   showLabel?: boolean;
+  preview?: boolean;
 }) {
   const { status } = useAuth();
   const { isFavorite, favoriteDelta, toggleFavorite } = useFavorites();
@@ -45,7 +48,7 @@ export function ProductLikeButton({
   const countText = total === null ? '' : `${total} ${total === 1 ? 'like' : 'likes'}`;
 
   const onClick = () => {
-    if (status === 'loading') return;
+    if (preview || status === 'loading') return;
     if (status !== 'authenticated') {
       router.push(`/login?next=${encodeURIComponent(pathname)}`);
       return;
@@ -67,8 +70,9 @@ export function ProductLikeButton({
       type="button"
       className={classes}
       aria-pressed={liked}
+      aria-disabled={preview || undefined}
       aria-label={showLabel ? undefined : `Like ${name}${countText ? `, ${countText}` : ''}`}
-      title={status !== 'authenticated' ? 'Log in to like' : liked ? 'Remove like' : 'Like'}
+      title={preview ? 'Preview only' : status !== 'authenticated' ? 'Log in to like' : liked ? 'Remove like' : 'Like'}
       onClick={onClick}
     >
       <HeartIcon filled={liked} />

@@ -150,11 +150,15 @@ export default function ProductDetailPage() {
 
           <p className="product-detail__price">{formatZAR(product.price_cents)}</p>
 
-          {isDemoProduct ? null : (
-            <div className="product-detail__like">
-              <ProductLikeButton id={product.id} name={product.name} count={product.favorite_count} showLabel />
-            </div>
-          )}
+          <div className="product-detail__like">
+            <ProductLikeButton
+              id={product.id}
+              name={product.name}
+              count={product.favorite_count}
+              showLabel
+              preview={isDemoProduct}
+            />
+          </div>
 
           {product.description ? (
             <div className="product-detail__description">

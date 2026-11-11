@@ -24,8 +24,8 @@ export function ProductCard({
   showLike?: boolean;
 }) {
   const initial = product.name.trim().charAt(0).toUpperCase() || '•';
-  // Demo catalogue items cannot be saved to an account, so they get no heart. Some grids
-  // pass items without the demo flag, so check the catalogue as well.
+  // Demo catalogue items show the heart for design review, but it cannot be saved to an
+  // account. Some grids pass items without the demo flag, so check the catalogue as well.
   const isPreview = demo || findDemoProduct(product.slug) !== undefined;
   const { addItem } = useCart();
   const [added, setAdded] = useState(false);
@@ -55,8 +55,8 @@ export function ProductCard({
         )}
       </Link>
 
-      {showLike && !isPreview ? (
-        <ProductLikeButton id={product.id} name={product.name} count={product.favorite_count} />
+      {showLike ? (
+        <ProductLikeButton id={product.id} name={product.name} count={product.favorite_count} preview={isPreview} />
       ) : null}
 
       <div className="tile__body">
