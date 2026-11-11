@@ -4,18 +4,35 @@ import Link from 'next/link';
 import { useEffect, useState, type FormEvent } from 'react';
 import { ProductCard } from '@/components/ProductCard';
 import { Notice } from '@/components/Notice';
+import { RecipeCard } from '@/components/RecipeCard';
 import { describeError } from '@/lib/api';
 import { newsletterService } from '@/lib/services';
 import type { Category, Product } from '@/lib/types';
 import { DEMO_CATEGORIES, DEMO_PRODUCTS } from '@/lib/demo-catalogue';
+import { RECIPES } from '@/lib/recipes';
 
 const CAKE_CATEGORY_RE = /cake|birthday|wedding|celebration/i;
+const BEST_SELLER_COUNT = 8;
+const MOST_LIKED_COUNT = 4;
+
+// Ranks by the like count the API sends. Until it sends counts, the demo items after the
+// best sellers stand in, so the layout can be reviewed.
+function pickMostLiked(products: Product[]): Product[] {
+  const counted = products.filter((p) => typeof p.favorite_count === 'number');
+  if (counted.length > 0) {
+    return [...counted]
+      .sort((a, b) => (b.favorite_count ?? 0) - (a.favorite_count ?? 0))
+      .slice(0, MOST_LIKED_COUNT);
+  }
+  return products.slice(BEST_SELLER_COUNT, BEST_SELLER_COUNT + MOST_LIKED_COUNT);
+}
 
 const categorySearchTerm = (name: string) => name.toLowerCase() === 'cakes' ? 'cake' : name.toLowerCase() === 'other products' ? 'other products' : name;
 
 export default function HomePage() {
   const [featured, setFeatured] = useState<Product[] | null>(null);
   const [cakes, setCakes] = useState<Product[] | null>(null);
+  const [mostLiked, setMostLiked] = useState<Product[] | null>(null);
   const [categories, setCategories] = useState<Category[] | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [newsletterEmail, setNewsletterEmail] = useState('');
@@ -23,7 +40,8 @@ export default function HomePage() {
   const [subscribing, setSubscribing] = useState(false);
 
   useEffect(() => {
-    setFeatured(DEMO_PRODUCTS.slice(0, 8));
+    setFeatured(DEMO_PRODUCTS.slice(0, BEST_SELLER_COUNT));
+    setMostLiked(pickMostLiked(DEMO_PRODUCTS));
     setCategories(DEMO_CATEGORIES);
     setCakes(DEMO_PRODUCTS.filter((product) => {
       const category = DEMO_CATEGORIES.find((item) => item.id === product.category_id);
@@ -165,6 +183,30 @@ export default function HomePage() {
         </div>
       </section>
 
+      <section className="section" aria-labelledby="home-most-liked">
+        <div className="container">
+          <div className="section__head">
+            <h2 id="home-most-liked">Most liked</h2>
+            <Link href="/products" className="link-arrow">
+              Browse the full shop <span aria-hidden="true">→</span>
+            </Link>
+          </div>
+          {mostLiked === null ? (
+            <div className="grid-products" aria-busy="true">
+              {Array.from({ length: MOST_LIKED_COUNT }).map((_, i) => (
+                <div key={i} className="tile tile--skeleton" />
+              ))}
+            </div>
+          ) : mostLiked.length > 0 ? (
+            <div className="grid-products">
+              {mostLiked.map((product) => <ProductCard key={product.id} product={product} demo />)}
+            </div>
+          ) : (
+            <p className="muted">Nothing has been liked yet. Tap the heart on a bake you love.</p>
+          )}
+        </div>
+      </section>
+
       <section className="section section--tint" aria-labelledby="home-cakes">
         <div className="container">
           <div className="section__head">
@@ -186,6 +228,22 @@ export default function HomePage() {
           ) : (
             <p className="muted">Our cake range is being refreshed. Enquire about a custom celebration cake.</p>
           )}
+        </div>
+      </section>
+
+      <section className="section" aria-labelledby="home-recipes">
+        <div className="container">
+          <div className="section__head">
+            <h2 id="home-recipes">Recipes</h2>
+            <Link href="/recipes" className="link-arrow">
+              All recipes <span aria-hidden="true">→</span>
+            </Link>
+          </div>
+          <ul className="recipe-grid">
+            {RECIPES.map((recipe) => (
+              <RecipeCard key={recipe.id} recipe={recipe} />
+            ))}
+          </ul>
         </div>
       </section>
 
