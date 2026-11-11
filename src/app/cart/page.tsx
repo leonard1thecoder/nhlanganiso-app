@@ -72,7 +72,7 @@ export default function CartPage() {
         </p>
         <div className="cta-row">
           <Link href="/products" className="btn btn-primary btn-lg">Shop the bakery</Link>
-          <Link href="/cakes" className="btn btn-outline btn-lg">See cakes</Link>
+          <Link href="/bakery" className="btn btn-outline btn-lg">See cakes</Link>
         </div>
       </section>
     );

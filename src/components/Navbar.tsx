@@ -29,7 +29,7 @@ export function Navbar() {
 
   const navLinks = [
     { href: '/', label: 'Home' },
-    { href: '/cakes', label: 'Cakes' },
+    { href: '/bakery', label: 'Bakery' },
     { href: '/recipes', label: 'Recipes' },
     { href: '/about', label: 'Our story' },
     { href: '/contact', label: 'Contact us' },

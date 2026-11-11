@@ -169,7 +169,7 @@ export default function HomePage() {
         <div className="container">
           <div className="section__head">
             <h2 id="home-cakes">Cakes</h2>
-            <Link href="/cakes" className="link-arrow">
+            <Link href="/bakery" className="link-arrow">
               All cakes <span aria-hidden="true">→</span>
             </Link>
           </div>

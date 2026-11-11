@@ -121,7 +121,7 @@ function ProductsView({ mode }: { mode: CatalogMode }) {
 
   const go = (nextQ: string, nextPage: number) => {
     const sp = new URLSearchParams();
-    const routePath = mode === 'cakes' ? '/cakes' : '/products';
+    const routePath = mode === 'cakes' ? '/bakery' : '/products';
     if (nextQ && nextQ !== defaultQuery) sp.set('q', nextQ);
     if (nextPage > 1) sp.set('page', String(nextPage));
     const qs = sp.toString();

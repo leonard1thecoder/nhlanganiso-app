@@ -29,7 +29,7 @@ export function Footer() {
           <h4 className="footer__heading">Shop</h4>
           <ul className="footer__list">
             <li><Link href="/products">Shop the bakery</Link></li>
-            <li><Link href="/cakes">Cakes</Link></li>
+            <li><Link href="/bakery">Bakery</Link></li>
             <li><Link href="/cart">Your bag</Link></li>
             <li><Link href="/about">Our story</Link></li>
           </ul>

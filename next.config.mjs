@@ -13,6 +13,8 @@ const nextConfig = {
       { source: '/catering', destination: '/contact', permanent: true },
       // Keep old newsletter links (including confirmation links with ?token=) working.
       { source: '/newsletter', destination: '/recipes', permanent: true },
+      // Keep old cakes links working now that the page is called Bakery.
+      { source: '/cakes', destination: '/bakery', permanent: true },
     ];
   },
   // Same-origin proxy for the API so the browser never hits CORS:
