@@ -76,8 +76,8 @@ export function ProductLikeButton({
       onClick={onClick}
     >
       <HeartIcon filled={liked} />
-      {total !== null ? <span className="product-like__count">{total}</span> : null}
       {showLabel ? <span>Like</span> : null}
+      {total !== null ? <span className="product-like__count">{total}</span> : null}
     </button>
   );
 }
