@@ -14,6 +14,8 @@ import { useAuth } from '@/context/AuthContext';
 import { favoriteService } from '@/lib/services';
 
 interface FavoritesContextValue {
+  /** True once the signed-in shopper's saved list has loaded. Until then, do not filter by it. */
+  ready: boolean;
   /** True when the signed-in shopper has saved this product. */
   isFavorite: (productId: string) => boolean;
   /**
@@ -32,6 +34,7 @@ export function FavoritesProvider({ children }: { children: ReactNode }) {
   const { status } = useAuth();
   const [loadedIds, setLoadedIds] = useState<ReadonlySet<string>>(() => new Set());
   const [savedIds, setSavedIds] = useState<ReadonlySet<string>>(() => new Set());
+  const [ready, setReady] = useState(false);
   // Products with a request in flight, so a quick double click cannot race itself.
   const pending = useRef(new Set<string>());
 
@@ -39,6 +42,7 @@ export function FavoritesProvider({ children }: { children: ReactNode }) {
     if (status !== 'authenticated') {
       setLoadedIds(new Set());
       setSavedIds(new Set());
+      setReady(false);
       return;
     }
     let cancelled = false;
@@ -49,6 +53,7 @@ export function FavoritesProvider({ children }: { children: ReactNode }) {
         const ids = new Set(items.map((item) => item.id));
         setLoadedIds(ids);
         setSavedIds(ids);
+        setReady(true);
       })
       .catch(() => {
         // Likes are best-effort: if the list cannot load, the hearts start empty.
@@ -90,12 +95,13 @@ export function FavoritesProvider({ children }: { children: ReactNode }) {
 
   const value = useMemo<FavoritesContextValue>(
     () => ({
+      ready,
       isFavorite: (productId) => savedIds.has(productId),
       favoriteDelta: (productId) =>
         (savedIds.has(productId) ? 1 : 0) - (loadedIds.has(productId) ? 1 : 0),
       toggleFavorite,
     }),
-    [savedIds, loadedIds, toggleFavorite],
+    [ready, savedIds, loadedIds, toggleFavorite],
   );
 
   return <FavoritesContext.Provider value={value}>{children}</FavoritesContext.Provider>;

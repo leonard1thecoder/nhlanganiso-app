@@ -1,8 +1,7 @@
 'use client';
 
 import { LikeButton } from '@/components/LikeButton';
-
-const RECIPE_LIKES_KEY = 'nhl.recipe-likes.v1';
+import { RECIPE_LIKES_KEY } from '@/lib/recipes';
 
 export function RecipeLikeButton({
   id,

@@ -1,3 +1,6 @@
+// Recipe likes are saved in this browser under this key.
+export const RECIPE_LIKES_KEY = 'nhl.recipe-likes.v1';
+
 export type Recipe = {
   id: string;
   title: string;

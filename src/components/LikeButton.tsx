@@ -27,6 +27,32 @@ function writeLikes(storageKey: string, ids: string[]) {
   }
 }
 
+/** The ids saved under a storage key, kept up to date as they change on this page or in other tabs. */
+export function useStoredLikes(storageKey: string): string[] {
+  const [ids, setIds] = useState<string[]>([]);
+
+  useEffect(() => {
+    setIds(readLikes(storageKey));
+
+    const onChanged = (event: Event) => {
+      const { detail } = event as CustomEvent<LikesChange>;
+      if (detail.storageKey === storageKey) setIds(detail.ids);
+    };
+    const onStorage = (event: StorageEvent) => {
+      if (event.key === storageKey) setIds(readLikes(storageKey));
+    };
+
+    window.addEventListener(LIKES_CHANGED_EVENT, onChanged);
+    window.addEventListener('storage', onStorage);
+    return () => {
+      window.removeEventListener(LIKES_CHANGED_EVENT, onChanged);
+      window.removeEventListener('storage', onStorage);
+    };
+  }, [storageKey]);
+
+  return ids;
+}
+
 function HeartIcon({ filled }: { filled: boolean }) {
   return (
     <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">

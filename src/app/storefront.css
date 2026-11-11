@@ -1920,6 +1920,31 @@
   }
 }
 
+/* Header favourites link: heart icon beside its label */
+.navbar__favourites-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+.navbar__favourites-link svg {
+  flex: none;
+}
+
+/* Favourites page: left-aligned, with one heading per list */
+.favorites-section {
+  text-align: left;
+}
+.favorites-section .crumbs,
+.favorites-section .page-head > div,
+.favorites-section .page-head h1,
+.favorites-section .page-head .eyebrow,
+.favorites-section .favorites-section__title {
+  text-align: left;
+}
+.favorites-section .favorites-section__title {
+  margin: 36px 0 16px;
+}
+
 /* Auth pages: centred brand logo above each card's content */
 .auth-logo {
   display: flex;
