@@ -42,8 +42,10 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           <a href="#main" className="skip-link">
             Skip to content
           </a>
-          <AnnouncementBanner />
-          <Navbar />
+          <div className="site-chrome">
+            <AnnouncementBanner />
+            <Navbar />
+          </div>
           <main id="main" className="site-main">
             {children}
           </main>
