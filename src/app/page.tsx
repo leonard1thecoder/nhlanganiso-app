@@ -4,11 +4,9 @@ import Link from 'next/link';
 import { useEffect, useState, type FormEvent } from 'react';
 import { ProductCard } from '@/components/ProductCard';
 import { Notice } from '@/components/Notice';
-import { RecipeCard } from '@/components/RecipeCard';
 import { describeError } from '@/lib/api';
 import { categoryService, newsletterService, productService } from '@/lib/services';
 import type { Category, Product } from '@/lib/types';
-import { RECIPES } from '@/lib/recipes';
 
 const BEST_SELLER_COUNT = 8;
 const MOST_LIKED_COUNT = 4;
@@ -241,22 +239,6 @@ export default function HomePage() {
           ) : (
             <p className="muted">Our cake range is being refreshed. Enquire about a custom celebration cake.</p>
           )}
-        </div>
-      </section>
-
-      <section className="section" aria-labelledby="home-recipes">
-        <div className="container">
-          <div className="section__head">
-            <h2 id="home-recipes">Recipes</h2>
-            <Link href="/recipes" className="link-arrow">
-              All recipes <span aria-hidden="true">→</span>
-            </Link>
-          </div>
-          <ul className="recipe-grid">
-            {RECIPES.map((recipe) => (
-              <RecipeCard key={recipe.id} recipe={recipe} />
-            ))}
-          </ul>
         </div>
       </section>
 

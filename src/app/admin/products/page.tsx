@@ -1,4 +1,3 @@
-/* existing admin product list with a direct entry to the public demo-catalogue seeder */
 'use client';
 
 import Link from 'next/link';
@@ -35,7 +34,6 @@ function AdminProducts() {
         </div>
         <div className="admin-products-actions">
           <Link href="/admin/categories" className="btn btn-outline">View categories</Link>
-          <Link href="/admin/products/demo-seed" className="btn btn-outline">Seed demo catalogue</Link>
           <Link href="/admin/products/new" className="btn btn-primary">New product</Link>
         </div>
       </header>
