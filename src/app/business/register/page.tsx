@@ -1,10 +1,11 @@
 'use client';
 
 import Link from 'next/link';
-import { useState, type FormEvent } from 'react';
+import { useEffect, useState, type FormEvent } from 'react';
 import { Notice } from '@/components/Notice';
 import { describeError } from '@/lib/api';
-import { cateringService } from '@/lib/services';
+import { cateringService, categoryService } from '@/lib/services';
+import type { Category } from '@/lib/types';
 import './register.css';
 
 const plans = [
@@ -47,12 +48,22 @@ const initialForm: FormState = {
 
 export default function BusinessRegisterPage() {
   const [form, setForm] = useState<FormState>(initialForm);
+  const [categories, setCategories] = useState<Category[]>([]);
+  const [categoryLoadError, setCategoryLoadError] = useState(false);
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [submitting, setSubmitting] = useState(false);
   const [serverError, setServerError] = useState<string | null>(null);
   const [submitted, setSubmitted] = useState(false);
 
-  const update = (key: keyof FormState, value: string) =>
+  useEffect(() => {
+    let active = true;
+    categoryService.list()
+      .then((items) => { if (active) setCategories(items); })
+      .catch(() => { if (active) setCategoryLoadError(true); });
+    return () => { active = false; };
+  }, []);
+
+  const update = <K extends keyof FormState>(key: K, value: FormState[K]) =>
     setForm((current) => ({ ...current, [key]: value }));
 
   const validate = () => {
@@ -195,14 +206,13 @@ export default function BusinessRegisterPage() {
               <label className="business-register__field">
                 <span>Business category *</span>
                 <select value={form.category} onChange={(e) => update('category', e.target.value)} aria-invalid={!!errors.category}>
-                  <option value="">Choose a category</option>
-                  <option value="Bakery">Bakery</option>
-                  <option value="Cakes and desserts">Cakes and desserts</option>
-                  <option value="Catering">Catering</option>
-                  <option value="Prepared food">Prepared food</option>
-                  <option value="Other food business">Other food business</option>
+                  <option value="">Choose an available category</option>
+                  {categories.map((category) => (
+                    <option key={category.id} value={category.name}>{category.name}</option>
+                  ))}
                   <option value="Request a new category">Request a new category</option>
                 </select>
+                {categoryLoadError ? <small>We couldn’t load the category list. You can still request a new category below.</small> : null}
                 {errors.category ? <small>{errors.category}</small> : null}
               </label>
               {form.category === 'Request a new category' ? (
