@@ -160,6 +160,30 @@ function AdminContactRequests() {
                     </button>
                   </div>
                 </div>
+                {r.message ? (
+                  <div
+                    style={{
+                      marginTop: 16,
+                      borderTop: '1px solid var(--line)',
+                      paddingTop: 14,
+                    }}
+                  >
+                    <strong className="small">Enquiry details</strong>
+                    <pre
+                      style={{
+                        margin: '8px 0 0',
+                        color: 'var(--muted)',
+                        font: 'inherit',
+                        fontSize: '.88rem',
+                        lineHeight: 1.7,
+                        whiteSpace: 'pre-wrap',
+                        overflowWrap: 'anywhere',
+                      }}
+                    >
+                      {r.message}
+                    </pre>
+                  </div>
+                ) : null}
                 {open && (
                   <ReplyBuilder requestId={r.id} />
                 )}

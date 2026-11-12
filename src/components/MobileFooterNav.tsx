@@ -83,6 +83,11 @@ function NavIcon({ href }: { href: string }) {
 export function MobileFooterNav() {
   const pathname = usePathname();
   const { isAdmin, status } = useAuth();
+
+  // The business pricing page is a focused landing page; keep the mobile
+  // storefront navigation out of its way.
+  if (pathname.startsWith('/business/')) return null;
+
   const isAdminArea = pathname === '/admin'
     || pathname.startsWith('/admin/')
     || (pathname === '/account' && (isAdmin || status === 'loading'));

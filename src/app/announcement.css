@@ -1,7 +1,29 @@
+/* Keep the announcement and navigation locked together while scrolling. */
+.site-chrome {
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  isolation: isolate;
+}
+
+.site-chrome > .announcement-banner {
+  position: relative;
+  z-index: 3;
+}
+
+.site-chrome > .navbar {
+  /* Keep the pink storefront navbar in the same sticky stack as the notice. */
+  position: relative !important;
+  top: auto !important;
+  z-index: 2;
+  isolation: isolate;
+}
+
 /* Premium bakery partner announcement strip */
 .announcement-banner {
   position: relative;
-  z-index: 60;
+  top: auto;
+  z-index: 2;
   width: 100%;
   overflow: hidden;
   background: #080706 !important;

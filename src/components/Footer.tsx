@@ -25,6 +25,33 @@ export function Footer() {
           </div>
         </div>
 
+        <div className="footer__business">
+          <h4 className="footer__heading">Grow your business</h4>
+          <p className="footer__desc">
+            Reach more customers and grow your business with Nhlanganiso.
+          </p>
+          <div className="cta-row footer__business-actions">
+            <Link href="/business/pricing" className="btn btn-primary">
+              Become a bakery partner
+            </Link>
+          </div>
+          <div className="footer__documents" style={{ marginTop: '1.5rem', textAlign: 'right' }}>
+            <h4 className="footer__heading">Documents</h4>
+            <ul className="footer__list">
+              <li>
+                <a href="/brand/Nhlanganiso_Business_Plan_Nov_2026.pdf" download>
+                  <span className="footer__icon" aria-hidden="true">↓</span> Business Plan
+                </a>
+              </li>
+              <li>
+                <a href="/brand/Nhlanganiso_Company_Profile_Nov_2026.pdf" download>
+                  <span className="footer__icon" aria-hidden="true">↓</span> Company Profile
+                </a>
+              </li>
+            </ul>
+          </div>
+        </div>
+
         <div>
           <h4 className="footer__heading">Shop</h4>
           <ul className="footer__list">
@@ -68,21 +95,6 @@ export function Footer() {
         </div>
         ) : null}
 
-        <div>
-          <h4 className="footer__heading">Documents</h4>
-          <ul className="footer__list">
-            <li>
-              <a href="/brand/Nhlanganiso_Business_Plan_Nov_2026.pdf" download>
-                <span className="footer__icon" aria-hidden="true">↓</span> Business Plan
-              </a>
-            </li>
-            <li>
-              <a href="/brand/Nhlanganiso_Company_Profile_Nov_2026.pdf" download>
-                <span className="footer__icon" aria-hidden="true">↓</span> Company Profile
-              </a>
-            </li>
-          </ul>
-        </div>
       </div>
 
       <div className="footer__bottom">

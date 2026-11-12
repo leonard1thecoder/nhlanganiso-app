@@ -1,0 +1,138 @@
+html:has(.business-register),
+html:has(.business-register) body { background: #080807; }
+html:has(.business-register) .navbar {
+  background: #d9c3a4 !important;
+  border-bottom: 1px solid #c5aa83 !important;
+  color: #382819;
+}
+html:has(.business-register) .navbar__text-link,
+html:has(.business-register) .navbar__business-register-link { color: #382819 !important; }
+html:has(.business-register) .site-main { background: #080807; color: #f6efe5; }
+html:has(.business-register) .footer { background: #d9c3a4; color: #382819; }
+html:has(.business-register) .footer :is(h1,h2,h3,h4,strong,a,p,span,small) { color: inherit; }
+
+.business-register {
+  --br-bg: #090807;
+  --br-panel: #14120f;
+  --br-line: rgba(230, 207, 174, .15);
+  --br-text: #f6efe5;
+  --br-muted: #b7aa99;
+  --br-gold: #e3bd78;
+  min-height: 70vh;
+  background: var(--br-bg);
+  color: var(--br-text);
+}
+.business-register * { box-sizing: border-box; }
+.business-register :is(h1,h2,h3,p) { text-align: left; }
+.business-register__container { width: min(100% - 40px, 1180px); margin-inline: auto; }
+.business-register__intro {
+  padding: clamp(3.5rem, 7vw, 6rem) 0 2.8rem;
+  border-bottom: 1px solid var(--br-line);
+  background: radial-gradient(ellipse at 82% 10%, rgba(183,126,53,.17), transparent 38%), linear-gradient(130deg,#0d0b09,#090807 70%);
+}
+.business-register__back { display: inline-block; margin-bottom: 2.5rem; color: #d7c3a8 !important; font-size: .85rem; }
+.business-register__eyebrow { margin: 0 0 .8rem; color: var(--br-gold) !important; font-size: .68rem; font-weight: 800; letter-spacing: .17em; }
+.business-register__intro h1 { max-width: 850px; margin: 0; color: #fffaf2; font: 600 clamp(2.7rem,6vw,5.2rem)/1 Georgia,'Times New Roman',serif; letter-spacing: -.05em; }
+.business-register__intro h1 span { color: var(--br-gold); }
+.business-register__lead { max-width: 690px; margin: 1.3rem 0 0; color: #c9bdae; font-size: 1.05rem; line-height: 1.8; }
+.business-register__steps { display: flex; align-items: center; gap: 16px; margin-top: 2rem; color: #d8cbb9; font-size: .78rem; }
+.business-register__steps span { display: flex; align-items: center; gap: 8px; }
+.business-register__steps b { color: var(--br-gold); font-size: .7rem; }
+.business-register__steps i { width: 35px; height: 1px; background: rgba(227,189,120,.35); }
+.business-register__body { padding: 3.5rem 0 6rem; }
+.business-register__layout { display: grid; grid-template-columns: minmax(0,1fr) 330px; align-items: start; gap: clamp(2rem,5vw,5rem); }
+.business-register__form { min-width: 0; }
+.business-register__form-heading { margin-bottom: 2rem; }
+.business-register__form-heading h2,
+.business-register__section h2 { margin: 0; color: #fff8ed; font: 600 1.75rem/1.2 Georgia,'Times New Roman',serif; }
+.business-register__form-heading > p:last-child,
+.business-register__section-copy { margin: .55rem 0 0; color: var(--br-muted); font-size: .85rem; }
+.business-register__fields { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 1.15rem; }
+.business-register__field { display: flex; min-width: 0; flex-direction: column; gap: .55rem; color: #e9dfd1; font-size: .82rem; font-weight: 650; }
+.business-register__field--wide { grid-column: 1 / -1; }
+.business-register__field em { margin-left: .3rem; color: #998d7d; font-size: .72rem; font-style: normal; font-weight: 450; }
+.business-register__field input,
+.business-register__field select,
+.business-register__field textarea {
+  width: 100%; min-height: 48px; border: 1px solid rgba(230,207,174,.2); border-radius: 8px;
+  outline: none; background: #12100e; padding: 0 14px; color: #f7efe4; font: inherit; font-weight: 450;
+  transition: border-color .18s, box-shadow .18s;
+}
+.business-register__field textarea { min-height: 112px; padding: 12px 14px; resize: vertical; }
+.business-register__field input::placeholder,
+.business-register__field textarea::placeholder { color: #776e62; }
+.business-register__field :is(input,select,textarea):focus { border-color: var(--br-gold); box-shadow: 0 0 0 3px rgba(227,189,120,.12); }
+.business-register__field :is(input,select,textarea)[aria-invalid="true"] { border-color: #df8276; }
+.business-register__field small { color: #f09b8e; font-size: .75rem; font-weight: 500; }
+.business-register__section { margin-top: 2.8rem; padding-top: 2.3rem; border-top: 1px solid var(--br-line); }
+.business-register__plan-list { display: grid; gap: .65rem; margin-top: 1.3rem; }
+.business-register__plan,
+.business-register__payout {
+  display: flex; align-items: center; gap: 13px; min-width: 0; border: 1px solid var(--br-line); border-radius: 9px;
+  background: #100f0d; padding: 15px; cursor: pointer; transition: border-color .18s,background .18s;
+}
+.business-register__plan.is-selected,
+.business-register__payout.is-selected { border-color: rgba(227,189,120,.8); background: rgba(227,189,120,.07); }
+.business-register__plan input,
+.business-register__payout input { position: absolute; width: 1px; height: 1px; opacity: 0; }
+.business-register__radio { display: block; width: 17px; height: 17px; flex: 0 0 17px; border: 1px solid #827565; border-radius: 50%; }
+.is-selected .business-register__radio { border: 5px solid var(--br-gold); }
+.business-register__plan-main { display: grid; gap: 4px; }
+.business-register__plan-main strong,
+.business-register__payout strong { color: #fff6e9; font-size: .9rem; }
+.business-register__plan-main small,
+.business-register__payout small { color: var(--br-muted); font-size: .76rem; line-height: 1.5; }
+.business-register__plan-price { margin-left: auto; color: var(--br-gold); font-size: .86rem; text-align: right; }
+.business-register__payout-options { display: grid; gap: .7rem; margin-top: 1.2rem; }
+.business-register__payout { align-items: flex-start; }
+.business-register__payout > span:last-child { display: grid; gap: 5px; }
+.business-register__security-note { margin: 1rem 0 0; color: #a99d8e; font-size: .78rem; line-height: 1.65; }
+.business-register__submit-area { display: grid; justify-items: start; gap: .85rem; margin-top: 2rem; padding-top: 1.7rem; border-top: 1px solid var(--br-line); }
+.business-register__submit-area p { max-width: 640px; margin: 0; color: #c4b8a8; font-size: .82rem; line-height: 1.7; }
+.business-register__submit-area small { color: #8e8376; font-size: .72rem; }
+.business-register__primary {
+  display: inline-flex; min-height: 50px; align-items: center; justify-content: center; gap: 15px;
+  border: 1px solid #e3bd78; border-radius: 7px; background: #e3bd78; padding: 0 22px;
+  color: #17110a !important; font-size: .86rem; font-weight: 800; cursor: pointer;
+}
+.business-register__primary:hover { background: #f0cf91; text-decoration: none; }
+.business-register__primary:disabled { cursor: wait; opacity: .65; }
+.business-register__secondary { color: #e3bd78 !important; font-size: .86rem; font-weight: 700; }
+.business-register__aside { position: sticky; top: 140px; display: grid; gap: 1rem; }
+.business-register__aside-card { border: 1px solid var(--br-line); border-radius: 12px; background: linear-gradient(155deg,#17140f,#100f0d); padding: 1.5rem; }
+.business-register__aside-card h3 { margin: 0; color: #fff6e9; font: 600 1.45rem/1.2 Georgia,'Times New Roman',serif; }
+.business-register__aside-card ol { display: grid; gap: 1.3rem; margin: 1.7rem 0; padding: 0; list-style: none; }
+.business-register__aside-card li { display: flex; gap: 12px; }
+.business-register__aside-card li > b { color: var(--br-gold); font-size: .72rem; }
+.business-register__aside-card li span { display: grid; gap: 5px; }
+.business-register__aside-card li strong { color: #f4eadb; font-size: .82rem; }
+.business-register__aside-card li small { color: var(--br-muted); font-size: .75rem; line-height: 1.6; }
+.business-register__aside-link { color: var(--br-gold) !important; font-size: .82rem; font-weight: 750; }
+.business-register__aside-note { display: flex; gap: 12px; border: 1px solid rgba(227,189,120,.25); border-radius: 9px; padding: 1rem; background: rgba(227,189,120,.05); }
+.business-register__aside-note > span { color: var(--br-gold); }
+.business-register__aside-note p { margin: 0; color: #c7b9a7; font-size: .77rem; line-height: 1.65; }
+.business-register__aside-note strong { color: #fff2dd; }
+.business-register__success { width: min(100% - 40px,680px); margin: 0 auto; padding: clamp(5rem,12vw,9rem) 0; }
+.business-register__success-mark { display: grid; width: 52px; height: 52px; place-items: center; border: 1px solid rgba(227,189,120,.5); border-radius: 50%; color: var(--br-gold); font-size: 1.4rem; }
+.business-register__success h1 { margin: 1rem 0; color: #fff6e9; font: 600 clamp(2.2rem,5vw,3.6rem)/1.05 Georgia,'Times New Roman',serif; }
+.business-register__success > p:not(.business-register__eyebrow) { color: #c8bcad; line-height: 1.8; }
+.business-register__notice { border-left: 2px solid var(--br-gold); background: rgba(227,189,120,.07); padding: 12px 15px; font-size: .82rem; }
+.business-register__success-actions { display: flex; align-items: center; gap: 1.5rem; margin-top: 1.7rem; }
+@media (max-width: 900px) {
+  .business-register__layout { grid-template-columns: 1fr; }
+  .business-register__aside { position: static; grid-row: 1; }
+  .business-register__aside-card ol { grid-template-columns: repeat(3,minmax(0,1fr)); gap: .8rem; }
+  .business-register__aside-card li { flex-direction: column; }
+}
+@media (max-width: 600px) {
+  .business-register__container { width: min(100% - 28px,1180px); }
+  .business-register__steps { flex-wrap: wrap; gap: 10px; font-size: .7rem; }
+  .business-register__steps i { width: 15px; }
+  .business-register__fields { grid-template-columns: 1fr; }
+  .business-register__field--wide { grid-column: auto; }
+  .business-register__aside-card ol { grid-template-columns: 1fr; }
+  .business-register__aside-card li { flex-direction: row; }
+  .business-register__plan { flex-wrap: wrap; }
+  .business-register__plan-price { margin-left: auto; font-size: .78rem; }
+  .business-register__success-actions { align-items: flex-start; flex-direction: column; }
+}
