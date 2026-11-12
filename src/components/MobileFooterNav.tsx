@@ -86,7 +86,7 @@ export function MobileFooterNav() {
 
   // The business pricing page is a focused landing page; keep the mobile
   // storefront navigation out of its way.
-  if (pathname === '/business/pricing') return null;
+  if (pathname.startsWith('/business/')) return null;
 
   const isAdminArea = pathname === '/admin'
     || pathname.startsWith('/admin/')
