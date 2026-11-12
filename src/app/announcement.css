@@ -8,13 +8,15 @@
 
 .site-chrome > .announcement-banner {
   position: relative;
-  z-index: 2;
+  z-index: 3;
 }
 
 .site-chrome > .navbar {
-  position: relative;
-  top: auto;
-  z-index: 1;
+  /* Keep the pink storefront navbar in the same sticky stack as the notice. */
+  position: relative !important;
+  top: auto !important;
+  z-index: 2;
+  isolation: isolate;
 }
 
 /* Premium bakery partner announcement strip */
