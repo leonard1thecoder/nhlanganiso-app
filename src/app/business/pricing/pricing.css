@@ -3,30 +3,35 @@ html:has(.business-pricing),
 html:has(.business-pricing) body {
   background: #080807;
 }
+/* Warm light-brown chrome frames the dark pricing content. */
 html:has(.business-pricing) .navbar {
-  background: #080807 !important;
-  border-bottom: 1px solid rgba(222, 174, 91, 0.2) !important;
-  color: #f7f0e6;
+  background: #d9c3a4 !important;
+  border-bottom: 1px solid #c5aa83 !important;
+  color: #302315;
 }
 html:has(.business-pricing) .navbar__link,
 html:has(.business-pricing) .navbar__text-link,
 html:has(.business-pricing) .navbar__bag-btn {
-  color: #f0e7db !important;
+  color: #382819 !important;
 }
 html:has(.business-pricing) .navbar__link.is-active,
 html:has(.business-pricing) .navbar__link:hover {
-  color: #e8c27c !important;
+  color: #805522 !important;
 }
-html:has(.business-pricing) .site-main,
-html:has(.business-pricing) .footer {
+html:has(.business-pricing) .site-main {
   background: #080807;
   color: #f5eee5;
 }
 html:has(.business-pricing) .footer {
-  border-top: 1px solid rgba(222, 174, 91, 0.18);
+  background: #d9c3a4;
+  border-top: 1px solid #c5aa83;
+  color: #382819;
 }
 html:has(.business-pricing) .footer :is(h1,h2,h3,h4,strong,a,p,span,small) {
   color: inherit;
+}
+html:has(.business-pricing) .footer__bottom {
+  border-top-color: rgba(56, 40, 25, 0.2);
 }
 
 .business-pricing {
