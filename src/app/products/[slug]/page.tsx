@@ -11,7 +11,6 @@ import { MAX_QTY_PER_LINE } from '@/lib/config';
 import { formatZAR } from '@/lib/format';
 import { productService } from '@/lib/services';
 import type { Availability, ProductDetail } from '@/lib/types';
-import { findDemoProduct } from '@/lib/demo-catalogue';
 
 export default function ProductDetailPage() {
   const { slug } = useParams<{ slug: string }>();
@@ -29,12 +28,6 @@ export default function ProductDetailPage() {
     let cancelled = false;
     setError(null);
     setNotFound(false);
-    const demoProduct = findDemoProduct(slug);
-    if (demoProduct) {
-      setProduct(demoProduct);
-      setAvailability(null);
-      return () => { cancelled = true; };
-    }
     productService
       .bySlug(slug)
       .then(async (p) => {
@@ -93,7 +86,6 @@ export default function ProductDetailPage() {
     );
   }
 
-  const isDemoProduct = Boolean(findDemoProduct(slug));
   const inCart = lines.find((l) => l.product_id === product.id)?.qty ?? 0;
   const outOfStock = availability !== null && (!availability.active || availability.stock_on_hand === 0);
   const maxQty =
@@ -102,7 +94,6 @@ export default function ProductDetailPage() {
       : MAX_QTY_PER_LINE;
 
   const onAdd = () => {
-    if (isDemoProduct) return;
     addItem({ product_id: product.id, slug: product.slug, name: product.name, price_cents: product.price_cents }, qty);
     setAdded(true);
     window.clearTimeout(addedTimer.current);
@@ -156,7 +147,6 @@ export default function ProductDetailPage() {
               name={product.name}
               count={product.favorite_count}
               showLabel
-              preview={isDemoProduct}
             />
           </div>
 
@@ -166,11 +156,7 @@ export default function ProductDetailPage() {
             </div>
           ) : null}
 
-          {isDemoProduct ? (
-            <div className="product-detail__oos-box">
-              <p>This is a catalogue preview. Ordering and checkout are disabled until the live catalogue is connected.</p>
-            </div>
-          ) : outOfStock ? (
+          {outOfStock ? (
             <div className="product-detail__oos-box">
               <p>This bake is sold out for today. Check back tomorrow, or enquire about a custom order.</p>
               <Link href="/contact" className="btn btn-outline btn-block">Enquire about a custom order</Link>
@@ -240,12 +226,10 @@ export default function ProductDetailPage() {
               <strong>Collect from our bakery</strong>
               <span className="muted">Orders are for collection. Delivery is not available online yet.</span>
             </li>
-            {!isDemoProduct ? (
-              <li>
-                <strong>Pay securely with PayFast</strong>
-                <span className="muted">You confirm the total on the checkout page before paying.</span>
-              </li>
-            ) : null}
+            <li>
+              <strong>Pay securely with PayFast</strong>
+              <span className="muted">You confirm the total on the checkout page before paying.</span>
+            </li>
           </ul>
         </div>
       </div>

@@ -6,11 +6,11 @@ import { Suspense, useEffect, useState, type FormEvent } from 'react';
 import { Notice } from '@/components/Notice';
 import { ProductCard } from '@/components/ProductCard';
 import type { Category, PageMeta, Product } from '@/lib/types';
-import { DEMO_CATEGORIES, DEMO_PRODUCTS } from '@/lib/demo-catalogue';
+import { describeError } from '@/lib/api';
+import { categoryService, productService } from '@/lib/services';
 
 const PER_PAGE = 12;
 const categorySearchTerm = (name: string) => name.toLowerCase() === 'cakes' ? 'cake' : name.toLowerCase() === 'other products' ? 'other products' : name;
-const CATEGORY_SEARCH_TERMS = new Set(['bread', 'cake', 'cupcakes', 'pastries', 'platters', 'other products']);
 const CAKE_CATEGORY_RE = /cake|birthday|wedding|celebration/i;
 export type CatalogMode = 'all' | 'cakes';
 
@@ -44,7 +44,14 @@ function ProductsView({ mode }: { mode: CatalogMode }) {
 
   useEffect(() => {
     let cancelled = false;
-    setCategories(DEMO_CATEGORIES);
+    categoryService
+      .list()
+      .then((cats) => {
+        if (!cancelled) setCategories(cats);
+      })
+      .catch((err) => {
+        if (!cancelled) setError(describeError(err));
+      });
     return () => {
       cancelled = true;
     };
@@ -69,7 +76,7 @@ function ProductsView({ mode }: { mode: CatalogMode }) {
     Promise.all(
       matchingCategories.map(async (category) => {
         try {
-          const products = DEMO_PRODUCTS.filter((product) => product.category_id === category.id).slice(0, 4);
+          const products = (await productService.list({ search: categorySearchTerm(category.name), per_page: 4 })).data;
           return { category, products };
         } catch {
           return { category, products: [] };
@@ -101,19 +108,18 @@ function ProductsView({ mode }: { mode: CatalogMode }) {
     let cancelled = false;
     setError(null);
     setProducts(null);
-    const isCategoryFilter = CATEGORY_SEARCH_TERMS.has(q.trim().toLowerCase());
-    const normalizedQuery = q.trim().toLowerCase();
-    const matching = DEMO_PRODUCTS.filter((product) => {
-      if (!normalizedQuery) return true;
-      const category = DEMO_CATEGORIES.find((item) => item.id === product.category_id);
-      return [product.name, product.description ?? '', category?.name ?? '']
-        .some((value) => value.toLowerCase().includes(normalizedQuery));
-    });
-    const filtered = isCategoryFilter
-      ? matching
-      : matching.slice((page - 1) * PER_PAGE, page * PER_PAGE);
-    setProducts(filtered);
-    setMeta({ page, per_page: isCategoryFilter ? Math.max(1, matching.length) : PER_PAGE, total: matching.length });
+    productService
+      .list({ search: q.trim() || undefined, page, per_page: PER_PAGE })
+      .then((res) => {
+        if (cancelled) return;
+        setProducts(res.data);
+        setMeta(res.meta);
+      })
+      .catch((err) => {
+        if (cancelled) return;
+        setError(describeError(err));
+        setProducts([]);
+      });
     return () => {
       cancelled = true;
     };
@@ -140,7 +146,7 @@ function ProductsView({ mode }: { mode: CatalogMode }) {
       {/* Editorial Header */}
       <header className="shop-header">
         <div className="shop-header__content">
-          <p className="eyebrow">{isCollectionBrowse ? `${collectionLabel} collections` : 'Demo bakery'}</p>
+          <p className="eyebrow">{isCollectionBrowse ? `${collectionLabel} collections` : 'Our bakery'}</p>
           <h1 className="shop-header__title">{isCollectionBrowse ? collectionLabel : 'Shop the bakery'}</h1>
           <p className="shop-header__desc">
             {isCollectionBrowse
@@ -300,7 +306,7 @@ function ProductsView({ mode }: { mode: CatalogMode }) {
                   </button>
                 </div>
                 <div className="grid-products">
-                  {sectionProducts.map((product) => <ProductCard key={product.id} product={product} demo />)}
+                  {sectionProducts.map((product) => <ProductCard key={product.id} product={product} />)}
                 </div>
               </section>
             ))}
@@ -315,7 +321,7 @@ function ProductsView({ mode }: { mode: CatalogMode }) {
           </div>
         ) : (
           <div className="grid-products">
-            {products.map((p) => <ProductCard key={p.id} product={p} demo />)}
+            {products.map((p) => <ProductCard key={p.id} product={p} />)}
           </div>
         )
       ) : null}

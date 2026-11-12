@@ -96,7 +96,6 @@ export function MobileFooterNav() {
     : [
         { href: '/', label: 'Home' },
         { href: '/bakery', label: 'Bakery' },
-        { href: '/recipes', label: 'Recipes' },
         { href: '/about', label: 'Our story' },
         { href: '/contact', label: 'Contact us' },
       ];

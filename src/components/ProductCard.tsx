@@ -4,7 +4,6 @@ import Link from 'next/link';
 import { useEffect, useRef, useState } from 'react';
 import { ProductLikeButton } from '@/components/ProductLikeButton';
 import { useCart } from '@/context/CartContext';
-import { findDemoProduct } from '@/lib/demo-catalogue';
 import { formatZAR } from '@/lib/format';
 import type { Product } from '@/lib/types';
 
@@ -15,18 +14,13 @@ import type { Product } from '@/lib/types';
  */
 export function ProductCard({
   product,
-  demo = false,
   showLike = true,
 }: {
   product: Product;
-  demo?: boolean;
   /** Hide the heart where it would mean something else, such as the account Favourites page. */
   showLike?: boolean;
 }) {
   const initial = product.name.trim().charAt(0).toUpperCase() || '•';
-  // Demo catalogue items show the heart for design review, but it cannot be saved to an
-  // account. Some grids pass items without the demo flag, so check the catalogue as well.
-  const isPreview = demo || findDemoProduct(product.slug) !== undefined;
   const { addItem } = useCart();
   const [added, setAdded] = useState(false);
   const resetTimer = useRef<number | undefined>(undefined);
@@ -34,7 +28,6 @@ export function ProductCard({
   useEffect(() => () => window.clearTimeout(resetTimer.current), []);
 
   const onAdd = () => {
-    if (demo) return;
     addItem(
       { product_id: product.id, slug: product.slug, name: product.name, price_cents: product.price_cents },
       1,
@@ -56,7 +49,7 @@ export function ProductCard({
       </Link>
 
       {showLike ? (
-        <ProductLikeButton id={product.id} name={product.name} count={product.favorite_count} preview={isPreview} />
+        <ProductLikeButton id={product.id} name={product.name} count={product.favorite_count} />
       ) : null}
 
       <div className="tile__body">
@@ -70,18 +63,14 @@ export function ProductCard({
 
         <div className="tile__foot">
           <span className="price tile__price">{formatZAR(product.price_cents)}</span>
-          {demo ? (
-            <span className="muted small" aria-label="Demo item, ordering disabled">Preview only</span>
-          ) : (
-            <button
-              type="button"
-              className={`btn btn-primary btn-sm tile__add ${added ? 'is-added' : ''}`}
-              onClick={onAdd}
-            >
-              {added ? 'Added' : 'Add to bag'}
-              <span className="sr-only"> {product.name}</span>
-            </button>
-          )}
+          <button
+            type="button"
+            className={`btn btn-primary btn-sm tile__add ${added ? 'is-added' : ''}`}
+            onClick={onAdd}
+          >
+            {added ? 'Added' : 'Add to bag'}
+            <span className="sr-only"> {product.name}</span>
+          </button>
         </div>
       </div>
     </article>
