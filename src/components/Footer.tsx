@@ -31,11 +31,8 @@ export function Footer() {
             Reach more customers and grow your business with Nhlanganiso.
           </p>
           <div className="cta-row footer__business-actions">
-            <Link href="/contact" className="btn btn-primary">
-              Register Business Account
-            </Link>
-            <Link href="/business/pricing" className="btn btn-outline">
-              View Business Prices
+            <Link href="/business/pricing" className="btn btn-primary">
+              Become a bakery partner
             </Link>
           </div>
         </div>
