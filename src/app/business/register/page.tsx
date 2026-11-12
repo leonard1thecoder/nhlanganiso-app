@@ -8,14 +8,6 @@ import { cateringService, categoryService } from '@/lib/services';
 import type { Category } from '@/lib/types';
 import './register.css';
 
-const plans = [
-  { value: 'Growth', price: 'R399 / month', capacity: 'Up to 100 active products' },
-  { value: 'Professional', price: 'R799 / month', capacity: 'Up to 500 active products' },
-  { value: 'Business', price: 'R1,499 / month', capacity: 'Up to 2,500 active products' },
-  { value: 'Scale', price: 'R2,499 / month', capacity: 'Up to 10,000 active products' },
-  { value: 'Enterprise', price: 'Custom pricing', capacity: 'Flexible product capacity' },
-] as const;
-
 type FormState = {
   businessName: string;
   registrationNumber: string;
@@ -26,9 +18,6 @@ type FormState = {
   requestedCategory: string;
   location: string;
   website: string;
-  plan: string;
-  payout: 'managed' | 'payfast';
-  notes: string;
 };
 
 const initialForm: FormState = {
@@ -41,9 +30,6 @@ const initialForm: FormState = {
   requestedCategory: '',
   location: '',
   website: '',
-  plan: 'Professional',
-  payout: 'managed',
-  notes: '',
 };
 
 export default function BusinessRegisterPage() {
@@ -87,7 +73,6 @@ export default function BusinessRegisterPage() {
     setErrors(nextErrors);
     if (Object.keys(nextErrors).length) return;
 
-    const selectedPlan = plans.find((plan) => plan.value === form.plan);
     const message = [
       'NEW BUSINESS PARTNERSHIP APPLICATION',
       '',
@@ -99,11 +84,6 @@ export default function BusinessRegisterPage() {
       `Business category: ${form.category === 'Request a new category' ? form.requestedCategory.trim() + ' (new category requested)' : form.category}`,
       `Location: ${form.location.trim()}`,
       `Website / social link: ${form.website.trim() || 'Not provided'}`,
-      `Selected plan: ${form.plan} — ${selectedPlan?.price ?? ''} (${selectedPlan?.capacity ?? ''})`,
-      `Settlement preference: ${form.payout === 'managed' ? 'Nhlanganiso-managed withdrawals (4.5% of gross withdrawal)' : 'Own PayFast merchant account (0% Nhlanganiso withdrawal fee; PayFast charges may apply)'}`,
-      '',
-      'Additional information:',
-      form.notes.trim() || 'None',
     ].join('\n');
 
     setSubmitting(true);
@@ -154,8 +134,8 @@ export default function BusinessRegisterPage() {
           <p className="business-register__eyebrow">BECOME A NHLANGANISO PARTNER</p>
           <h1>Let’s put your <span>business on the map.</span></h1>
           <p className="business-register__lead">
-            Tell us about your business, choose a plan and select how you’d like to receive your sales.
-            Our team will review your application and guide you through onboarding.
+            Tell us about your business and our team will review your application.
+            You’ll choose your subscription and payment setup during onboarding.
           </p>
           <div className="business-register__steps" aria-label="Application steps">
             <span><b>01</b> Business details</span>
@@ -233,49 +213,6 @@ export default function BusinessRegisterPage() {
               </label>
             </div>
 
-            <div className="business-register__section">
-              <p className="business-register__eyebrow">YOUR SUBSCRIPTION</p>
-              <h2>Choose a business plan</h2>
-              <p className="business-register__section-copy">You can discuss a different plan with our team before activation.</p>
-              <div className="business-register__plan-list">
-                {plans.map((plan) => (
-                  <label className={`business-register__plan${form.plan === plan.value ? ' is-selected' : ''}`} key={plan.value}>
-                    <input type="radio" name="plan" value={plan.value} checked={form.plan === plan.value} onChange={() => update('plan', plan.value)} />
-                    <span className="business-register__radio" aria-hidden="true" />
-                    <span className="business-register__plan-main"><strong>{plan.value}</strong><small>{plan.capacity}</small></span>
-                    <b className="business-register__plan-price">{plan.price}</b>
-                  </label>
-                ))}
-              </div>
-            </div>
-
-            <div className="business-register__section">
-              <p className="business-register__eyebrow">PAYMENT SETTLEMENT</p>
-              <h2>How would you like to get paid?</h2>
-              <div className="business-register__payout-options">
-                <label className={`business-register__payout${form.payout === 'managed' ? ' is-selected' : ''}`}>
-                  <input type="radio" name="payout" checked={form.payout === 'managed'} onChange={() => update('payout', 'managed')} />
-                  <span className="business-register__radio" aria-hidden="true" />
-                  <span><strong>Nhlanganiso-managed withdrawals</strong><small>4.5% fee on the gross withdrawal amount.</small></span>
-                </label>
-                <label className={`business-register__payout${form.payout === 'payfast' ? ' is-selected' : ''}`}>
-                  <input type="radio" name="payout" checked={form.payout === 'payfast'} onChange={() => update('payout', 'payfast')} />
-                  <span className="business-register__radio" aria-hidden="true" />
-                  <span><strong>My own PayFast merchant account</strong><small>0% Nhlanganiso withdrawal fee. PayFast fees may still apply.</small></span>
-                </label>
-              </div>
-              <p className="business-register__security-note">
-                Don’t enter PayFast passwords, secret keys or banking credentials here. We’ll guide you through a secure connection after approval.
-              </p>
-            </div>
-
-            <div className="business-register__section">
-              <label className="business-register__field">
-                <span>Anything else we should know? <em>Optional</em></span>
-                <textarea rows={4} value={form.notes} onChange={(e) => update('notes', e.target.value)} placeholder="Tell us about your products, delivery area or what you need from the platform." />
-              </label>
-            </div>
-
             <div className="business-register__submit-area">
               <p>Submitting this form sends an application for review. It does not immediately create or activate a business account.</p>
               <button type="submit" className="business-register__primary" disabled={submitting}>
@@ -291,7 +228,7 @@ export default function BusinessRegisterPage() {
               <h3>A real person reviews your application.</h3>
               <ol>
                 <li><b>01</b><span><strong>We review your details</strong><small>Our team checks your business information and category request.</small></span></li>
-                <li><b>02</b><span><strong>We confirm your plan</strong><small>We’ll contact you if anything needs clarification.</small></span></li>
+                <li><b>02</b><span><strong>We prepare your onboarding</strong><small>We’ll guide you through plan selection and payment setup.</small></span></li>
                 <li><b>03</b><span><strong>We help you get set up</strong><small>Account access, catalogue setup and payment connection follow approval.</small></span></li>
               </ol>
               <Link href="/business/pricing" className="business-register__aside-link">Compare all plans <span aria-hidden="true">↗</span></Link>
