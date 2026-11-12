@@ -35,6 +35,7 @@ export function Navbar() {
     { href: '/contact', label: 'Contact us' },
   ];
 
+  const isBusinessArea = pathname === '/business/pricing' || pathname.startsWith('/business/');
   const isActive = (href: string) => pathname === href || pathname.startsWith(`${href}/`);
 
   useEffect(() => {
@@ -90,7 +91,7 @@ export function Navbar() {
           />
         </Link>
 
-        {!isAdminArea ? (
+        {!isAdminArea && !isBusinessArea ? (
           <nav className="navbar__nav-desktop" aria-label="Main">
             <ul className="navbar__menu">
               {navLinks.map((l) => (
@@ -142,7 +143,11 @@ export function Navbar() {
             </Link>
           ) : null}
 
-          {!isAdminArea ? (
+          {isBusinessArea ? (
+            <Link href="/contact" className="navbar__bag-btn navbar__business-register-link">
+              <span>Register Business Account</span>
+            </Link>
+          ) : !isAdminArea ? (
             <Link href="/cart" className="navbar__bag-btn" aria-label={`Shopping bag${ready && count > 0 ? `, ${count} ${count === 1 ? 'item' : 'items'}` : ', empty'}`}>
               <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
                 <path d="M6 7h12l-1 13H7L6 7Z" />
