@@ -25,6 +25,21 @@ export function Footer() {
           </div>
         </div>
 
+        <div className="footer__business">
+          <h4 className="footer__heading">Grow your business</h4>
+          <p className="footer__desc">
+            Reach more customers and grow your business with Nhlanganiso.
+          </p>
+          <div className="cta-row footer__business-actions">
+            <Link href="/contact" className="btn btn-primary">
+              Register Business Account
+            </Link>
+            <Link href="/business/pricing" className="btn btn-outline">
+              View Business Prices
+            </Link>
+          </div>
+        </div>
+
         <div>
           <h4 className="footer__heading">Shop</h4>
           <ul className="footer__list">
