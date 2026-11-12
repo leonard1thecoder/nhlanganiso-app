@@ -1,0 +1,138 @@
+/* ---------- Bakery partner announcement ---------- */
+.announcement-banner {
+  position: relative;
+  z-index: 30;
+  width: 100%;
+  background: #171310;
+  color: #fff;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.announcement-banner__inner {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  min-height: 58px;
+  padding-block: 10px;
+}
+
+.announcement-banner__tag {
+  flex: none;
+  padding: 4px 9px;
+  border: 1px solid rgba(232, 185, 112, 0.48);
+  border-radius: 999px;
+  color: #f0c98f;
+  font-size: 0.68rem;
+  font-weight: 800;
+  letter-spacing: 0.09em;
+  line-height: 1.4;
+  text-transform: uppercase;
+}
+
+.announcement-banner__content {
+  display: flex;
+  flex: 1;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 4px 9px;
+  min-width: 0;
+  color: rgba(255, 255, 255, 0.88);
+  font-size: 0.88rem;
+  line-height: 1.45;
+  text-align: center;
+}
+
+.announcement-banner__content strong {
+  color: #fff;
+  font-weight: 750;
+}
+
+.announcement-banner__sep {
+  color: #d6a65e;
+}
+
+.announcement-banner__body {
+  min-width: 0;
+}
+
+.announcement-banner__cta {
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+  gap: 5px;
+  margin-left: 5px;
+  color: #f0c98f;
+  font-weight: 750;
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+.announcement-banner__cta:hover {
+  color: #fff;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.announcement-banner__close {
+  display: grid;
+  flex: none;
+  place-items: center;
+  width: 34px;
+  height: 34px;
+  margin-left: auto;
+  padding: 0;
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  border-radius: 50%;
+  background: transparent;
+  color: #fff;
+  font: inherit;
+  font-size: 1.35rem;
+  line-height: 1;
+  cursor: pointer;
+  transition: background-color 160ms ease, border-color 160ms ease;
+}
+
+.announcement-banner__close:hover {
+  border-color: rgba(255, 255, 255, 0.55);
+  background: rgba(255, 255, 255, 0.12);
+}
+
+.announcement-banner__close:focus-visible {
+  outline: 2px solid #f0c98f;
+  outline-offset: 3px;
+}
+
+@media (max-width: 680px) {
+  .announcement-banner__inner {
+    align-items: flex-start;
+    gap: 8px;
+    padding-block: 11px;
+  }
+
+  .announcement-banner__tag {
+    margin-top: 2px;
+  }
+
+  .announcement-banner__content {
+    justify-content: flex-start;
+    gap: 3px 6px;
+    font-size: 0.8rem;
+    text-align: left;
+  }
+
+  .announcement-banner__cta {
+    margin-left: 0;
+  }
+
+  .announcement-banner__close {
+    width: 30px;
+    height: 30px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .announcement-banner__close {
+    transition: none;
+  }
+}
