@@ -132,6 +132,15 @@
   transition: background-color 160ms ease, border-color 160ms ease, transform 160ms ease;
 }
 
+.announcement-banner__close > span {
+  display: block;
+  width: 1em;
+  height: 1em;
+  line-height: 1;
+  text-align: center;
+  transform: translateY(-1px);
+}
+
 .announcement-banner__close:hover {
   border-color: rgba(238, 196, 120, 0.75);
   background: rgba(238, 196, 120, 0.14) !important;
