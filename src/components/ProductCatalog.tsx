@@ -118,7 +118,6 @@ function ProductsView({ mode }: { mode: CatalogMode }) {
       .catch((err) => {
         if (cancelled) return;
         setError(describeError(err));
-        setProducts([]);
       });
     return () => {
       cancelled = true;
