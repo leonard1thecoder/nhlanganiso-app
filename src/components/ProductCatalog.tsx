@@ -118,7 +118,6 @@ function ProductsView({ mode }: { mode: CatalogMode }) {
       .catch((err) => {
         if (cancelled) return;
         setError(describeError(err));
-        setProducts([]);
       });
     return () => {
       cancelled = true;
@@ -146,11 +145,11 @@ function ProductsView({ mode }: { mode: CatalogMode }) {
       {/* Editorial Header */}
       <header className="shop-header">
         <div className="shop-header__content">
-          <p className="eyebrow">{isCollectionBrowse ? `${collectionLabel} collections` : 'Our bakery'}</p>
-          <h1 className="shop-header__title">{isCollectionBrowse ? collectionLabel : 'Shop the bakery'}</h1>
+          <p className="eyebrow">{isCollectionBrowse ? 'Bakery collections' : 'Our bakery'}</p>
+          <h1 className="shop-header__title">{isCollectionBrowse ? 'Bakery' : 'Shop the bakery'}</h1>
           <p className="shop-header__desc">
             {isCollectionBrowse
-              ? `Browse our ${collectionLabel.toLowerCase()}. Add what you like to your bag, then collect from the bakery.`
+              ? `Browse our bakery. Add what you like to your bag, then collect from the bakery.`
               : 'Browse everything we have on the menu, or search for something specific.'}
           </p>
         </div>
@@ -167,7 +166,7 @@ function ProductsView({ mode }: { mode: CatalogMode }) {
               id="product-search"
               className="shop-search__input"
               type="search"
-              placeholder={isCakeBrowse ? 'Search cakes' : 'Search the bakery'}
+              placeholder={isCakeBrowse ? 'Search bakery' : 'Search the bakery'}
               value={input}
               onChange={(e) => setInput(e.target.value)}
             />
@@ -192,7 +191,7 @@ function ProductsView({ mode }: { mode: CatalogMode }) {
       {/* Category Filter Pills (if categories available) */}
       {visibleCategories.length > 0 && (
         <div className="shop-filter-bar">
-          <div className="shop-filter-bar__label" id="shop-filter-label">{isCollectionBrowse ? `${collectionLabel} collections` : 'Categories'}</div>
+          <div className="shop-filter-bar__label" id="shop-filter-label">{isCollectionBrowse ? 'Bakery collections' : 'Categories'}</div>
           <div className="shop-filter-pills" role="group" aria-labelledby="shop-filter-label">
             <button
               type="button"
