@@ -1,8 +1,27 @@
-/* Premium bakery partner announcement strip */
-.announcement-banner {
+/* Keep the announcement and navigation locked together while scrolling. */
+.site-chrome {
   position: sticky;
   top: 0;
   z-index: 1000;
+  isolation: isolate;
+}
+
+.site-chrome > .announcement-banner {
+  position: relative;
+  z-index: 2;
+}
+
+.site-chrome > .navbar {
+  position: relative;
+  top: auto;
+  z-index: 1;
+}
+
+/* Premium bakery partner announcement strip */
+.announcement-banner {
+  position: relative;
+  top: auto;
+  z-index: 2;
   width: 100%;
   overflow: hidden;
   background: #080706 !important;
