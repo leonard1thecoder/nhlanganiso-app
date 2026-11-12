@@ -54,7 +54,7 @@ export function AnnouncementBanner() {
               </span>
             </>
           )}
-          <Link href="/contact" className="announcement-banner__cta">
+          <Link href="/business/pricing" className="announcement-banner__cta">
             Become a bakery partner <span aria-hidden="true">→</span>
           </Link>
         </div>
