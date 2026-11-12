@@ -144,7 +144,7 @@ export function Navbar() {
           ) : null}
 
           {isBusinessArea ? (
-            <Link href="/contact" className="navbar__bag-btn navbar__business-register-link">
+            <Link href="/business/register" className="navbar__bag-btn navbar__business-register-link">
               <span>Register Business Account</span>
             </Link>
           ) : !isAdminArea ? (
