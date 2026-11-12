@@ -1,7 +1,8 @@
 /* Premium bakery partner announcement strip */
 .announcement-banner {
-  position: relative;
-  z-index: 60;
+  position: sticky;
+  top: 0;
+  z-index: 1000;
   width: 100%;
   overflow: hidden;
   background: #080706 !important;
