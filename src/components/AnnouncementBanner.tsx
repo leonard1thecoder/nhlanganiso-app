@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import Link from 'next/link';
 import { announcementService } from '@/lib/services';
 import type { PublicAnnouncement } from '@/lib/types';
 
@@ -18,30 +19,44 @@ export function AnnouncementBanner() {
         }
       })
       .catch(() => {
-        // Silently fallback if announcements aren't available
+        // The partner invitation remains visible if the announcements API is unavailable.
       });
     return () => {
       cancelled = true;
     };
   }, []);
 
-  if (dismissed || !announcements || announcements.length === 0) {
-    return null;
-  }
+  if (dismissed) return null;
 
-  const active = announcements[0];
+  const active = announcements?.[0];
 
   return (
     <aside className="announcement-banner" aria-label="Bakery announcement">
       <div className="container announcement-banner__inner">
-        <span className="announcement-banner__tag">Notice</span>
+        <span className="announcement-banner__tag">
+          {active ? 'Notice' : 'Sell with us'}
+        </span>
         <div className="announcement-banner__content">
-          <strong>{active.title}</strong>
-          <span className="announcement-banner__sep">—</span>
-          <span
-            className="announcement-banner__body"
-            dangerouslySetInnerHTML={{ __html: active.body_html }}
-          />
+          {active ? (
+            <>
+              <strong>{active.title}</strong>
+              <span className="announcement-banner__sep" aria-hidden="true">—</span>
+              <span
+                className="announcement-banner__body"
+                dangerouslySetInnerHTML={{ __html: active.body_html }}
+              />
+            </>
+          ) : (
+            <>
+              <strong>Have a bakery or food business?</strong>
+              <span className="announcement-banner__body">
+                Grow your reach — sell your baked goods in the Nhlanganiso online bakery.
+              </span>
+            </>
+          )}
+          <Link href="/contact" className="announcement-banner__cta">
+            Become a bakery partner <span aria-hidden="true">→</span>
+          </Link>
         </div>
         <button
           type="button"
@@ -49,7 +64,7 @@ export function AnnouncementBanner() {
           onClick={() => setDismissed(true)}
           aria-label="Dismiss announcement"
         >
-          ✕
+          <span aria-hidden="true">×</span>
         </button>
       </div>
     </aside>
