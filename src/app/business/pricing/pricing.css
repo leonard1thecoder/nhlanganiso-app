@@ -1,0 +1,519 @@
+/* Business pricing — dark editorial surface with warm bakery-gold accents. */
+html:has(.business-pricing),
+html:has(.business-pricing) body {
+  background: #080807;
+}
+html:has(.business-pricing) .navbar {
+  background: #080807 !important;
+  border-bottom: 1px solid rgba(222, 174, 91, 0.2) !important;
+  color: #f7f0e6;
+}
+html:has(.business-pricing) .navbar__link,
+html:has(.business-pricing) .navbar__text-link,
+html:has(.business-pricing) .navbar__bag-btn {
+  color: #f0e7db !important;
+}
+html:has(.business-pricing) .navbar__link.is-active,
+html:has(.business-pricing) .navbar__link:hover {
+  color: #e8c27c !important;
+}
+html:has(.business-pricing) .site-main,
+html:has(.business-pricing) .footer {
+  background: #080807;
+  color: #f5eee5;
+}
+html:has(.business-pricing) .footer {
+  border-top: 1px solid rgba(222, 174, 91, 0.18);
+}
+html:has(.business-pricing) .footer :is(h1,h2,h3,h4,strong,a,p,span,small) {
+  color: inherit;
+}
+
+.business-pricing {
+  --bp-bg: #080807;
+  --bp-panel: #11100e;
+  --bp-panel-raised: #171511;
+  --bp-line: rgba(236, 216, 185, 0.14);
+  --bp-text: #f6efe5;
+  --bp-muted: #b6aa9b;
+  --bp-gold: #e3bd78;
+  --bp-gold-deep: #b77e35;
+  overflow: hidden;
+  background: var(--bp-bg);
+  color: var(--bp-text);
+  text-align: left;
+}
+.business-pricing * { box-sizing: border-box; }
+.business-pricing :is(h1,h2,h3,p) { text-align: left; }
+.business-pricing__container {
+  width: min(100% - 40px, 1180px);
+  margin-inline: auto;
+}
+.business-pricing__hero {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  padding: clamp(5rem, 10vw, 8.5rem) 0 clamp(4rem, 8vw, 6.5rem);
+  border-bottom: 1px solid var(--bp-line);
+  background:
+    radial-gradient(ellipse at 80% 35%, rgba(184, 122, 46, 0.16), transparent 35%),
+    linear-gradient(135deg, #0b0a08 0%, #100e0b 55%, #080807 100%);
+}
+.business-pricing__hero .business-pricing__container { position: relative; z-index: 2; }
+.business-pricing__eyebrow {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 0 0 1rem;
+  color: var(--bp-gold) !important;
+  font-size: 0.7rem;
+  font-weight: 800;
+  letter-spacing: 0.17em;
+  line-height: 1.4;
+}
+.business-pricing__eyebrow > span {
+  width: 25px;
+  height: 1px;
+  background: var(--bp-gold-deep);
+}
+.business-pricing__hero h1 {
+  max-width: 850px;
+  margin: 0;
+  color: #fffaf2 !important;
+  font-family: Georgia, 'Times New Roman', serif;
+  font-size: clamp(3rem, 7vw, 6.2rem);
+  font-weight: 600;
+  letter-spacing: -0.055em;
+  line-height: 0.99;
+}
+.business-pricing__hero h1 span { color: var(--bp-gold) !important; }
+.business-pricing__intro {
+  max-width: 640px;
+  margin: 1.6rem 0 0;
+  color: #c9bdae !important;
+  font-size: clamp(1rem, 1.5vw, 1.15rem);
+  line-height: 1.8;
+}
+.business-pricing__hero-note {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 1.6rem;
+  color: #e8ddcf;
+  font-size: 0.88rem;
+}
+.business-pricing__check {
+  display: grid;
+  width: 23px;
+  height: 23px;
+  flex: 0 0 23px;
+  place-items: center;
+  border: 1px solid rgba(227, 189, 120, 0.5);
+  border-radius: 50%;
+  color: var(--bp-gold);
+  font-size: 0.75rem;
+}
+.business-pricing__scroll {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  margin-top: 2.2rem;
+  color: var(--bp-gold) !important;
+  font-size: 0.82rem;
+  font-weight: 750;
+  letter-spacing: 0.03em;
+}
+.business-pricing__scroll span { font-size: 1.1rem; transition: transform 160ms ease; }
+.business-pricing__scroll:hover { text-decoration: none; }
+.business-pricing__scroll:hover span { transform: translateY(3px); }
+.business-pricing__orb {
+  position: absolute;
+  z-index: 1;
+  width: 420px;
+  height: 420px;
+  border: 1px solid rgba(227, 189, 120, 0.12);
+  border-radius: 50%;
+  pointer-events: none;
+}
+.business-pricing__orb::before,
+.business-pricing__orb::after {
+  position: absolute;
+  inset: 28px;
+  border: 1px solid rgba(227, 189, 120, 0.08);
+  border-radius: inherit;
+  content: '';
+}
+.business-pricing__orb::after { inset: 65px; }
+.business-pricing__orb--one { top: 4%; right: -125px; }
+.business-pricing__orb--two { top: 18%; right: 35px; width: 180px; height: 180px; opacity: 0.5; }
+
+.business-pricing__plans {
+  padding: clamp(4rem, 7vw, 6rem) 0;
+  background: #0a0908;
+}
+.business-pricing__section-heading {
+  max-width: 720px;
+  margin: 0 auto 2.8rem;
+  text-align: center;
+}
+.business-pricing__section-heading .business-pricing__eyebrow { justify-content: center; }
+.business-pricing__section-heading h2,
+.business-pricing__settlement-heading h2,
+.business-pricing__cta-section h2 {
+  margin: 0;
+  color: #fff8ef !important;
+  font-family: Georgia, 'Times New Roman', serif;
+  font-size: clamp(2.1rem, 4.5vw, 3.5rem);
+  font-weight: 600;
+  letter-spacing: -0.04em;
+}
+.business-pricing__section-heading > p:last-child,
+.business-pricing__settlement-heading > p:last-child {
+  margin: 0.85rem 0 0;
+  color: var(--bp-muted) !important;
+  font-size: 0.98rem;
+  line-height: 1.7;
+}
+.business-pricing__grid {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  align-items: stretch;
+  gap: 14px;
+}
+.business-plan-card {
+  position: relative;
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  padding: 1.55rem 1.25rem 1.3rem;
+  border: 1px solid var(--bp-line);
+  border-radius: 17px;
+  background: linear-gradient(155deg, #171511, #100f0d 70%);
+  box-shadow: 0 18px 45px rgba(0,0,0,.18);
+}
+.business-plan-card--featured {
+  border-color: rgba(227, 189, 120, 0.7);
+  background: linear-gradient(155deg, #211a10, #14110c 70%);
+  box-shadow: 0 18px 48px rgba(0,0,0,.28), 0 0 0 1px rgba(227, 189, 120, 0.08);
+}
+.business-plan-card__ribbon {
+  position: absolute;
+  top: -12px;
+  left: 50%;
+  width: max-content;
+  max-width: calc(100% - 20px);
+  padding: 5px 10px;
+  border: 1px solid rgba(227, 189, 120, 0.55);
+  border-radius: 999px;
+  background: #e3bd78;
+  color: #21170c;
+  font-size: 0.61rem;
+  font-weight: 850;
+  letter-spacing: 0.02em;
+  transform: translateX(-50%);
+}
+.business-plan-card__name {
+  margin: 0 0 0.45rem;
+  color: #f6ead8 !important;
+  font-family: Georgia, 'Times New Roman', serif;
+  font-size: 1.35rem;
+  font-weight: 700;
+}
+.business-plan-card__description {
+  min-height: 4.2em;
+  margin: 0;
+  color: #b7aa99 !important;
+  font-size: 0.78rem;
+  line-height: 1.6;
+}
+.business-plan-card__price {
+  display: flex;
+  align-items: baseline;
+  gap: 3px;
+  margin: 1.5rem 0 1.15rem;
+  white-space: nowrap;
+}
+.business-plan-card__currency {
+  align-self: flex-start;
+  margin-top: 0.5rem;
+  color: var(--bp-gold);
+  font-size: 1rem;
+  font-weight: 700;
+}
+.business-plan-card__price strong {
+  color: #fff8ee !important;
+  font-size: clamp(1.75rem, 2.2vw, 2.3rem);
+  font-weight: 750;
+  letter-spacing: -0.06em;
+  line-height: 1;
+}
+.business-plan-card__period {
+  color: #9f9282;
+  font-size: 0.7rem;
+}
+.business-plan-card__price--custom strong {
+  color: var(--bp-gold) !important;
+  font-size: 1.85rem;
+}
+.business-plan-card__capacity {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  min-height: 47px;
+  padding: 0.65rem 0.7rem;
+  border: 1px solid rgba(227, 189, 120, 0.17);
+  border-radius: 10px;
+  background: rgba(227, 189, 120, 0.055);
+  color: #cfc1af;
+  font-size: 0.76rem;
+}
+.business-plan-card__capacity strong { color: #f4d49c; }
+.business-plan-card__capacity-icon { color: var(--bp-gold); font-size: 1.1rem; }
+.business-plan-card__divider {
+  height: 1px;
+  margin: 1.2rem 0 1rem;
+  background: var(--bp-line);
+}
+.business-plan-card__included-label {
+  margin: 0 0 0.8rem;
+  color: #a99578 !important;
+  font-size: 0.62rem;
+  font-weight: 850;
+  letter-spacing: 0.13em;
+}
+.business-plan-card__features {
+  display: grid;
+  gap: 0.75rem;
+  margin: 0 0 1.5rem;
+  padding: 0;
+  list-style: none;
+}
+.business-plan-card__features li {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  color: #c8bdaf;
+  font-size: 0.73rem;
+  line-height: 1.5;
+  text-align: left;
+}
+.business-plan-card__features li span {
+  color: var(--bp-gold);
+  font-weight: 850;
+}
+.business-plan-card__cta {
+  display: flex;
+  min-height: 44px;
+  align-items: center;
+  justify-content: center;
+  gap: 9px;
+  margin-top: auto;
+  padding: 0.7rem 0.6rem;
+  border: 1px solid rgba(227, 189, 120, 0.38);
+  border-radius: 10px;
+  color: #f0d29b !important;
+  font-size: 0.75rem;
+  font-weight: 800;
+  text-decoration: none !important;
+  transition: background 160ms ease, color 160ms ease, transform 160ms ease;
+}
+.business-plan-card__cta:hover {
+  background: rgba(227, 189, 120, 0.1);
+  transform: translateY(-1px);
+}
+.business-plan-card__cta--featured {
+  border-color: #e3bd78;
+  background: linear-gradient(135deg, #f0d39c, #c9944d);
+  color: #21170c !important;
+}
+.business-plan-card__cta--featured:hover {
+  background: linear-gradient(135deg, #f7dfb2, #d9a85f);
+  color: #21170c !important;
+}
+.business-pricing__fine-print {
+  margin: 1.25rem 0 0;
+  color: #8e8377 !important;
+  font-size: 0.76rem;
+  line-height: 1.6;
+  text-align: center !important;
+}
+
+.business-pricing__settlement {
+  padding: clamp(4rem, 7vw, 6rem) 0;
+  border-top: 1px solid var(--bp-line);
+  border-bottom: 1px solid var(--bp-line);
+  background: #0e0d0b;
+}
+.business-pricing__settlement-heading {
+  max-width: 680px;
+  margin: 0 auto 2.4rem;
+  text-align: center;
+}
+.business-pricing__settlement-heading .business-pricing__eyebrow { justify-content: center; }
+.business-pricing__settlement-heading h2 { font-size: clamp(2rem, 4vw, 3rem); }
+.business-pricing__settlement-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 18px;
+}
+.settlement-card {
+  padding: clamp(1.5rem, 3vw, 2.1rem);
+  border: 1px solid var(--bp-line);
+  border-radius: 18px;
+  background: linear-gradient(145deg, #171511, #11100e);
+}
+.settlement-card--gold {
+  border-color: rgba(227, 189, 120, 0.45);
+  background: linear-gradient(145deg, #211a10, #13110d);
+}
+.settlement-card__icon {
+  display: grid;
+  width: 43px;
+  height: 43px;
+  place-items: center;
+  border: 1px solid rgba(227, 189, 120, 0.32);
+  border-radius: 13px;
+  background: rgba(227, 189, 120, 0.08);
+  color: var(--bp-gold);
+  font-size: 1.3rem;
+}
+.settlement-card__label {
+  margin: 1.2rem 0 0.5rem;
+  color: #aa956f !important;
+  font-size: 0.65rem;
+  font-weight: 850;
+  letter-spacing: 0.15em;
+}
+.settlement-card h3 {
+  margin: 0;
+  color: #fff6e9 !important;
+  font-family: Georgia, 'Times New Roman', serif;
+  font-size: 1.45rem;
+}
+.settlement-card__rate {
+  display: flex;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: 0.6rem;
+  margin: 1.2rem 0 0.9rem;
+}
+.settlement-card__rate strong {
+  color: var(--bp-gold) !important;
+  font-size: clamp(2.5rem, 5vw, 3.7rem);
+  letter-spacing: -0.06em;
+  line-height: 1;
+}
+.settlement-card__rate span {
+  color: #c5b8a8;
+  font-size: 0.82rem;
+}
+.settlement-card__copy {
+  max-width: 560px;
+  margin: 0;
+  color: #b7aa99 !important;
+  font-size: 0.88rem;
+  line-height: 1.75;
+}
+.business-pricing__fee-note {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  margin-top: 1.3rem;
+  padding: 1.15rem 1.25rem;
+  border: 1px solid rgba(227, 189, 120, 0.2);
+  border-radius: 12px;
+  background: rgba(227, 189, 120, 0.045);
+}
+.business-pricing__fee-note-icon {
+  display: grid;
+  width: 23px;
+  height: 23px;
+  flex: 0 0 23px;
+  place-items: center;
+  border-radius: 50%;
+  background: rgba(227, 189, 120, 0.15);
+  color: var(--bp-gold);
+  font-size: 0.75rem;
+}
+.business-pricing__fee-note p {
+  margin: 0;
+  color: #c8bdaf !important;
+  font-size: 0.82rem;
+  line-height: 1.65;
+}
+.business-pricing__fee-note strong { color: #f5dfb8; }
+
+.business-pricing__cta-section {
+  padding: clamp(4.5rem, 8vw, 7rem) 0;
+  background:
+    radial-gradient(ellipse at 50% 100%, rgba(184, 122, 46, 0.13), transparent 55%),
+    #090807;
+  text-align: center;
+}
+.business-pricing__cta-section .business-pricing__eyebrow { justify-content: center; }
+.business-pricing__cta-section h2 {
+  max-width: 760px;
+  margin: 0 auto;
+  text-align: center;
+}
+.business-pricing__cta-section > .business-pricing__container > p:not(.business-pricing__eyebrow) {
+  max-width: 570px;
+  margin: 1rem auto 1.6rem;
+  color: #b7aa99 !important;
+  font-size: 0.95rem;
+  line-height: 1.7;
+  text-align: center;
+}
+.business-pricing__final-cta {
+  display: inline-flex;
+  min-height: 52px;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  padding: 0.85rem 1.4rem;
+  border: 1px solid #e8c98f;
+  border-radius: 999px;
+  background: linear-gradient(135deg, #f0d39c, #c9944d);
+  color: #21170c !important;
+  font-size: 0.88rem;
+  font-weight: 850;
+  text-decoration: none !important;
+  box-shadow: 0 12px 32px rgba(184, 122, 46, 0.16);
+  transition: transform 160ms ease, box-shadow 160ms ease;
+}
+.business-pricing__final-cta:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 16px 38px rgba(184, 122, 46, 0.25);
+}
+@media (max-width: 1120px) {
+  .business-pricing__grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .business-plan-card--enterprise { grid-column: span 3; }
+}
+@media (max-width: 760px) {
+  .business-pricing__container { width: min(100% - 32px, 560px); }
+  .business-pricing__hero { padding: 4.2rem 0 3.7rem; }
+  .business-pricing__hero h1 { font-size: clamp(2.65rem, 12vw, 4.4rem); }
+  .business-pricing__orb--one { right: -280px; opacity: 0.65; }
+  .business-pricing__grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+  .business-plan-card--enterprise { grid-column: span 2; }
+  .business-plan-card { padding: 1.35rem 1rem 1.1rem; }
+  .business-plan-card__price strong { font-size: 2rem; }
+  .business-plan-card__description { min-height: 0; }
+  .business-pricing__settlement-grid { grid-template-columns: 1fr; }
+}
+@media (max-width: 480px) {
+  .business-pricing__container { width: min(100% - 28px, 420px); }
+  .business-pricing__hero-note { align-items: flex-start; font-size: 0.8rem; }
+  .business-pricing__grid { grid-template-columns: 1fr; }
+  .business-plan-card--enterprise { grid-column: auto; }
+  .business-plan-card { padding: 1.5rem 1.25rem 1.25rem; }
+  .business-plan-card__description { min-height: 0; }
+  .business-plan-card__price strong { font-size: 2.35rem; }
+  .business-pricing__fine-print { text-align: left !important; }
+  .business-pricing__fee-note { padding: 1rem; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .business-pricing__scroll span,
+  .business-plan-card__cta,
+  .business-pricing__final-cta { transition: none; }
+}
