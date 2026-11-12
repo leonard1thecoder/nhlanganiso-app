@@ -113,7 +113,7 @@ export default function BusinessPricingPage() {
                 </ul>
                 <Link
                   className={`business-plan-card__cta${plan.featured ? ' business-plan-card__cta--featured' : ''}`}
-                  href="/contact"
+                  href="/business/register"
                 >
                   Become a partner <span aria-hidden="true">→</span>
                 </Link>
