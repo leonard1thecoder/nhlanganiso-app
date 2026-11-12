@@ -244,7 +244,6 @@ export default function HomePage() {
         </div>
       </section>
 
-      {RECIPES.length > 0 ? (
       <section className="section" aria-labelledby="home-recipes">
         <div className="container">
           <div className="section__head">
@@ -253,14 +252,17 @@ export default function HomePage() {
               All recipes <span aria-hidden="true">→</span>
             </Link>
           </div>
-          <ul className="recipe-grid">
-            {RECIPES.map((recipe) => (
-              <RecipeCard key={recipe.id} recipe={recipe} />
-            ))}
-          </ul>
+          {RECIPES.length > 0 ? (
+            <ul className="recipe-grid">
+              {RECIPES.map((recipe) => (
+                <RecipeCard key={recipe.id} recipe={recipe} />
+              ))}
+            </ul>
+          ) : (
+            <p className="muted">No recipes yet. Check back soon.</p>
+          )}
         </div>
       </section>
-      ) : null}
 
       <section className="section section--tint" aria-labelledby="home-how">
         <div className="container home-how">
