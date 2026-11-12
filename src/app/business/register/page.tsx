@@ -140,7 +140,7 @@ export default function BusinessRegisterPage() {
           <div className="business-register__steps" aria-label="Application steps">
             <span><b>01</b> Business details</span>
             <i />
-            <span><b>02</b> Choose your setup</span>
+            <span><b>02</b> Onboarding after approval</span>
             <i />
             <span><b>03</b> Team review</span>
           </div>
