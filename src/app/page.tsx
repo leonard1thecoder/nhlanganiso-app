@@ -3,8 +3,10 @@
 import Link from 'next/link';
 import { useEffect, useState, type FormEvent } from 'react';
 import { ProductCard } from '@/components/ProductCard';
+import { RecipeCard } from '@/components/RecipeCard';
 import { Notice } from '@/components/Notice';
 import { describeError } from '@/lib/api';
+import { RECIPES } from '@/lib/recipes';
 import { categoryService, newsletterService, productService } from '@/lib/services';
 import type { Category, Product } from '@/lib/types';
 
@@ -241,6 +243,24 @@ export default function HomePage() {
           )}
         </div>
       </section>
+
+      {RECIPES.length > 0 ? (
+      <section className="section" aria-labelledby="home-recipes">
+        <div className="container">
+          <div className="section__head">
+            <h2 id="home-recipes">Recipes</h2>
+            <Link href="/recipes" className="link-arrow">
+              All recipes <span aria-hidden="true">→</span>
+            </Link>
+          </div>
+          <ul className="recipe-grid">
+            {RECIPES.map((recipe) => (
+              <RecipeCard key={recipe.id} recipe={recipe} />
+            ))}
+          </ul>
+        </div>
+      </section>
+      ) : null}
 
       <section className="section section--tint" aria-labelledby="home-how">
         <div className="container home-how">
